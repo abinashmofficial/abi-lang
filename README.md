@@ -62,8 +62,8 @@ while count <= 5 {
 ### 1. Installation & Setup
 Clone the repository and install the project dependencies:
 ```bash
-git clone https://github.com/abinashmofficial/abilang.git
-cd abilang
+git clone https://github.com/abinashmofficial/abi-lang.git
+cd abi-lang
 npm install
 ```
 

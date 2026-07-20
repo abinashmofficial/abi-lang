@@ -104,13 +104,13 @@
                         <div class="cmd-group">
                             <span class="cmd-label">Option A: One-Click Automated Installer (Recommended)</span>
                             <pre><code># Fetch and execute bash auto-installer script
-curl -fsSL https://raw.githubusercontent.com/abinashmofficial/abilang/master-v1/install.sh | bash</code></pre>
+curl -fsSL https://raw.githubusercontent.com/abinashmofficial/abi-lang/main/install.sh | bash</code></pre>
                             <span class="cmd-desc">Or run locally: <code>chmod +x install.sh && ./install.sh</code></span>
                         </div>
                         <div class="cmd-group">
                             <span class="cmd-label">Option B: Download Installer and Run Locally</span>
                             <pre><code># 1. Download installer script using wget and execute
-wget https://raw.githubusercontent.com/abinashmofficial/abilang/master-v1/install.sh && chmod +x install.sh && ./install.sh
+wget https://raw.githubusercontent.com/abinashmofficial/abi-lang/main/install.sh && chmod +x install.sh && ./install.sh
 
 # 2. Compile TypeScript binary & register global terminal alias
 npm run web</code></pre>
@@ -133,14 +133,14 @@ abi path/to/script.vue</code></pre>
                         <div class="cmd-group">
                             <span class="cmd-label">Option A: PowerShell Automated Installer (Recommended)</span>
                             <pre><code># Run PowerShell installer remotely
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/abinashmofficial/abilang/master-v1/install.ps1'))</code></pre>
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/abinashmofficial/abi-lang/main/install.ps1'))</code></pre>
                             <span class="cmd-desc">Or run local clone script: <code>.\install.ps1</code></span>
                         </div>
                         <div class="cmd-group">
                             <span class="cmd-label">Option B: Manual Compilation & Global CLI Installation</span>
                             <pre><code># 1. Clone repo, enter folder & install dependencies
-git clone https://github.com/abinashmofficial/abilang.git
-cd abilang
+git clone https://github.com/abinashmofficial/abi-lang.git
+cd abi-lang
 npm install
 
 # 2. Compile TypeScript binary & register global terminal alias

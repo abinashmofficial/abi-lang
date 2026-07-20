@@ -181,7 +181,7 @@ if [[ "$CREATE_ENV" =~ ^[Yy]$ ]]; then
 fi
 
 # Base repository URL
-BASE_URL="https://raw.githubusercontent.com/abinashmofficial/abilang/master-v1"
+BASE_URL="https://raw.githubusercontent.com/abinashmofficial/abi-lang/main"
 
 # 3. Create package.json
 cat << EOF > package.json
@@ -437,7 +437,7 @@ try {
                 </p>
                 <div class="d-flex justify-content-center gap-3 mb-5">
                     <button class="btn btn-gradient btn-lg px-4" id="launch-btn"><%= lang.get_started %></button>
-                    <a class="btn btn-outline-secondary btn-lg px-4" href="https://github.com/abinashmofficial/abilang" target="_blank"><%= lang.view_docs %></a>
+                    <a class="btn btn-outline-secondary btn-lg px-4" href="https://github.com/abinashmofficial/abi-lang" target="_blank"><%= lang.view_docs %></a>
                 </div>
                 <div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;">
                     <h5 class="text-white mb-3"><%= lang.system_info %></h5>

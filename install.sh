@@ -37,6 +37,7 @@ API_KEY="xyz123secret"
 {
     echo "PORT=$PORT"
     echo "APP_NAME=$APP_NAME"
+    echo "APP_LANG=en"
     echo "DB_HOST="
     echo "DB_PORT="
     echo "DB_DATABASE="
@@ -204,7 +205,13 @@ const path = require('path');
 const os = require('os');
 let lang = {};
 try {
-    lang = JSON.parse(fs.readFileSync(path.resolve('lang/en/messages.json'), 'utf8'));
+    const langCode = process.env.APP_LANG || 'en';
+    const langFile = path.resolve('lang/' + langCode + '/messages.json');
+    if (fs.existsSync(langFile)) {
+        lang = JSON.parse(fs.readFileSync(langFile, 'utf8'));
+    } else {
+        lang = JSON.parse(fs.readFileSync(path.resolve('lang/en/messages.json'), 'utf8'));
+    }
 } catch (e) {
     lang = { title: "AbiLang", subtitle: "Welcome" };
 }

@@ -771,9 +771,10 @@ async function startServer() {
                     const filePath = path.join(__dirname, viewFile);
                     if (fs.existsSync(filePath)) {
                         const content = renderTemplate(filePath);
-                    res.writeHead(200, { 'Content-Type': 'text/html' });
-                    res.end(content);
-                    return;
+                        res.writeHead(200, { 'Content-Type': 'text/html' });
+                        res.end(content);
+                        return;
+                    }
                 }
             }
         }

@@ -1,0 +1,5 @@
+node_modules/
+temp_ts/
+.DS_Store
+.vscode/
+*.log

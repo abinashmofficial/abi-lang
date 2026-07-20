@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AbiLang - Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="theme.css?v=1.2">
+    <link rel="stylesheet" href="style.css?v=1.2">
+</head>
+<body class="dark-theme">
+    <canvas id="star-rain-canvas"></canvas>
+    <button id="theme-toggle" class="theme-toggle-floating" title="Toggle Light/Dark Theme">
+        <span id="theme-toggle-icon">☀</span>
+    </button>
+
+    <div id="portal-view" class="portal-screen">
+        <nav class="portal-nav">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <div class="abi-logo-badge">A</div>
+                    <span class="nav-title">Abi<span>Lang</span></span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html">Playground</a>
+                    <a href="docs.html" class="active">Documentation</a>
+                    <a href="https://github.com/abinashmofficial" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="portal-hero">
+            <div class="hero-container">
+                <div class="hologram-overlay"></div>
+                <div class="mockup-container" style="text-align:center; margin: 20px 0;">
+                  <div class="dash-circle">
+                    <div class="dash-text">Abi</div>
+                  </div>
+                </div>
+
+                <div class="tagline-badge">AbiLang v1.1.0 (Cloud Release)</div>
+                <h1 class="hero-title">
+                    The Progressive <br>
+                    <span>Scripting Language</span>
+                </h1>
+                <p class="hero-subtitle">
+                    An approachable, highly performant and versatile scripting language designed for <strong>Abinash</strong>, running natively on all platform engines.
+                </p>
+                <div class="hero-actions">
+                    <button id="launch-btn" class="btn btn-vue-primary">
+                        Get Started
+                        <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                    <a href="file:///var/www/personal/new-lang/README.md" target="_blank" class="btn btn-vue-secondary">View Docs</a>
+                </div>
+            </div>
+        </main>
+
+        <section class="portal-features">
+            <div class="features-container">
+                <div class="feature-card">
+                    <h3 class="feat-title">Approachable</h3>
+                    <p class="feat-desc">Builds on top of standard script logic. No complex boilerplate, clean braces, and optional parentheses.</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="feat-title">Cloud Native</h3>
+                    <p class="feat-desc">Integrated asynchronous fetch triggers and parsing tools to bridge with Firestore, Supabase, or REST backends.</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="feat-title">Visual Scopes</h3>
+                    <p class="feat-desc">Embedded interactive AST syntax trees and memory scope inspectors to see variables execute in real-time.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="documentation-section" class="portal-installation">
+            <div class="install-container">
+                <h2 class="install-section-title">Documentation V1</h2>
+                <p class="install-section-subtitle">Discover what makes AbiLang unique and learn how to use its methods, controllers, and routing step-by-step.</p>
+                
+                <div class="os-tabs">
+                    <button class="os-tab-btn active" data-os="intro">Overview & Uniqueness</button>
+                    <button class="os-tab-btn" data-os="syntax">Syntax & Basic Rules</button>
+                    <button class="os-tab-btn" data-os="controllers">Controllers & Models</button>
+                    <button class="os-tab-btn" data-os="routing">Routing & Views</button>
+                </div>
+
+                <div class="install-code-blocks">
+                    <div class="os-content active" id="os-intro">
+                        <div class="cmd-group">
+                            <span class="cmd-label">About AbiLang</span>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">AbiLang is a progressive scripting language designed for clean structure, optimal execution speed, and simplicity. It allows writing expressive scripts with optional parentheses, clean brackets, and zero boilerplate code.</p>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">Why is it unique?</span>
+                            <ul style="color: var(--text-muted); font-size: 14px; line-height: 1.8; padding-left: 20px; margin-top: 10px;">
+                                <li><strong>Hybrid Architecture:</strong> Compiles and runs directly in Node.js on the backend, or bundles to clean standard JavaScript for runtime performance in web browsers.</li>
+                                <li><strong>Procedural Scoping:</strong> Imports other scripts recursively using the global <code>include("path")</code> system, keeping functions, models, and constants within a shared environment.</li>
+                                <li><strong>Cloud Fetch:</strong> Built-in async HTTP call methods (<code>fetch</code>) and JSON parsing utilities (<code>json_parse</code>) for smooth REST-database connectivity.</li>
+                            </ul>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">Minimum System Requirements</span>
+                            <ul style="color: var(--text-muted); font-size: 13px; line-height: 1.8; padding-left: 20px; margin-top: 10px;">
+                                <li><strong>macOS:</strong> macOS 10.15+ (Catalina), Node.js v18.0.0+, npm v9.0.0+</li>
+                                <li><strong>Linux:</strong> Ubuntu 20.04 LTS+ / Debian 11+ / Fedora 36+, Node.js v18.0.0+, Git installed</li>
+                                <li><strong>Windows:</strong> Windows 10/11 (64-bit), PowerShell 5.1+ / PowerShell Core 7+, Node.js v18.0.0+, npm v9.0.0+</li>
+                                <li><strong>Mobile:</strong> Android SDK API Level 30+ (Android 11+), Xcode 14+ (macOS only, for iOS), CocoaPods installed</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="os-content" id="os-syntax">
+                        <div class="cmd-group">
+                            <span class="cmd-label">1. Variables & Expressions</span>
+                            <pre><code>greeting = "Hello world"
+result = 100 + 50 * (4 / 2)
+print greeting</code></pre>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">2. Standard Controls & Loops</span>
+                            <pre><code>age = 18
+if age >= 18 {
+    print "Access authorized"
+}
+
+count = 1
+while count <= 3 {
+    print count
+    count = count + 1
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="os-content" id="os-controllers">
+                        <div class="cmd-group">
+                            <span class="cmd-label">1. Default Controller (controller/controller.abi)</span>
+                            <pre><code>include("model/model.abi")
+
+func index() {
+    return view("index")
+}</code></pre>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">2. Creating and Extending Controllers</span>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">To create a custom controller and inherit all functions from the base controller, include both the model and the base controller:</p>
+                            <pre><code>include("model/model.abi")
+
+include("controller/controller.abi")
+
+func show_profile() {
+    return view("profile")
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="os-content" id="os-routing">
+                        <div class="cmd-group">
+                            <span class="cmd-label">1. Route Registrations (routes/route.abi)</span>
+                            <pre><code>include("controller/controller.abi")
+
+route("get", "/", "controller@index", "home")</code></pre>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">2. Returning Views with the <code>view()</code> Method</span>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>view("filename")</code> helper inside your controller actions. The view parser resolves filenames to <code>view/filename.ui</code> automatically, so you don't have to specify folders or file extensions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="hud-footer">
+            <span><a href="index.html" style="color: var(--abi-green); text-decoration: none;">View Playground</a></span>
+            <span>Progressive Language Platform</span>
+            <span>Made for Abinash</span>
+        </footer>
+    </div>
+
+    <script src="dist/abilang.min.js?v=1.2"></script>
+    <script src="app.js?v=1.2"></script>
+</body>
+</html>

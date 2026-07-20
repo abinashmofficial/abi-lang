@@ -1,0 +1,611 @@
+import {
+  Statement,
+  Expression,
+  PrintStatement,
+  VarDeclStatement,
+  IfStatement,
+  WhileStatement,
+  ForStatement,
+  FunctionDeclStatement,
+  ReturnStatement,
+  ExpressionStatement,
+  LiteralExpression,
+  VariableExpression,
+  BinaryExpression,
+  UnaryExpression,
+  InputExpression,
+  AssignExpression,
+  CallExpression,
+  GetExpression,
+  ListExpression,
+  DictExpression
+} from "./types";
+
+export interface IOHandler {
+  print(message: string): void;
+  input(prompt: string): Promise<string>;
+  renderUI?(element: any): void | Promise<void>;
+}
+
+export interface Callable {
+  arity(): number;
+  call(interpreter: Interpreter, args: any[]): Promise<any>;
+}
+
+export class ReturnException {
+  public value: any;
+  constructor(value: any) {
+    this.value = value;
+  }
+}
+
+export class BuiltinFunction implements Callable {
+  private fn: (args: any[]) => Promise<any> | any;
+  private paramCount: number;
+
+  constructor(paramCount: number, fn: (args: any[]) => Promise<any> | any) {
+    this.paramCount = paramCount;
+    this.fn = fn;
+  }
+
+  arity(): number {
+    return this.paramCount;
+  }
+
+  async call(interpreter: Interpreter, args: any[]): Promise<any> {
+    return await this.fn(args);
+  }
+}
+
+export class UserFunction implements Callable {
+  private declaration: FunctionDeclStatement;
+  private closure: Environment;
+
+  constructor(declaration: FunctionDeclStatement, closure: Environment) {
+    this.declaration = declaration;
+    this.closure = closure;
+  }
+
+  arity(): number {
+    return this.declaration.params.length;
+  }
+
+  async call(interpreter: Interpreter, args: any[]): Promise<any> {
+    const env = new Environment(this.closure);
+    for (let i = 0; i < this.declaration.params.length; i++) {
+      env.define(this.declaration.params[i], args[i]);
+    }
+
+    try {
+      await interpreter.executeBlock(this.declaration.body, env);
+    } catch (err: any) {
+      if (err instanceof ReturnException) {
+        return err.value;
+      }
+      throw err;
+    }
+    return null;
+  }
+}
+
+export class Environment {
+  private values: Map<string, any> = new Map();
+  private outer: Environment | null;
+
+  constructor(outer: Environment | null = null) {
+    this.outer = outer;
+  }
+
+  public getOuter(): Environment | null {
+    return this.outer;
+  }
+
+  public getVariables(): Map<string, any> {
+    return this.values;
+  }
+
+  public define(name: string, value: any): void {
+    this.values.set(name, value);
+  }
+
+  public get(name: string, line: number): any {
+    if (this.values.has(name)) {
+      return this.values.get(name);
+    }
+
+    if (this.outer) {
+      return this.outer.get(name, line);
+    }
+
+    throw new Error(`[Runtime Error] Undefined variable '${name}' at line ${line}.`);
+  }
+
+  public assign(name: string, value: any, line: number): void {
+    if (this.values.has(name)) {
+      this.values.set(name, value);
+      return;
+    }
+
+    if (this.outer) {
+      this.outer.assign(name, value, line);
+      return;
+    }
+
+    // Default: define in local scope if it doesn't exist anywhere
+    this.values.set(name, value);
+  }
+}
+
+export class Interpreter {
+  private io: IOHandler;
+  private globals: Environment = new Environment();
+  private environment: Environment = this.globals;
+
+  public getVariables(): Record<string, any> {
+    const vars: Record<string, any> = {};
+    let curr: Environment | null = this.environment;
+    while (curr !== null) {
+      for (const [key, val] of curr.getVariables().entries()) {
+        if (key === "fetch" || key === "json_parse" || key === "json_stringify" || key === "date_now") {
+          continue;
+        }
+        if (vars[key] === undefined) {
+          vars[key] = val;
+        }
+      }
+      curr = curr.getOuter();
+    }
+    return vars;
+  }
+
+  constructor(io: IOHandler) {
+    this.io = io;
+    this.setupGlobals();
+  }
+
+  private setupGlobals() {
+    // 1. Fetch for cloud APIs (works in Node 18+ and Browser natively)
+    this.globals.define(
+      "fetch",
+      new BuiltinFunction(1, async (args) => {
+        const url = args[0];
+        const options = args[1] || {};
+        
+        const fetchOptions: any = {};
+        if (options.method) fetchOptions.method = String(options.method);
+        if (options.headers) {
+          fetchOptions.headers = options.headers;
+        }
+        if (options.body) {
+          fetchOptions.body = typeof options.body === "object" ? JSON.stringify(options.body) : String(options.body);
+        }
+
+        try {
+          const res = await fetch(url, fetchOptions);
+          return await res.text();
+        } catch (err: any) {
+          throw new Error(`Cloud fetch failed: ${err.message}`);
+        }
+      })
+    );
+
+    // 2. Parse JSON
+    this.globals.define(
+      "json_parse",
+      new BuiltinFunction(1, (args) => {
+        try {
+          return JSON.parse(args[0]);
+        } catch (e: any) {
+          throw new Error(`JSON parse error: ${e.message}`);
+        }
+      })
+    );
+
+    // 3. Stringify JSON
+    this.globals.define(
+      "json_stringify",
+      new BuiltinFunction(1, (args) => {
+        return JSON.stringify(args[0], null, 2);
+      })
+    );
+
+    // 4. Timestamp
+    this.globals.define(
+      "date_now",
+      new BuiltinFunction(0, () => Date.now())
+    );
+
+    // 5. Declarative UI Component Helpers
+    this.globals.define(
+      "create_text",
+      new BuiltinFunction(1, (args) => {
+        return { type: "text", content: String(args[0]) };
+      })
+    );
+
+    this.globals.define(
+      "create_button",
+      new BuiltinFunction(2, (args) => {
+        return { type: "button", text: String(args[0]), onClick: args[1] };
+      })
+    );
+
+    this.globals.define(
+      "create_column",
+      new BuiltinFunction(1, (args) => {
+        return { type: "column", children: Array.isArray(args[0]) ? args[0] : [args[0]] };
+      })
+    );
+
+    this.globals.define(
+      "create_row",
+      new BuiltinFunction(1, (args) => {
+        return { type: "row", children: Array.isArray(args[0]) ? args[0] : [args[0]] };
+      })
+    );
+
+    this.globals.define(
+      "render_ui",
+      new BuiltinFunction(1, async (args) => {
+        const uiElement = args[0];
+        if (this.io && "renderUI" in this.io && typeof (this.io as any).renderUI === "function") {
+          await (this.io as any).renderUI(uiElement);
+        } else {
+          this.io.print(`[UI Render Log] ${JSON.stringify(uiElement, null, 2)}\n`);
+        }
+        return null;
+      })
+    );
+  }
+
+  public async interpret(statements: Statement[]): Promise<void> {
+    try {
+      for (const statement of statements) {
+        await this.execute(statement);
+      }
+    } catch (err: any) {
+      if (err instanceof ReturnException) {
+        this.io.print("\nError: Return statements are only allowed inside functions.\n");
+      } else {
+        this.io.print(`\nError: ${err.message}\n`);
+      }
+      throw err;
+    }
+  }
+
+  private async execute(stmt: Statement): Promise<void> {
+    switch (stmt.type) {
+      case "PrintStatement":
+        await this.executePrint(stmt);
+        break;
+      case "VarDeclStatement":
+        await this.executeVarDecl(stmt);
+        break;
+      case "FunctionDeclStatement":
+        await this.executeFunctionDecl(stmt);
+        break;
+      case "ReturnStatement":
+        await this.executeReturn(stmt);
+        break;
+      case "IfStatement":
+        await this.executeIf(stmt);
+        break;
+      case "WhileStatement":
+        await this.executeWhile(stmt);
+        break;
+      case "ForStatement":
+        await this.executeFor(stmt as ForStatement);
+        break;
+      case "ExpressionStatement":
+        await this.evaluate(stmt.expression);
+        break;
+      default:
+        throw new Error(`[Runtime Error] Unknown statement type: ${(stmt as any).type}`);
+    }
+  }
+
+  private async executePrint(stmt: PrintStatement): Promise<void> {
+    const value = await this.evaluate(stmt.expression);
+    this.io.print(this.stringify(value) + "\n");
+  }
+
+  private async executeVarDecl(stmt: VarDeclStatement): Promise<void> {
+    const value = await this.evaluate(stmt.expression);
+    this.environment.define(stmt.name, value);
+  }
+
+  private async executeFunctionDecl(stmt: FunctionDeclStatement): Promise<void> {
+    const fn = new UserFunction(stmt, this.environment);
+    this.environment.define(stmt.name, fn);
+  }
+
+  private async executeReturn(stmt: ReturnStatement): Promise<void> {
+    let value = null;
+    if (stmt.value) {
+      value = await this.evaluate(stmt.value);
+    }
+    throw new ReturnException(value);
+  }
+
+  private async executeIf(stmt: IfStatement): Promise<void> {
+    const condition = await this.evaluate(stmt.condition);
+    if (this.isTruthy(condition)) {
+      await this.executeBlock(stmt.thenBranch, new Environment(this.environment));
+    } else if (stmt.elseBranch) {
+      await this.executeBlock(stmt.elseBranch, new Environment(this.environment));
+    }
+  }
+
+  private async executeWhile(stmt: WhileStatement): Promise<void> {
+    while (this.isTruthy(await this.evaluate(stmt.condition))) {
+      await this.executeBlock(stmt.body, new Environment(this.environment));
+    }
+  }
+
+  private async executeFor(stmt: ForStatement): Promise<void> {
+    const iteratorVal = await this.evaluate(stmt.iterator);
+    if (!Array.isArray(iteratorVal)) {
+      throw new Error(`[Runtime Error] Can only iterate over lists at line ${stmt.line}.`);
+    }
+    for (const val of iteratorVal) {
+      const loopEnv = new Environment(this.environment);
+      loopEnv.define(stmt.item, val);
+      await this.executeBlock(stmt.body, loopEnv);
+    }
+  }
+
+  public async executeBlock(statements: Statement[], env: Environment): Promise<void> {
+    const previousEnv = this.environment;
+    try {
+      this.environment = env;
+      for (const statement of statements) {
+        await this.execute(statement);
+      }
+    } finally {
+      this.environment = previousEnv;
+    }
+  }
+
+  // --- Expression Evaluation ---
+  private async evaluate(expr: Expression): Promise<any> {
+    switch (expr.type) {
+      case "LiteralExpression":
+        return expr.value;
+      case "VariableExpression":
+        return this.environment.get(expr.name, expr.line);
+      case "BinaryExpression":
+        return this.evaluateBinary(expr);
+      case "UnaryExpression":
+        return this.evaluateUnary(expr);
+      case "InputExpression":
+        return this.evaluateInput(expr);
+      case "AssignExpression":
+        return this.evaluateAssign(expr);
+      case "CallExpression":
+        return this.evaluateCall(expr);
+      case "GetExpression":
+        return this.evaluateGet(expr);
+      case "ListExpression":
+        return this.evaluateList(expr);
+      case "DictExpression":
+        return this.evaluateDict(expr);
+      default:
+        throw new Error(`[Runtime Error] Unknown expression type: ${(expr as any).type}`);
+    }
+  }
+
+  private async evaluateBinary(expr: BinaryExpression): Promise<any> {
+    const left = await this.evaluate(expr.left);
+    const right = await this.evaluate(expr.right);
+
+    switch (expr.operator) {
+      case "+":
+        if (typeof left === "number" && typeof right === "number") {
+          return left + right;
+        }
+        if (typeof left === "string" || typeof right === "string") {
+          return this.stringify(left) + this.stringify(right);
+        }
+        throw new Error(`[Runtime Error] Operands of '+' must be numbers or strings at line ${expr.line}.`);
+
+      case "-":
+        this.checkNumberOperands(expr.operator, left, right, expr.line);
+        return left - right;
+
+      case "*":
+        this.checkNumberOperands(expr.operator, left, right, expr.line);
+        return left * right;
+
+      case "/":
+        this.checkNumberOperands(expr.operator, left, right, expr.line);
+        if (right === 0) {
+          throw new Error(`[Runtime Error] Division by zero at line ${expr.line}.`);
+        }
+        return left / right;
+
+      case "%":
+        this.checkNumberOperands(expr.operator, left, right, expr.line);
+        return left % right;
+
+      case ">":
+        this.checkComparableOperands(expr.operator, left, right, expr.line);
+        return left > right;
+
+      case ">=":
+        this.checkComparableOperands(expr.operator, left, right, expr.line);
+        return left >= right;
+
+      case "<":
+        this.checkComparableOperands(expr.operator, left, right, expr.line);
+        return left < right;
+
+      case "<=":
+        this.checkComparableOperands(expr.operator, left, right, expr.line);
+        return left <= right;
+
+      case "==":
+        return left === right;
+
+      case "!=":
+        return left !== right;
+
+      case "and":
+        return this.isTruthy(left) ? right : left;
+
+      case "or":
+        return this.isTruthy(left) ? left : right;
+
+      default:
+        throw new Error(`[Runtime Error] Unknown operator '${expr.operator}' at line ${expr.line}.`);
+    }
+  }
+
+  private async evaluateUnary(expr: UnaryExpression): Promise<any> {
+    const right = await this.evaluate(expr.right);
+
+    switch (expr.operator) {
+      case "-":
+        this.checkNumberOperand(expr.operator, right, expr.line);
+        return -right;
+      case "+":
+        this.checkNumberOperand(expr.operator, right, expr.line);
+        return right;
+      case "not":
+        return !this.isTruthy(right);
+      default:
+        throw new Error(`[Runtime Error] Unknown unary operator '${expr.operator}' at line ${expr.line}.`);
+    }
+  }
+
+  private async evaluateInput(expr: InputExpression): Promise<any> {
+    const promptValue = await this.evaluate(expr.prompt);
+    const promptStr = this.stringify(promptValue);
+    const inputVal = await this.io.input(promptStr);
+    
+    if (inputVal.trim() !== "" && !isNaN(Number(inputVal))) {
+      return Number(inputVal);
+    }
+    return inputVal;
+  }
+
+  private async evaluateAssign(expr: AssignExpression): Promise<any> {
+    const value = await this.evaluate(expr.value);
+    const target = expr.name;
+
+    if (target.type === "VariableExpression") {
+      this.environment.assign(target.name, value, expr.line);
+    } else if (target.type === "GetExpression") {
+      const obj = await this.evaluate(target.object);
+      
+      if (obj === null || obj === undefined || typeof obj !== "object") {
+        throw new Error(`[Runtime Error] Can only assign properties of objects or arrays at line ${expr.line}.`);
+      }
+
+      let propKey: any;
+      if (target.isComputed) {
+        propKey = await this.evaluate(target.property);
+      } else {
+        propKey = (target.property as LiteralExpression).value;
+      }
+
+      obj[propKey] = value;
+    } else {
+      throw new Error(`[Runtime Error] Invalid assignment target at line ${expr.line}.`);
+    }
+
+    return value;
+  }
+
+  private async evaluateCall(expr: CallExpression): Promise<any> {
+    const callee = await this.evaluate(expr.callee);
+    
+    const args: any[] = [];
+    for (const arg of expr.args) {
+      args.push(await this.evaluate(arg));
+    }
+
+    if (callee === null || typeof callee !== "object" || !("call" in callee)) {
+      throw new Error(`[Runtime Error] Can only call functions and classes at line ${expr.line}.`);
+    }
+
+    const callable = callee as Callable;
+    if (args.length !== callable.arity()) {
+      throw new Error(`[Runtime Error] Expected ${callable.arity()} arguments but got ${args.length} at line ${expr.line}.`);
+    }
+
+    return await callable.call(this, args);
+  }
+
+  private async evaluateGet(expr: GetExpression): Promise<any> {
+    const obj = await this.evaluate(expr.object);
+
+    if (obj === null || obj === undefined) {
+      throw new Error(`[Runtime Error] Cannot read property of null/undefined at line ${expr.line}.`);
+    }
+
+    let propKey: any;
+    if (expr.isComputed) {
+      propKey = await this.evaluate(expr.property);
+    } else {
+      propKey = (expr.property as LiteralExpression).value;
+    }
+
+    const val = obj[propKey];
+    if (typeof val === "function") {
+      // Bind member methods to parent object context (e.g. string/array utility methods)
+      return val.bind(obj);
+    }
+    return val;
+  }
+
+  private async evaluateList(expr: ListExpression): Promise<any> {
+    const list: any[] = [];
+    for (const el of expr.elements) {
+      list.push(await this.evaluate(el));
+    }
+    return list;
+  }
+
+  private async evaluateDict(expr: DictExpression): Promise<any> {
+    const dict: Record<string, any> = {};
+    for (const prop of expr.properties) {
+      dict[prop.key] = await this.evaluate(prop.value);
+    }
+    return dict;
+  }
+
+  // --- Helpers ---
+  private checkNumberOperand(operator: string, operand: any, line: number) {
+    if (typeof operand === "number") return;
+    throw new Error(`[Runtime Error] Operand of '${operator}' must be a number at line ${line}.`);
+  }
+
+  private checkNumberOperands(operator: string, left: any, right: any, line: number) {
+    if (typeof left === "number" && typeof right === "number") return;
+    throw new Error(`[Runtime Error] Operands of '${operator}' must be numbers at line ${line}.`);
+  }
+
+  private checkComparableOperands(operator: string, left: any, right: any, line: number) {
+    if (typeof left === "number" && typeof right === "number") return;
+    if (typeof left === "string" && typeof right === "string") return;
+    throw new Error(`[Runtime Error] Operands of '${operator}' must be both numbers or both strings at line ${line}.`);
+  }
+
+  private isTruthy(val: any): boolean {
+    if (val === null || val === undefined) return false;
+    if (typeof val === "boolean") return val;
+    return true;
+  }
+
+  private stringify(val: any): string {
+    if (val === null) return "null";
+    if (typeof val === "boolean") return val ? "true" : "false";
+    if (typeof val === "object") {
+      if (val instanceof UserFunction || val instanceof BuiltinFunction) {
+        return `<function>`;
+      }
+      return JSON.stringify(val);
+    }
+    return String(val);
+  }
+}

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AbiLang - The Progressive Scripting Language</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="theme.css?v=1.2">
+    <link rel="stylesheet" href="style.css?v=1.2">
+</head>
+<body>
+    <canvas id="star-rain-canvas"></canvas>
+    <button id="theme-toggle" class="theme-toggle-floating" title="Toggle Light/Dark Theme">
+        <span id="theme-toggle-icon">☀</span>
+    </button>
+
+    
+    
+    <!-- View State 1: Landing Page Portal -->
+    <div id="portal-view" class="portal-screen">
+        <!-- Navbar Header -->
+        <nav class="portal-nav">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <div class="abi-logo-badge">A</div>
+                    <span class="nav-title">Abi<span>Lang</span></span>
+                </div>
+                <div class="nav-links">
+                    <a href="#" id="nav-playground-btn" class="active">Playground</a>
+                    <a href="documents.html" id="nav-docs-link">Documentation</a>
+                    <a href="https://github.com/abinashmofficial" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Hero Section -->
+        <main class="portal-hero">
+            <div class="hero-container">
+                <div class="hologram-overlay"></div>
+<!-- Custom UI Mockup -->
+<div class="mockup-container" style="text-align:center; margin: 20px 0;">
+  <div class="dash-circle">
+    <div class="dash-text">Abi</div>
+</div>
+</div>
+
+                <div class="tagline-badge">AbiLang v1.1.0 (Cloud Release)</div>
+                <h1 class="hero-title">
+                    The Progressive <br>
+                    <span>Scripting Language</span>
+                </h1>
+                <p class="hero-subtitle">
+                    An approachable, highly performant and versatile scripting language designed for <strong>Abinash</strong>, running natively on all platform engines.
+                </p>
+                <div class="hero-actions">
+                    <button id="launch-btn" class="btn btn-vue-primary">
+                        Get Started
+                        <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                    <a href="documents.html" class="btn btn-vue-secondary">View Docs</a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Features Grid -->
+        <section class="portal-features">
+            <div class="features-container">
+                <div class="feature-card">
+                    <h3 class="feat-title">Approachable</h3>
+                    <p class="feat-desc">Builds on top of standard script logic. No complex boilerplate, clean braces, and optional parentheses.</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="feat-title">Cloud Native</h3>
+                    <p class="feat-desc">Integrated asynchronous fetch triggers and parsing tools to bridge with Firestore, Supabase, or REST backends.</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="feat-title">Visual Scopes</h3>
+                    <p class="feat-desc">Embedded interactive AST syntax trees and memory scope inspectors to see variables execute in real-time.</p>
+                </div>
+            </div>
+        </section>
+
+        
+        <!-- Installation Guide Section -->
+        <section class="portal-installation">
+            <div class="install-container">
+                <h2 class="install-section-title">Local Installation Guide</h2>
+                <p class="install-section-subtitle">Run the AbiLang compiler CLI and local web playground on your machine.</p>
+                
+                <div class="os-tabs">
+                    <button class="os-tab-btn active" data-os="unix">macOS / Linux</button>
+                    <button class="os-tab-btn" data-os="win">Windows</button>
+                    <button class="os-tab-btn" data-os="mobile">Android / iOS</button>
+                </div>
+
+                <div class="install-code-blocks">
+                    <!-- macOS / Linux Commands -->
+                    <div class="os-content active" id="os-unix">
+                        <div class="cmd-group">
+                            <span class="cmd-label">Option A: One-Click Automated Installer (Recommended)</span>
+                            <pre><code># Fetch and execute bash auto-installer script
+curl -fsSL https://raw.githubusercontent.com/abinashmofficial/abilang/master-v1/install.sh | bash</code></pre>
+                            <span class="cmd-desc">Or run locally: <code>chmod +x install.sh && ./install.sh</code></span>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">Option B: Download Installer and Run Locally</span>
+                            <pre><code># 1. Download installer script using wget and execute
+wget https://raw.githubusercontent.com/abinashmofficial/abilang/master-v1/install.sh && chmod +x install.sh && ./install.sh
+
+# 2. Compile TypeScript binary & register global terminal alias
+npm run web</code></pre>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">3. Run Globally from Anywhere</span>
+                            <pre><code># Launch interactive REPL console abi
+
+# Run an external script file
+abi path/to/script.vue</code></pre>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">4. Local Playground Server</span>
+                            <pre><code>npm run web</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Windows Commands -->
+                    <div class="os-content" id="os-win">
+                        <div class="cmd-group">
+                            <span class="cmd-label">Option A: PowerShell Automated Installer (Recommended)</span>
+                            <pre><code># Run PowerShell installer remotely
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/abinashmofficial/abilang/master-v1/install.ps1'))</code></pre>
+                            <span class="cmd-desc">Or run local clone script: <code>.\install.ps1</code></span>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">Option B: Manual Compilation & Global CLI Installation</span>
+                            <pre><code># 1. Clone repo, enter folder & install dependencies
+git clone https://github.com/abinashmofficial/abilang.git
+cd abilang
+npm install
+
+# 2. Compile TypeScript binary & register global terminal alias
+npm run build
+npm link</code></pre>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">3. Run Globally from Anywhere</span>
+                            <pre><code># Launch interactive REPL console
+abi
+
+# Run an external script file
+abi path\to\script.vue</code></pre>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">4. Local Playground Server</span>
+                            <pre><code>npm run web</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Android / iOS Commands -->
+                    <div class="os-content" id="os-mobile">
+                        <div class="cmd-group">
+                            <span class="cmd-label">Option A: Native Wrapper App via Capacitor (Visual Playground)</span>
+                            <pre><code># 1. Add Capacitor core and CLI tooling
+npm install @capacitor/core @capacitor/cli
+
+# 2. Initialize configuration schema
+npx cap init AbiLang com.abinash.abilang --web-dir=web
+
+# 3. Add Android and iOS platform wrappers
+npm install @capacitor/android @capacitor/ios
+npx cap add android
+npx cap add ios
+
+# 4. Sync assets & launch project inside Android Studio / Xcode
+npx cap sync
+npx cap open android
+npx cap open ios</code></pre>
+                            <span class="cmd-desc">Builds and runs the interactive playground as a native Android or iOS application.</span>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">Option B: Embedded Core Interpreter inside React Native</span>
+                            <pre><code>// 1. Copy web/dist/abilang.min.js to your React Native assets/
+// 2. Load the bundle in your JavaScript files:
+import './assets/abilang.min.js';
+
+// 3. Define native device inputs/outputs:
+const mobileIO = {
+    print: (msg) => Alert.alert("AbiLang Output", msg),
+    input: (prompt) => promptUserTextField(prompt)
+};
+
+// 4. Run scripts asynchronously:
+const interpreter = new global.AbiLang.Interpreter(mobileIO);
+await interpreter.interpret(statements);</code></pre>
+                            <span class="cmd-desc">Imports the raw execution core straight into mobile runtime engines (Hermes / JavaScriptCore).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- View State 2: SFC Playground Style Workspace -->
+    <div id="hud-view" class="hud-container" style="display: none;">
+        <!-- Header Nav -->
+        <header class="hud-header">
+            <div class="header-left">
+                <div class="nav-logo">
+                    <div class="abi-logo-badge">A</div>
+                    <span class="nav-title">Abi<span>Lang</span></span>
+                    <span class="version-tag">Playground</span>
+                </div>
+                <div class="connection-status">
+                    <span class="pulse-dot"></span>
+                    <span class="status-lbl">Connected</span>
+                </div>
+            </div>
+
+            <div class="hud-controls">
+                <button id="run-btn" class="btn btn-vue-run">
+                    <svg class="icon-run" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    Run
+                </button>
+                <button id="clear-btn" class="btn btn-vue-clear">
+                    Clear
+                </button>
+                <button id="btn-get-started" class="btn btn-vue-clear" style="border-color: var(--abi-green); color: var(--abi-green); padding: 6px 16px; font-size: 13px; border-radius: 6px;">
+                    <style>.dash-text { font-size: 2rem; color: var(--abi-green); font-weight: 600; }</style>
+                    Get Started
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Workspace Pane Split -->
+        <main class="workspace-main">
+            <!-- Left Panel: Editor Pane -->
+            <section class="split-pane editor-pane">
+                <div class="pane-tabbar">
+                    <!-- Explorer style tabs -->
+                    <div class="file-explorer-tabs">
+                        <button class="template-item active" data-template="hello">
+                            <span class="file-icon">📄</span> Basics.abi
+                        </button>
+                        <button class="template-item" data-template="flow">
+                            <span class="file-icon">📄</span> Conditions.abi
+                        </button>
+                        <button class="template-item" data-template="functions">
+                            <span class="file-icon">📄</span> Functions.abi
+                        </button>
+                        <button class="template-item" data-template="cloud">
+                            <span class="file-icon">📄</span> CloudAPI.abi
+                        </button>
+                        <button class="template-item" data-template="mobile">
+                            <span class="file-icon">📄</span> MobileApp.abi
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="pane-body editor-body">
+                    <div class="line-gutter" id="line-numbers">
+                        <div>1</div>
+                    </div>
+                    <div class="editor-wrapper">
+                        <div id="editor-backdrop">
+                            <pre id="editor-highlight" aria-hidden="true"><code id="highlighting-content"></code></pre>
+                        </div>
+                        <textarea id="editor" spellcheck="false" autocomplete="off" placeholder="Write AbiLang code here..."></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Diagnostics/Viewer Pane -->
+            <section class="split-pane viewer-pane">
+                <div class="pane-tabbar">
+                    <div class="diagnostic-tabs">
+                         <button class="hud-tab-btn active" data-tab="console">Output</button>
+                         <button class="hud-tab-btn" data-tab="ast">AST Tree</button>
+                         <button class="hud-tab-btn" data-tab="variables">Memory</button>
+                    </div>
+                    <div class="engine-badge">
+                        <span class="engine-indicator" id="runtime-status-dot"></span>
+                        <span id="runtime-status">Idle</span>
+                    </div>
+                </div>
+
+                <div class="pane-body viewer-body">
+                    <!-- Output Console View -->
+                    <div class="tab-content active" id="tab-console">
+                        <div id="terminal" class="console-box">
+                            <div class="terminal-line sys-line">AbiLang JavaScript Engine initialized.</div>
+                            <div class="terminal-line sys-line">Click "Run" to execute the current component code.</div>
+                        </div>
+                    </div>
+
+                    <!-- AST Tree View -->
+                    <div class="tab-content" id="tab-ast">
+                        <div class="ast-box" id="ast-container">
+                            <div class="placeholder-msg">Execute compilation payload to view AST nodes.</div>
+                        </div>
+                    </div>
+
+                    <!-- Variables Scope View -->
+                    <div class="tab-content" id="tab-variables">
+                        <div class="variables-box" id="variables-container">
+                            <div class="placeholder-msg">Execute compiler to analyze memory frame variables.</div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="hud-footer">
+            <span><a href="#" id="view-portal-link" style="color: var(--abi-green); text-decoration: none;">View Landing Portal</a></span>
+            <span>Progressive Language Platform</span>
+            <span>Made for Abinash</span>
+        </footer>
+    </div>
+
+    <script src="dist/abilang.min.js?v=1.2"></script>
+    <script src="app.js?v=1.2"></script>
+</body>
+</html>

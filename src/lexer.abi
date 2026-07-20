@@ -1,0 +1,248 @@
+import { Token, TokenType } from "./types";
+
+export class Lexer {
+  private source: string;
+  private position: number = 0;
+  private line: number = 1;
+  private column: number = 1;
+
+  private keywords: Record<string, TokenType> = {
+    print: TokenType.PRINT,
+    input: TokenType.INPUT,
+    if: TokenType.IF,
+    else: TokenType.ELSE,
+    while: TokenType.WHILE,
+    func: TokenType.FUNC,
+    return: TokenType.RETURN,
+    for: TokenType.FOR,
+    in: TokenType.IN,
+    true: TokenType.BOOLEAN,
+    false: TokenType.BOOLEAN,
+    null: TokenType.NULL,
+    and: TokenType.AND,
+    or: TokenType.OR,
+    not: TokenType.NOT,
+  };
+
+  constructor(source: string) {
+    this.source = source.replace(/\r\n/g, "\n");
+  }
+
+  private isAtEnd(): boolean {
+    return this.position >= this.source.length;
+  }
+
+  private peek(): string {
+    if (this.isAtEnd()) return "\0";
+    return this.source[this.position];
+  }
+
+  private peekNext(): string {
+    if (this.position + 1 >= this.source.length) return "\0";
+    return this.source[this.position + 1];
+  }
+
+  private advance(): string {
+    const char = this.source[this.position++];
+    if (char === "\n") {
+      this.line++;
+      this.column = 1;
+    } else {
+      this.column++;
+    }
+    return char;
+  }
+
+  private error(message: string): never {
+    throw new Error(`[Lexer Error] ${message} at line ${this.line}, column ${this.column}`);
+  }
+
+  public tokenize(): Token[] {
+    const tokens: Token[] = [];
+
+    while (!this.isAtEnd()) {
+      const startLine = this.line;
+      const startColumn = this.column;
+      const char = this.peek();
+
+      // Skip whitespace
+      if (/\s/.test(char)) {
+        this.advance();
+        continue;
+      }
+
+      // Handle comments
+      if (char === "#" || (char === "/" && this.peekNext() === "/")) {
+        while (!this.isAtEnd() && this.peek() !== "\n") {
+          this.advance();
+        }
+        continue;
+      }
+
+      // Numbers
+      if (/[0-9]/.test(char)) {
+        tokens.push(this.readNumber(startLine, startColumn));
+        continue;
+      }
+
+      // Identifiers / Keywords
+      if (/[a-zA-Z_]/.test(char)) {
+        tokens.push(this.readIdentifier(startLine, startColumn));
+        continue;
+      }
+
+      // Strings
+      if (char === '"') {
+        tokens.push(this.readString(startLine, startColumn));
+        continue;
+      }
+
+      // Operators & Punctuations
+      this.advance(); // consume the character
+      switch (char) {
+        case "(":
+          tokens.push({ type: TokenType.LPAREN, value: "(", line: startLine, column: startColumn });
+          break;
+        case ")":
+          tokens.push({ type: TokenType.RPAREN, value: ")", line: startLine, column: startColumn });
+          break;
+        case "{":
+          tokens.push({ type: TokenType.LBRACE, value: "{", line: startLine, column: startColumn });
+          break;
+        case "}":
+          tokens.push({ type: TokenType.RBRACE, value: "}", line: startLine, column: startColumn });
+          break;
+        case "[":
+          tokens.push({ type: TokenType.LBRACKET, value: "[", line: startLine, column: startColumn });
+          break;
+        case "]":
+          tokens.push({ type: TokenType.RBRACKET, value: "]", line: startLine, column: startColumn });
+          break;
+        case ":":
+          tokens.push({ type: TokenType.COLON, value: ":", line: startLine, column: startColumn });
+          break;
+        case ".":
+          tokens.push({ type: TokenType.DOT, value: ".", line: startLine, column: startColumn });
+          break;
+        case ",":
+          tokens.push({ type: TokenType.COMMA, value: ",", line: startLine, column: startColumn });
+          break;
+        case "+":
+          tokens.push({ type: TokenType.PLUS, value: "+", line: startLine, column: startColumn });
+          break;
+        case "-":
+          tokens.push({ type: TokenType.MINUS, value: "-", line: startLine, column: startColumn });
+          break;
+        case "*":
+          tokens.push({ type: TokenType.STAR, value: "*", line: startLine, column: startColumn });
+          break;
+        case "/":
+          tokens.push({ type: TokenType.SLASH, value: "/", line: startLine, column: startColumn });
+          break;
+        case "%":
+          tokens.push({ type: TokenType.PERCENT, value: "%", line: startLine, column: startColumn });
+          break;
+        case "=":
+          if (this.peek() === "=") {
+            this.advance();
+            tokens.push({ type: TokenType.EQ, value: "==", line: startLine, column: startColumn });
+          } else {
+            tokens.push({ type: TokenType.ASSIGN, value: "=", line: startLine, column: startColumn });
+          }
+          break;
+        case "!":
+          if (this.peek() === "=") {
+            this.advance();
+            tokens.push({ type: TokenType.NEQ, value: "!=", line: startLine, column: startColumn });
+          } else {
+            this.error("Unexpected character '!'");
+          }
+          break;
+        case "<":
+          if (this.peek() === "=") {
+            this.advance();
+            tokens.push({ type: TokenType.LTE, value: "<=", line: startLine, column: startColumn });
+          } else {
+            tokens.push({ type: TokenType.LT, value: "<", line: startLine, column: startColumn });
+          }
+          break;
+        case ">":
+          if (this.peek() === "=") {
+            this.advance();
+            tokens.push({ type: TokenType.GTE, value: ">=", line: startLine, column: startColumn });
+          } else {
+            tokens.push({ type: TokenType.GT, value: ">", line: startLine, column: startColumn });
+          }
+          break;
+        default:
+          this.error(`Unexpected character '${char}'`);
+      }
+    }
+
+    tokens.push({
+      type: TokenType.EOF,
+      value: "",
+      line: this.line,
+      column: this.column
+    });
+
+    return tokens;
+  }
+
+  private readNumber(startLine: number, startColumn: number): Token {
+    let value = "";
+    while (!this.isAtEnd() && /[0-9]/.test(this.peek())) {
+      value += this.advance();
+    }
+
+    if (this.peek() === "." && /[0-9]/.test(this.peekNext())) {
+      value += this.advance();
+      while (!this.isAtEnd() && /[0-9]/.test(this.peek())) {
+        value += this.advance();
+      }
+    }
+
+    return { type: TokenType.NUMBER, value, line: startLine, column: startColumn };
+  }
+
+  private readIdentifier(startLine: number, startColumn: number): Token {
+    let value = "";
+    while (!this.isAtEnd() && /[a-zA-Z0-9_]/.test(this.peek())) {
+      value += this.advance();
+    }
+
+    const type = this.keywords[value];
+    if (type !== undefined) {
+      return { type, value, line: startLine, column: startColumn };
+    }
+
+    return { type: TokenType.IDENTIFIER, value, line: startLine, column: startColumn };
+  }
+
+  private readString(startLine: number, startColumn: number): Token {
+    this.advance(); // Consume opening quote
+    let value = "";
+
+    while (!this.isAtEnd() && this.peek() !== '"') {
+      const char = this.advance();
+      if (char === "\\") {
+        if (this.isAtEnd()) this.error("Unterminated escape sequence");
+        const next = this.advance();
+        if (next === "n") value += "\n";
+        else if (next === "t") value += "\t";
+        else if (next === "\\") value += "\\";
+        else if (next === '"') value += '"';
+        else value += next;
+      } else {
+        value += char;
+      }
+    }
+
+    if (this.isAtEnd()) {
+      this.error("Unterminated string");
+    }
+
+    this.advance(); // Consume closing quote
+    return { type: TokenType.STRING, value, line: startLine, column: startColumn };
+  }
+}

@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AbiLang - Comprehensive Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="theme.css?v=1.2">
+    <link rel="stylesheet" href="documents.css?v=1.2">
+</head>
+<body class="dark-theme">
+    
+    <!-- Mobile Navigation Overlay -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- Header -->
+    <header class="docs-header">
+        <div class="header-left">
+            <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Toggle Menu">☰</button>
+            <a href="index.html" class="brand-link">
+                <div class="abi-logo-badge">A</div>
+                <span class="brand-name">Abi<span>Lang</span></span>
+            </a>
+            <span class="version-badge">v1.1.0 (Cloud)</span>
+        </div>
+        <div class="header-right">
+            <nav class="header-nav">
+                <a href="index.html">Playground</a>
+                <a href="documents.html" class="active">Documentation</a>
+                <a href="https://github.com/abinashmofficial" target="_blank">GitHub</a>
+            </nav>
+            <button id="theme-toggle" class="theme-toggle-floating" style="position: static; margin-left: 10px;" title="Toggle Light/Dark Theme">
+                <span id="theme-toggle-icon">☀</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Layout Grid -->
+    <div class="docs-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="docs-sidebar" class="docs-sidebar">
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" class="search-input" placeholder="Search documentation..." autocomplete="off">
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Getting Started</div>
+                <ul class="nav-group-list">
+                    <li class="nav-item"><a href="#introduction" class="nav-link active">Introduction</a></li>
+                    <li class="nav-item"><a href="#installation" class="nav-link">Installation & CLI</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Language Syntax</div>
+                <ul class="nav-group-list">
+                    <li class="nav-item"><a href="#variables" class="nav-link">Variables</a></li>
+                    <li class="nav-item"><a href="#conditionals" class="nav-link">Conditionals</a></li>
+                    <li class="nav-item"><a href="#loops" class="nav-link">Loops</a></li>
+                    <li class="nav-item"><a href="#functions" class="nav-link">Functions</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Architecture</div>
+                <ul class="nav-group-list">
+                    <li class="nav-item"><a href="#controllers" class="nav-link">Controllers & Models</a></li>
+                    <li class="nav-item"><a href="#routing" class="nav-link">Routing & Views</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Comparison</div>
+                <ul class="nav-group-list">
+                    <li class="nav-item"><a href="#comparison-js" class="nav-link">AbiLang vs JavaScript</a></li>
+                    <li class="nav-item"><a href="#comparison-python" class="nav-link">AbiLang vs Python</a></li>
+                    <li class="nav-item"><a href="#comparison-php" class="nav-link">AbiLang vs PHP</a></li>
+                    <li class="nav-item"><a href="#comparison-table-sec" class="nav-link">Comparison Table</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content Pane -->
+        <main class="docs-main">
+            
+            <!-- Section: Introduction -->
+            <section id="introduction" class="docs-section">
+                <h1>Introduction</h1>
+                <p><strong>AbiLang</strong> is a progressive, lightweight, and versatile scripting language named after you (<strong>Abinash</strong>). Built from scratch using TypeScript, it runs natively on both backend environments via CLI terminal engines and in web browsers through an interactive sandboxed playground.</p>
+                
+                <div class="callout callout-info">
+                    <strong>Core Philosophy:</strong> AbiLang is designed to minimize boilerplates, eliminate unnecessary tokens like declarations (<code>const</code>, <code>let</code>) and mandatory semicolons, and introduce robust structural clarity with clean braces and optional parameter parentheses.
+                </div>
+
+                <h2>Key Features</h2>
+                <ul>
+                    <li><strong>No Declarations:</strong> Assign variables directly. The interpreter handles allocations dynamically.</li>
+                    <li><strong>Flexible Flow Control:</strong> Clean loop iterations and conditional checks with optional parentheses.</li>
+                    <li><strong>Integrated Framework Mechanics:</strong> Native controller configurations, model definitions, route bindings, and view render engine helpers.</li>
+                    <li><strong>Cloud Ready:</strong> Native cloud integrations featuring asynchronous <code>fetch</code> routines and <code>json_parse</code> parsing out of the box.</li>
+                </ul>
+            </section>
+
+            <!-- Section: Installation & CLI -->
+            <section id="installation" class="docs-section">
+                <h1>Installation & CLI</h1>
+                <p>Run the AbiLang compiler CLI and local web playground directly on your machine. Choose the appropriate installer command for your environment below.</p>
+                
+                <h2>macOS & Linux Setup</h2>
+                <p>To run the single-click remote automated installation script, copy the command below:</p>
+                <pre><code class="language-bash"># Fetch and execute bash auto-installer script
+curl -fsSL https://raw.githubusercontent.com/abinashmofficial/abilang/master-v1/install.sh | bash</code></pre>
+
+                <h2>Manual Compilation & Local Run</h2>
+                <p>If you prefer a manual setup, clone the repository, install its packages, and boot up the visual playground:</p>
+                <pre><code class="language-bash"># 1. Clone repository
+git clone https://github.com/abinashmofficial/abilang.git
+cd abilang
+
+# 2. Install TypeScript development tooling
+npm install
+
+# 3. Build compiler engine binaries
+npm run build
+
+# 4. Spin up local interactive web playground
+npm run web</code></pre>
+                <p>Once running, navigate to <a href="http://127.0.0.1:8080" target="_blank" style="color: var(--abi-green);">http://127.0.0.1:8080</a> to access the sandbox interface locally.</p>
+            </section>
+
+            <!-- Section: Variables -->
+            <section id="variables" class="docs-section">
+                <h1>Variables</h1>
+                <p>Variables in AbiLang store data dynamically. You do not need keywords like <code>var</code>, <code>let</code>, or <code>const</code>, and semicolons are completely optional.</p>
+                
+                <div class="code-tabs">
+                    <div class="tab-headers">
+                        <button class="tab-btn active" data-tab="var-abi">AbiLang</button>
+                        <button class="tab-btn" data-tab="var-js">JavaScript</button>
+                        <button class="tab-btn" data-tab="var-py">Python</button>
+                        <button class="tab-btn" data-tab="var-php">PHP</button>
+                    </div>
+                    <div class="tab-content active" id="var-abi">
+                        <pre><code>name = "Abinash"
+age = 21
+pi = 3.14159
+print "Name: " + name</code></pre>
+                    </div>
+                    <div class="tab-content" id="var-js">
+                        <pre><code>const name = "Abinash";
+let age = 21;
+const pi = 3.14159;
+console.log("Name: " + name);</code></pre>
+                    </div>
+                    <div class="tab-content" id="var-py">
+                        <pre><code>name = "Abinash"
+age = 21
+pi = 3.14159
+print("Name: " + name)</code></pre>
+                    </div>
+                    <div class="tab-content" id="var-php">
+                        <pre><code>$name = "Abinash";
+$age = 21;
+$pi = 3.14159;
+echo "Name: " . $name;</code></pre>
+                    </div>
+                </div>
+
+                <div class="callout callout-tip">
+                    <strong>Tip:</strong> Dynamic typing ensures variables can change their underlying representation on successive operations automatically.
+                </div>
+            </section>
+
+            <!-- Section: Conditionals -->
+            <section id="conditionals" class="docs-section">
+                <h1>Conditionals</h1>
+                <p>Conditionals allow branching execution. AbiLang utilizes modern block scoping via braces <code>{}</code> while making parentheses around expressions optional.</p>
+
+                <div class="code-tabs">
+                    <div class="tab-headers">
+                        <button class="tab-btn active" data-tab="cond-abi">AbiLang</button>
+                        <button class="tab-btn" data-tab="cond-js">JavaScript</button>
+                        <button class="tab-btn" data-tab="cond-py">Python</button>
+                        <button class="tab-btn" data-tab="cond-php">PHP</button>
+                    </div>
+                    <div class="tab-content active" id="cond-abi">
+                        <pre><code>score = 85
+if score >= 90 {
+    print "Grade A"
+} else if score >= 80 {
+    print "Grade B"
+} else {
+    print "Grade F"
+}</code></pre>
+                    </div>
+                    <div class="tab-content" id="cond-js">
+                        <pre><code>let score = 85;
+if (score >= 90) {
+    console.log("Grade A");
+} else if (score >= 80) {
+    console.log("Grade B");
+} else {
+    console.log("Grade F");
+}</code></pre>
+                    </div>
+                    <div class="tab-content" id="cond-py">
+                        <pre><code>score = 85
+if score >= 90:
+    print("Grade A")
+elif score >= 80:
+    print("Grade B")
+else:
+    print("Grade F")</code></pre>
+                    </div>
+                    <div class="tab-content" id="cond-php">
+                        <pre><code>$score = 85;
+if ($score >= 90) {
+    echo "Grade A";
+} elseif ($score >= 80) {
+    echo "Grade B";
+} else {
+    echo "Grade F";
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Loops -->
+            <section id="loops" class="docs-section">
+                <h1>Loops</h1>
+                <p>Iterate over code ranges efficiently. AbiLang supports standard <code>while</code> loops and native array iterations without parenthesis boilerplates.</p>
+
+                <div class="code-tabs">
+                    <div class="tab-headers">
+                        <button class="tab-btn active" data-tab="loop-abi">AbiLang</button>
+                        <button class="tab-btn" data-tab="loop-js">JavaScript</button>
+                        <button class="tab-btn" data-tab="loop-py">Python</button>
+                        <button class="tab-btn" data-tab="loop-php">PHP</button>
+                    </div>
+                    <div class="tab-content active" id="loop-abi">
+                        <pre><code>count = 1
+while count <= 3 {
+    print "Count: " + count
+    count = count + 1
+}</code></pre>
+                    </div>
+                    <div class="tab-content" id="loop-js">
+                        <pre><code>let count = 1;
+while (count <= 3) {
+    console.log("Count: " + count);
+    count = count + 1;
+}</code></pre>
+                    </div>
+                    <div class="tab-content" id="loop-py">
+                        <pre><code>count = 1
+while count <= 3:
+    print("Count: " + str(count))
+    count = count + 1</code></pre>
+                    </div>
+                    <div class="tab-content" id="loop-php">
+                        <pre><code>$count = 1;
+while ($count <= 3) {
+    echo "Count: " . $count;
+    $count = $count + 1;
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Functions -->
+            <section id="functions" class="docs-section">
+                <h1>Functions</h1>
+                <p>Functions isolate modular calculations. AbiLang uses the <code>func</code> keyword to declare reusable code blocks that accept arguments and return evaluations.</p>
+
+                <div class="code-tabs">
+                    <div class="tab-headers">
+                        <button class="tab-btn active" data-tab="func-abi">AbiLang</button>
+                        <button class="tab-btn" data-tab="func-js">JavaScript</button>
+                        <button class="tab-btn" data-tab="func-py">Python</button>
+                        <button class="tab-btn" data-tab="func-php">PHP</button>
+                    </div>
+                    <div class="tab-content active" id="func-abi">
+                        <pre><code>func greet(name) {
+    return "Hello, " + name + "!"
+}
+message = greet("Abinash")
+print message</code></pre>
+                    </div>
+                    <div class="tab-content" id="func-js">
+                        <pre><code>function greet(name) {
+    return "Hello, " + name + "!";
+}
+const message = greet("Abinash");
+console.log(message);</code></pre>
+                    </div>
+                    <div class="tab-content" id="func-py">
+                        <pre><code>def greet(name):
+    return "Hello, " + name + "!"
+message = greet("Abinash")
+print(message)</code></pre>
+                    </div>
+                    <div class="tab-content" id="func-php">
+                        <pre><code>function greet($name) {
+    return "Hello, " . $name . "!";
+}
+$message = greet("Abinash");
+echo $message;</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Controllers & Models -->
+            <section id="controllers" class="docs-section">
+                <h1>Controllers & Models (OOP Concepts)</h1>
+                <p>AbiLang utilizes **Object-Oriented Programming (OOP)** paradigms by leveraging the dynamic nature of dictionary literals and lexical closures. Since AbiLang focuses on a clean syntax without boilerplate class decorators, objects are instantiated using **Factory Constructor Patterns**.</p>
+                
+                <div class="callout callout-tip">
+                    <strong>OOP Architecture in AbiLang:</strong>
+                    <ul>
+                        <li><strong>Objects:</strong> Created as dynamic dictionaries (<code>{}</code>) containing both attributes and member functions.</li>
+                        <li><strong>Encapsulation:</strong> Private fields can be initialized in constructor scopes; inner functions capture these states in their closures.</li>
+                        <li><strong>Inheritance:</strong> Accomplished by initializing parent object dictionaries and merging/extending them with new attributes or overridden functions.</li>
+                    </ul>
+                </div>
+
+                <h2>Defining OOP Models</h2>
+                <p>In AbiLang, models represent database entities and domain objects. You can structure them as constructor classes using factory functions:</p>
+                
+                <pre><code># file: model/user_model.abi
+
+# Factory constructor for UserModel
+func UserModel(id, name, email) {
+    # 1. Instantiate the object dictionary
+    self = {}
+    self.id = id
+    self.name = name
+    self.email = email
+
+    # 2. Define member methods (encapsulation)
+    func get_info() {
+        return "User: " + self.name + " (" + self.email + ")"
+    }
+    self.get_info = get_info
+
+    func update_email(new_email) {
+        self.email = new_email
+        return self
+    }
+    self.update_email = update_email
+
+    return self
+}</code></pre>
+
+                <p>To use this model in your application:</p>
+                <pre><code>include("model/user_model.abi")
+
+# Create user instances
+user1 = UserModel(1, "Abinash", "abinash@example.com")
+user2 = UserModel(2, "Developer", "dev@example.com")
+
+print user1.get_info()  # Outputs: User: Abinash (abinash@example.com)
+user1.update_email("abinash.official@example.com")
+print user1.get_info()  # Outputs: User: Abinash (abinash.official@example.com)</code></pre>
+
+                <h2>Controller Classes & OOP Inheritance</h2>
+                <p>Controllers manage application logic, coordinating between models and views. You can implement controller classes that inherit base behavior through dictionary compositions:</p>
+                
+                <pre><code># file: controller/base_controller.abi
+
+# Base Controller Class/Factory
+func BaseController(controller_name) {
+    self = {}
+    self.name = controller_name
+
+    # Shared rendering utility method
+    func render_view(view_name, data) {
+        print "[BaseController] Preparing layout context for: " + self.name
+        return view(view_name, data)
+    }
+    self.render_view = render_view
+
+    return self
+}</code></pre>
+
+                <p>Next, inherit from the <code>BaseController</code> to construct specific controller implementations:</p>
+                
+                <pre><code># file: controller/user_controller.abi
+include("controller/base_controller.abi")
+include("model/user_model.abi")
+
+# Derived UserController Class/Factory
+func UserController(user_id) {
+    # 1. Inherit attributes and methods from BaseController
+    self = BaseController("UserController")
+    self.user_id = user_id
+
+    # 2. Define controller actions (derived methods)
+    func show() {
+        # Fetch data using UserModel
+        user = UserModel(self.user_id, "Abinash", "abinash@example.com")
+        
+        # Invoke inherited render_view method
+        return self.render_view("profile", user)
+    }
+    self.show = show
+
+    return self
+}</code></pre>
+
+                <p>Finally, register the controller action in your routing system:</p>
+                <pre><code># file: routes/route.abi
+include("controller/user_controller.abi")
+
+# Routing to OOP Controller Instance Action
+func handle_request(req_id) {
+    controller = UserController(req_id)
+    return controller.show()
+}</code></pre>
+            </section>
+
+            <!-- Section: Routing & Views -->
+            <section id="routing" class="docs-section">
+                <h1>Routing & Views</h1>
+                <p>AbiLang features standard routing structures built into the language engine, allowing you to define route schemas that map directly to controller actions.</p>
+                
+                <h3>Route Registration</h3>
+                <p>Register routes using the native <code>route</code> statement, specifying HTTP verb, endpoint, target controller action, and route alias:</p>
+                <pre><code># file: routes/route.abi
+include("controller/controller.abi")
+
+route("get", "/profile", "controller@show_profile", "user.profile")</code></pre>
+
+                <h3>Returning Views</h3>
+                <p>The built-in <code>view("filename")</code> helper automatically loads and processes the corresponding user interface definition from the project layout space:</p>
+                <pre><code># file: controller/controller.abi
+func index() {
+    # Automatically resolves to view/index.ui template
+    return view("index")
+}</code></pre>
+            </section>
+
+            <!-- Section: Comparison JS -->
+            <section id="comparison-js" class="docs-section">
+                <h1>AbiLang vs JavaScript</h1>
+                <p>While AbiLang is built on top of JavaScript/TypeScript runtimes, there are substantial differences in their syntactic execution structures.</p>
+
+                <div class="comparison-grid">
+                    <div class="comparison-card">
+                        <div class="comp-header">
+                            <span class="comp-logo logo-js">JS</span>
+                            <span class="comp-title">Variable Declarations</span>
+                        </div>
+                        <p><strong>JavaScript</strong> strictly requires lexical identifiers such as <code>let</code>, <code>const</code>, or <code>var</code> to allocate variables. Forgetting these in strict modes triggers runtime errors. In <strong>AbiLang</strong>, declarations are completely optional: variables are dynamically created upon assignment.</p>
+                    </div>
+
+                    <div class="comparison-card">
+                        <div class="comp-header">
+                            <span class="comp-logo logo-js">JS</span>
+                            <span class="comp-title">Module Imports</span>
+                        </div>
+                        <p>JavaScript uses ES modules (<code>import/export</code>) or CommonJS (<code>require</code>) to manage dependencies, which frequently result in scoping issues or bundler errors. AbiLang uses a simplified <code>include("path")</code> system that executes sub-scripts recursively in the parent global scope, offering an easy shared state model.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Comparison Python -->
+            <section id="comparison-python" class="docs-section">
+                <h1>AbiLang vs Python</h1>
+                <p>Python is a script-oriented programming language, but AbiLang differs in its approach to structuring code blocks and target platforms.</p>
+
+                <div class="comparison-grid">
+                    <div class="comparison-card">
+                        <div class="comp-header">
+                            <span class="comp-logo logo-py">Py</span>
+                            <span class="comp-title">Block Scoping vs Whitespace</span>
+                        </div>
+                        <p><strong>Python</strong> relies on strict indentation (spaces/tabs) to define code blocks, which can lead to layout errors during formatting or copy-paste actions. <strong>AbiLang</strong> resolves block contexts using brackets (<code>{}</code>), creating robust, formatting-independent structures that look clean and readable.</p>
+                    </div>
+
+                    <div class="comparison-card">
+                        <div class="comp-header">
+                            <span class="comp-logo logo-py">Py</span>
+                            <span class="comp-title">Web Browser Runtime Integration</span>
+                        </div>
+                        <p>Python requires massive web-assembly runtime interpreters (e.g., Pyodide) to run inside web browsers, which slows down initial page loads. AbiLang compiles to lightweight JavaScript bundles natively, executing in the browser with minimal overhead.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Comparison PHP -->
+            <section id="comparison-php" class="docs-section">
+                <h1>AbiLang vs PHP</h1>
+                <p>PHP has historically powered backend routing, but AbiLang optimizes script formatting and built-in architecture setups.</p>
+
+                <div class="comparison-grid">
+                    <div class="comparison-card">
+                        <div class="comp-header">
+                            <span class="comp-logo logo-php">PHP</span>
+                            <span class="comp-title">Clean Syntax (No Sigils)</span>
+                        </div>
+                        <p><strong>PHP</strong> requires variables to begin with a dollar sigil (e.g., <code>$variable</code>), adding syntactic noise to arithmetic and logical statements. <strong>AbiLang</strong> removes this noise, keeping variable references clean and readable (e.g., <code>variable</code>).</p>
+                    </div>
+
+                    <div class="comparison-card">
+                        <div class="comp-header">
+                            <span class="comp-logo logo-php">PHP</span>
+                            <span class="comp-title">Built-In Framework Model</span>
+                        </div>
+                        <p>PHP requires a web server (Nginx/Apache) or external frameworks (Laravel) to register routes and views. AbiLang integrates these concepts natively into the language kernel, permitting routing tables and controller resolutions straight out of the box.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Comparison Table -->
+            <section id="comparison-table-sec" class="docs-section">
+                <h1>Feature Comparison Table</h1>
+                <p>A quick summary of how AbiLang stacks up against other major languages:</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>AbiLang</th>
+                            <th>JavaScript</th>
+                            <th>Python</th>
+                            <th>PHP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="strong">Variable Keywords</td>
+                            <td class="check-yes">None (Dynamic)</td>
+                            <td class="check-no">const / let / var</td>
+                            <td class="check-yes">None (Dynamic)</td>
+                            <td class="check-no">None (Requires $)</td>
+                        </tr>
+                        <tr>
+                            <td class="strong">Semicolons</td>
+                            <td class="check-yes">Optional</td>
+                            <td class="check-yes">Optional</td>
+                            <td class="check-yes">None</td>
+                            <td class="check-no">Required</td>
+                        </tr>
+                        <tr>
+                            <td class="strong">Block Scoping</td>
+                            <td class="check-yes">Braces {}</td>
+                            <td class="check-yes">Braces {}</td>
+                            <td class="check-no">Indentation</td>
+                            <td class="check-yes">Braces {}</td>
+                        </tr>
+                        <tr>
+                            <td class="strong">Condition Parentheses</td>
+                            <td class="check-yes">Optional</td>
+                            <td class="check-no">Required</td>
+                            <td class="check-yes">Optional</td>
+                            <td class="check-no">Required</td>
+                        </tr>
+                        <tr>
+                            <td class="strong">Browser Playground</td>
+                            <td class="check-yes">Native / Built-in</td>
+                            <td class="check-yes">Native</td>
+                            <td class="check-no">Heavy (WASM)</td>
+                            <td class="check-no">No (Server only)</td>
+                        </tr>
+                        <tr>
+                            <td class="strong">Routing & Controllers</td>
+                            <td class="check-yes">Built-in helpers</td>
+                            <td class="check-no">Framework required</td>
+                            <td class="check-no">Framework required</td>
+                            <td class="check-no">Framework/Server required</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="hud-footer" style="position: static; margin-top: auto; border-top: 1px solid var(--border-color); padding: 20px 48px; display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-pane);">
+        <span><a href="index.html" style="color: var(--abi-green); text-decoration: none;">← Back to Playground</a></span>
+        <span style="color: var(--text-muted); font-size: 13px;">Progressive Language Platform</span>
+        <span style="color: var(--text-muted); font-size: 13px;">Made for Abinash</span>
+    </footer>
+
+    <!-- Interactive Client Scripts -->
+    <script>
+        // 1. Theme Toggle and Synchronization
+        const themeToggle = document.getElementById("theme-toggle");
+        const themeIcon = document.getElementById("theme-toggle-icon");
+        
+        function applyTheme(theme) {
+            if (theme === "dark") {
+                document.body.classList.add("dark-theme");
+                themeIcon.innerText = "☀";
+            } else {
+                document.body.classList.remove("dark-theme");
+                themeIcon.innerText = "🌙";
+            }
+        }
+
+        if (themeToggle && themeIcon) {
+            themeToggle.addEventListener("click", () => {
+                const isDark = document.body.classList.contains("dark-theme");
+                const nextTheme = isDark ? "light" : "dark";
+                applyTheme(nextTheme);
+                try {
+                    localStorage.setItem("theme", nextTheme);
+                } catch(e){}
+            });
+            
+            // Initial Load Sync
+            let activeTheme = "light";
+            try {
+                activeTheme = localStorage.getItem("theme") || "light";
+            } catch(e){}
+            applyTheme(activeTheme);
+        }
+
+        // 2. Interactive Code Tabs Controller
+        const tabButtons = document.querySelectorAll(".tab-btn");
+        tabButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                const group = button.parentElement;
+                const container = group.parentElement;
+                const targetTabId = button.getAttribute("data-tab");
+                
+                // Remove active classes
+                group.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+                container.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
+                
+                // Add active classes
+                button.classList.add("active");
+                container.querySelector(`#${targetTabId}`).classList.add("active");
+            });
+        });
+
+        // 3. Search and Content Filtering
+        const searchInput = document.getElementById("search-input");
+        if (searchInput) {
+            searchInput.addEventListener("input", (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                const navLinks = document.querySelectorAll(".nav-link");
+                const sections = document.querySelectorAll(".docs-section");
+                
+                // Filter Navigation links
+                navLinks.forEach(link => {
+                    const text = link.textContent.toLowerCase();
+                    const parentLi = link.closest(".nav-item");
+                    if (query === "" || text.includes(query)) {
+                        parentLi.style.display = "";
+                    } else {
+                        parentLi.style.display = "none";
+                    }
+                });
+
+                // Highlight sections based on query
+                sections.forEach(section => {
+                    const content = section.textContent.toLowerCase();
+                    if (query === "" || content.includes(query)) {
+                        section.style.display = "";
+                        section.style.opacity = "1";
+                    } else {
+                        section.style.display = "none";
+                    }
+                });
+            });
+        }
+
+        // 4. Code Blocks Copy-to-Clipboard
+        const preElements = document.querySelectorAll("pre");
+        preElements.forEach(pre => {
+            const code = pre.querySelector("code");
+            if (code) {
+                const btn = document.createElement("button");
+                btn.className = "code-copy-btn";
+                btn.innerText = "Copy";
+                pre.appendChild(btn);
+
+                btn.addEventListener("click", () => {
+                    navigator.clipboard.writeText(code.innerText).then(() => {
+                        btn.innerText = "Copied!";
+                        setTimeout(() => {
+                            btn.innerText = "Copy";
+                        }, 2000);
+                    }).catch(() => {
+                        btn.innerText = "Error";
+                    });
+                });
+            }
+        });
+
+        // 5. Sidebar Active Scroll Highlighting
+        const sections = document.querySelectorAll(".docs-section");
+        const navLinks = document.querySelectorAll(".nav-link");
+        
+        window.addEventListener("scroll", () => {
+            let currentActiveId = "";
+            sections.forEach(section => {
+                const top = section.offsetTop - 120;
+                if (window.scrollY >= top) {
+                    currentActiveId = section.getAttribute("id");
+                }
+            });
+
+            if (currentActiveId) {
+                navLinks.forEach(link => {
+                    link.classList.remove("active");
+                    if (link.getAttribute("href") === `#${currentActiveId}`) {
+                        link.classList.add("active");
+                    }
+                });
+            }
+        });
+
+        // 6. Mobile Side Menu Toggle Drawer
+        const menuToggle = document.getElementById("mobile-menu-toggle");
+        const sidebar = document.getElementById("docs-sidebar");
+        const overlay = document.getElementById("sidebar-overlay");
+
+        if (menuToggle && sidebar && overlay) {
+            const toggleMenu = () => {
+                sidebar.classList.toggle("open");
+                overlay.classList.toggle("open");
+            };
+
+            menuToggle.addEventListener("click", toggleMenu);
+            overlay.addEventListener("click", toggleMenu);
+
+            // Close menu on link click
+            document.querySelectorAll(".nav-link").forEach(link => {
+                link.addEventListener("click", () => {
+                    sidebar.classList.remove("open");
+                    overlay.classList.remove("open");
+                });
+            });
+        }
+    </script>
+</body>
+</html>

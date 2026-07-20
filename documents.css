@@ -559,6 +559,37 @@ body.dark-theme .tab-headers {
     align-items: center;
 }
 
+.theme-toggle-floating {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-pane);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-toggle-floating:hover {
+    transform: scale(1.1) rotate(20deg);
+    border-color: var(--abi-green);
+    background: #ffffff;
+    color: #0a090e;
+    box-shadow: 0 0 14px rgba(174, 68, 90, 0.25);
+}
+
+body.light-theme .theme-toggle-floating:hover {
+    background: #111016;
+    color: #f4f4f5;
+    border-color: var(--abi-green);
+    box-shadow: 0 0 14px rgba(174, 68, 90, 0.25);
+}
+
 /* Overlay for Mobile Navigation */
 .sidebar-overlay {
     display: none;

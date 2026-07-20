@@ -60,7 +60,7 @@ const abilangTmGrammar = {
       "patterns": [
         {
           "name": "keyword.control.abi",
-          "match": "\\b(if|else|while|return|for|in|try|catch|finally|import|export|from|implements|extends)\\b"
+          "match": "\\b(if|else|while|return|for|in|try|catch|finally|import|export|from|implements|extends|extents)\\b"
         },
         {
           "name": "keyword.declaration.abi",
@@ -106,6 +106,38 @@ const abilangUiTmGrammar = {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "AbiLang UI",
   "patterns": [
+    {
+      "name": "meta.keyword.load.abiui",
+      "match": "\\b(load)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(from)\\s+(\"[^\"]*\"|'[^']*')",
+      "captures": {
+        "1": { "name": "keyword.control.import.abiui" },
+        "2": { "name": "variable.other.readwrite.abiui" },
+        "3": { "name": "keyword.control.import.abiui" },
+        "4": { "name": "string.quoted.double.abiui" }
+      }
+    },
+    {
+      "name": "keyword.control.component.abiui",
+      "match": "\\b(component)\\b"
+    },
+    {
+      "begin": "<script\\s+setup>",
+      "beginCaptures": { "0": { "name": "punctuation.definition.tag.begin.html" } },
+      "end": "</script>",
+      "endCaptures": { "0": { "name": "punctuation.definition.tag.end.html" } },
+      "name": "meta.embedded.block.html",
+      "contentName": "source.js",
+      "patterns": [{ "include": "source.js" }]
+    },
+    {
+      "begin": "\\{\\{",
+      "beginCaptures": { "0": { "name": "punctuation.section.embedded.begin.abiui" } },
+      "end": "\\}\\}",
+      "endCaptures": { "0": { "name": "punctuation.section.embedded.end.abiui" } },
+      "name": "meta.embedded.expression.abiui",
+      "contentName": "source.js",
+      "patterns": [{ "include": "source.js" }]
+    },
     {
       "name": "keyword.control.directive.abiui",
       "match": "@include\\s*\\(\\s*\"[^\"]*\"\\s*\\)|@include\\s*\\(\\s*'[^']*'\\s*\\)"
@@ -203,7 +235,7 @@ const vimAbiSyntax = `if exists("b:current_syntax")
   finish
 endif
 
-syn keyword abiKeyword class func print input return if else while for in and or not public private protected import export from const let interface implements extends new async await throw try catch finally this db_connect db_create db_update db_delete db_fetch dd
+syn keyword abiKeyword class func print input return if else while for in and or not public private protected import export from const let interface implements extends extents new async await throw try catch finally this db_connect db_create db_update db_delete db_fetch dd
 syn keyword abiConstant true false null
 syn match abiClass "\\b[A-Z][a-zA-Z0-9_]*\\b"
 syn match abiNumber "\\b\\d\\+\\(\\.\\d\\+\\)\\?\\b"
@@ -235,11 +267,17 @@ endif
 runtime! syntax/html.vim
 unlet b:current_syntax
 
+syn keyword uiKeyword component load from
 syn match uiDirective "@include\\s*([^\\)]*)"
 syn match uiDirective "@plugin\\s*([^\\)]*)"
+syn region uiScriptBlock start="<script\\s\\+setup>" end="</script>" contains=@htmlJavaScript
+syn region uiExprBlock start="{{" end="}}" contains=@htmlJavaScript
 syn region uiCodeBlock start="<%" end="%>" contains=@htmlJavaScript
 
+hi def link uiKeyword Keyword
 hi def link uiDirective PreProc
+hi def link uiScriptBlock Special
+hi def link uiExprBlock Special
 hi def link uiCodeBlock Special
 
 let b:current_syntax = "ui"
@@ -258,7 +296,7 @@ contexts:
   main:
     - match: '#.*|//.*'
       scope: comment.line.abi
-    - match: '\\b(class|func|print|input|return|if|else|while|for|in|and|or|not|public|private|protected|import|export|from|const|let|interface|implements|extends|new|async|await|throw|try|catch|finally|db_connect|db_create|db_update|db_delete|db_fetch|dd)\\b'
+    - match: '\\b(class|func|print|input|return|if|else|while|for|in|and|or|not|public|private|protected|import|export|from|const|let|interface|implements|extends|extents|new|async|await|throw|try|catch|finally|db_connect|db_create|db_update|db_delete|db_fetch|dd)\\b'
       scope: keyword.control.abi
     - match: '\\b[A-Z][a-zA-Z0-9_]*\\b'
       scope: entity.name.type.class.abi
@@ -300,6 +338,18 @@ scope: text.html.abilangui
 
 contexts:
   main:
+    - match: '\\b(load)\\b'
+      scope: keyword.control.import.abiui
+    - match: '\\b(from)\\b'
+      scope: keyword.control.import.abiui
+    - match: '\\b(component)\\b'
+      scope: keyword.control.component.abiui
+    - match: '<script\\s+setup>'
+      scope: punctuation.section.embedded.begin.abiui
+      push: embedded_js_script
+    - match: '\\{\\{'
+      scope: punctuation.section.embedded.begin.abiui
+      push: embedded_js_expression
     - match: '@include\\s*\\(\\s*["''][^"'']*["'']\\s*\\)'
       scope: keyword.control.directive.abiui
     - match: '@plugin\\s*\\(\\s*["''][^"'']*["''](?:,\\s*["''][^"'']*["''])*(?:,\\s*[^)]*)?\\)'
@@ -310,12 +360,27 @@ contexts:
     - match: ''
       push: scope:text.html.basic
 
+  embedded_js_script:
+    - meta_scope: source.js.embedded.abiui
+    - match: '</script>'
+      scope: punctuation.section.embedded.end.abiui
+      pop: true
+    - match: ''
+      push: scope:source.js
+
+  embedded_js_expression:
+    - meta_scope: source.js.embedded.abiui
+    - match: '\\}\\}'
+      scope: punctuation.section.embedded.end.abiui
+      pop: true
+    - match: ''
+      push: scope:source.js
+
   embedded_js:
     - meta_scope: source.js.embedded.abiui
     - match: '%>'
       scope: punctuation.section.embedded.end.abiui
       pop: true
-    - match: ''
       push: scope:source.js
 `;
 

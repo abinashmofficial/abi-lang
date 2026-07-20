@@ -6,6 +6,18 @@ scope: text.html.abilangui
 
 contexts:
   main:
+    - match: '\b(load)\b'
+      scope: keyword.control.import.abiui
+    - match: '\b(from)\b'
+      scope: keyword.control.import.abiui
+    - match: '\b(component)\b'
+      scope: keyword.control.component.abiui
+    - match: '<script\s+setup>'
+      scope: punctuation.section.embedded.begin.abiui
+      push: embedded_js_script
+    - match: '\{\{'
+      scope: punctuation.section.embedded.begin.abiui
+      push: embedded_js_expression
     - match: '@include\s*\(\s*["''][^"'']*["'']\s*\)'
       scope: keyword.control.directive.abiui
     - match: '@plugin\s*\(\s*["''][^"'']*["''](?:,\s*["''][^"'']*["''])*(?:,\s*[^)]*)?\)'
@@ -16,10 +28,25 @@ contexts:
     - match: ''
       push: scope:text.html.basic
 
+  embedded_js_script:
+    - meta_scope: source.js.embedded.abiui
+    - match: '</script>'
+      scope: punctuation.section.embedded.end.abiui
+      pop: true
+    - match: ''
+      push: scope:source.js
+
+  embedded_js_expression:
+    - meta_scope: source.js.embedded.abiui
+    - match: '\}\}'
+      scope: punctuation.section.embedded.end.abiui
+      pop: true
+    - match: ''
+      push: scope:source.js
+
   embedded_js:
     - meta_scope: source.js.embedded.abiui
     - match: '%>'
       scope: punctuation.section.embedded.end.abiui
       pop: true
-    - match: ''
       push: scope:source.js

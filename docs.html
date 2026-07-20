@@ -88,6 +88,7 @@
                     <button class="os-tab-btn" data-os="syntax">Syntax & Basic Rules</button>
                     <button class="os-tab-btn" data-os="handlers">Handlers & Entities</button>
                     <button class="os-tab-btn" data-os="navigation">Navigation & Screens</button>
+                    <button class="os-tab-btn" data-os="idesyntax">IDE Syntax Coloring</button>
                 </div>
 
                 <div class="install-code-blocks">
@@ -182,6 +183,32 @@ route("get", "/", "handler@index", "home")</code></pre>
                         <div class="cmd-group">
                             <span class="cmd-label">2. Returning Screens with the <code>screen()</code> Method</span>
                             <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.ui</code> automatically, so you don't have to specify folders or file extensions.</p>
+                        </div>
+                    </div>
+
+                    <div class="os-content" id="os-idesyntax">
+                        <div class="cmd-group">
+                            <span class="cmd-label">IDE Syntax Highlight Integration</span>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">AbiLang offers customized, React-like JSX syntax coloring configurations for popular code editors (VS Code, Vim, and Sublime Text). This colors standard classes, visibility modifiers, and UI component keywords seamlessly.</p>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">Configuring Syntax Highlighting</span>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">To configure syntax highlighting globally for all editors on your device, execute the installer script:</p>
+                            <pre><code>node scripts/install-syntax.js</code></pre>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">Highlighting for .ui Components</span>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Syntax coloring highlights components, import constructs, and expression placeholders identically to modern frontend codebases:</p>
+                            <pre><code>component # Highlights component declarations
+
+load Header from "screens/layout/header.ui" # Highlights load & from keywords
+load Footer from "screens/layout/footer.ui"
+
+&lt;script setup&gt;
+# Highlighting enabled inside script setup logic blocks
+&lt;/script&gt;
+
+&lt;h1&gt;{{ lang.title }}&lt;/h1&gt; # Highlighting enabled inside output placeholders</code></pre>
                         </div>
                     </div>
                 </div>

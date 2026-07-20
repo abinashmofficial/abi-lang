@@ -80,7 +80,7 @@
       "patterns": [
         {
           "name": "keyword.control.abi",
-          "match": "\\b(if|else|while|return|for|in|try|catch|finally|import|export|from|implements|extends)\\b"
+          "match": "\\b(if|else|while|return|for|in|try|catch|finally|import|export|from|implements|extends|extents)\\b"
         },
         {
           "name": "keyword.declaration.abi",

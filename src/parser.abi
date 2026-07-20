@@ -1,4 +1,4 @@
-import { Token, TokenType, Statement, Expression, ClassDeclStatement, MethodDecl } from "./types";
+import { Token, TokenType, Statement, Expression, ClassDeclStatement, MethodDecl, TryCatchStatement } from "./types";
 
 export class Parser {
   private tokens: Token[];
@@ -65,6 +65,7 @@ export class Parser {
     if (this.match(TokenType.FUNC)) return this.functionDecl();
     if (this.match(TokenType.RETURN)) return this.returnStatement();
     if (this.match(TokenType.CLASS)) return this.classDecl();
+    if (this.match(TokenType.TRY)) return this.tryCatchStatement();
 
     return this.expressionStatement();
   }
@@ -496,6 +497,12 @@ export class Parser {
   private classDecl(): Statement {
     const line = this.previous().line;
     const name = this.consume(TokenType.IDENTIFIER, "Expect class name.").value;
+    
+    let parent: string | null = null;
+    if (this.match(TokenType.EXTENDS)) {
+      parent = this.consume(TokenType.IDENTIFIER, "Expect parent class name.").value;
+    }
+
     this.consume(TokenType.LBRACE, "Expect '{' before class body.");
 
     const methods: MethodDecl[] = [];
@@ -539,7 +546,48 @@ export class Parser {
     return {
       type: "ClassDeclStatement",
       name,
+      parent,
       methods,
+      line
+    };
+  }
+
+  private tryCatchStatement(): Statement {
+    const line = this.previous().line;
+
+    this.consume(TokenType.LBRACE, "Expect '{' after 'try'.");
+    const tryBranch = this.block();
+
+    let catchVar: string | null = null;
+    let catchBranch: Statement[] | null = null;
+
+    if (this.match(TokenType.CATCH)) {
+      if (this.match(TokenType.LPAREN)) {
+        catchVar = this.consume(TokenType.IDENTIFIER, "Expect catch variable name.").value;
+        this.consume(TokenType.RPAREN, "Expect ')' after catch variable.");
+      } else if (this.check(TokenType.IDENTIFIER)) {
+        catchVar = this.advance().value;
+      }
+      this.consume(TokenType.LBRACE, "Expect '{' before catch body.");
+      catchBranch = this.block();
+    }
+
+    let finallyBranch: Statement[] | null = null;
+    if (this.match(TokenType.FINALLY)) {
+      this.consume(TokenType.LBRACE, "Expect '{' before finally body.");
+      finallyBranch = this.block();
+    }
+
+    if (!catchBranch && !finallyBranch) {
+      throw new Error(`[Parser Error] Expect 'catch' or 'finally' after 'try' block at line ${line}.`);
+    }
+
+    return {
+      type: "TryCatchStatement",
+      tryBranch,
+      catchVar,
+      catchBranch,
+      finallyBranch,
       line
     };
   }

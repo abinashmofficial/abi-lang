@@ -81,13 +81,13 @@
         <section id="documentation-section" class="portal-installation">
             <div class="install-container">
                 <h2 class="install-section-title">Documentation V1</h2>
-                <p class="install-section-subtitle">Discover what makes AbiLang unique and learn how to use its methods, controllers, and routing step-by-step.</p>
+                <p class="install-section-subtitle">Discover what makes AbiLang unique and learn how to use its methods, handlers, and routing step-by-step.</p>
                 
                 <div class="os-tabs">
                     <button class="os-tab-btn active" data-os="intro">Overview & Uniqueness</button>
                     <button class="os-tab-btn" data-os="syntax">Syntax & Basic Rules</button>
-                    <button class="os-tab-btn" data-os="controllers">Controllers & Models</button>
-                    <button class="os-tab-btn" data-os="routing">Routing & Views</button>
+                    <button class="os-tab-btn" data-os="handlers">Handlers & Entities</button>
+                    <button class="os-tab-btn" data-os="navigation">Navigation & Screens</button>
                 </div>
 
                 <div class="install-code-blocks">
@@ -137,32 +137,32 @@ while count <= 3 {
                         </div>
                     </div>
 
-                    <div class="os-content" id="os-controllers">
+                    <div class="os-content" id="os-handlers">
                         <div class="cmd-group">
-                            <span class="cmd-label">1. Default Controller (controller/controller.abi)</span>
-                            <pre><code>include("model/model.abi")
+                            <span class="cmd-label">1. Default Handler (handlers/handler.abi)</span>
+                            <pre><code>include("entities/entity.abi")
 
-class Controller {
+class Handler {
     public func index() {
-        m = Model()
-        print "Calling model: " + m.data()
-        return view("index")
+        e = Entity()
+        print "Calling entity: " + e.data()
+        return screen("index")
     }
 
     public func docs() {
-        return view("docs")
+        return screen("docs")
     }
 }</code></pre>
                         </div>
                         <div class="cmd-group">
-                            <span class="cmd-label">2. Creating and Extending Controllers</span>
-                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Controllers use object-oriented class syntax and support public, private, and protected visibility modifiers for methods. Member data can be assigned to <code>this</code>. To define dynamic route handlers, map paths to class action methods:</p>
-                            <pre><code>include("model/model.abi")
+                            <span class="cmd-label">2. Creating and Extending Handlers</span>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Handlers use object-oriented class syntax and support public, private, and protected visibility modifiers for methods. Member data can be assigned to <code>this</code>. To define dynamic route handlers, map paths to class action methods:</p>
+                            <pre><code>include("entities/entity.abi")
 
-class ProfileController {
+class ProfileHandler {
     public func show_profile() {
         this.log_profile_view()
-        return view("profile")
+        return screen("profile")
     }
 
     private func log_profile_view() {
@@ -172,16 +172,16 @@ class ProfileController {
                         </div>
                     </div>
 
-                    <div class="os-content" id="os-routing">
+                    <div class="os-content" id="os-navigation">
                         <div class="cmd-group">
-                            <span class="cmd-label">1. Route Registrations (routes/route.abi)</span>
-                            <pre><code>include("controller/controller.abi")
+                            <span class="cmd-label">1. Route Registrations (navigation/routes.abi)</span>
+                            <pre><code>include("handlers/handler.abi")
 
-route("get", "/", "controller@index", "home")</code></pre>
+route("get", "/", "handler@index", "home")</code></pre>
                         </div>
                         <div class="cmd-group">
-                            <span class="cmd-label">2. Returning Views with the <code>view()</code> Method</span>
-                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>view("filename")</code> helper inside your controller actions. The view parser resolves filenames to <code>view/filename.ui</code> automatically, so you don't have to specify folders or file extensions.</p>
+                            <span class="cmd-label">2. Returning Screens with the <code>screen()</code> Method</span>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.ui</code> automatically, so you don't have to specify folders or file extensions.</p>
                         </div>
                     </div>
                 </div>

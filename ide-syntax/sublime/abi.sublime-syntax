@@ -8,8 +8,10 @@ contexts:
   main:
     - match: '#.*|//.*'
       scope: comment.line.abi
-    - match: '\b(class|func|print|input|return|if|else|while|for|in|and|or|not|public|private|protected|import|export|from|const|let|interface|implements|extends|new|async|await|throw|try|catch|finally)\b'
+    - match: '\b(class|func|print|input|return|if|else|while|for|in|and|or|not|public|private|protected|import|export|from|const|let|interface|implements|extends|new|async|await|throw|try|catch|finally|db_connect|db_create|db_update|db_delete|db_fetch|dd)\b'
       scope: keyword.control.abi
+    - match: '\b[A-Z][a-zA-Z0-9_]*\b'
+      scope: entity.name.type.class.abi
     - match: '\b(true|false|null)\b'
       scope: constant.language.abi
     - match: '\bthis\b'

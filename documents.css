@@ -147,7 +147,9 @@ body:not(.dark-theme) .docs-header {
     background-color: var(--bg-pane);
     border-right: 1px solid var(--border-color);
     padding: 32px 24px;
-    overflow-y: auto;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    max-height: calc(100vh - var(--header-height));
     z-index: 900;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -155,10 +157,13 @@ body:not(.dark-theme) .docs-header {
 .search-container {
     margin-bottom: 24px;
     position: relative;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .search-input {
     width: 100%;
+    box-sizing: border-box;
     padding: 10px 14px 10px 36px;
     background-color: rgba(0, 0, 0, 0.05);
     border: 1px solid var(--border-color);
@@ -243,7 +248,7 @@ body.dark-theme .nav-link:hover {
 .docs-main {
     margin-left: var(--sidebar-width);
     flex: 1;
-    padding: 48px 64px;
+    padding: 48px 350px;
     max-width: 960px;
     transition: var(--transition-base);
 }
@@ -584,7 +589,7 @@ body.dark-theme .tab-headers {
     
     .docs-main {
         margin-left: 0;
-        padding: 32px 24px;
+        padding: 24px 20px !important;
     }
     
     .mobile-menu-toggle {
@@ -600,5 +605,9 @@ body.dark-theme .tab-headers {
     .docs-sidebar {
         width: 80vw;
         max-width: 300px;
+    }
+    .docs-main {
+        margin-left: 0;
+        padding: 16px 10px !important;
     }
 }

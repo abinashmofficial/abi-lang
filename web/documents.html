@@ -51,6 +51,7 @@
                 <div class="nav-group-title">Getting Started</div>
                 <ul class="nav-group-list">
                     <li class="nav-item"><a href="#introduction" class="nav-link active">Introduction</a></li>
+                    <li class="nav-item"><a href="#structure" class="nav-link">Language Structure & Use</a></li>
                     <li class="nav-item"><a href="#installation" class="nav-link">Installation & CLI</a></li>
                 </ul>
             </div>
@@ -68,17 +69,14 @@
             <div class="nav-group">
                 <div class="nav-group-title">Architecture</div>
                 <ul class="nav-group-list">
-                    <li class="nav-item"><a href="#controllers" class="nav-link">Controllers & Models</a></li>
-                    <li class="nav-item"><a href="#routing" class="nav-link">Routing & Views</a></li>
+                    <li class="nav-item"><a href="#handlers" class="nav-link">Handlers & Entities</a></li>
+                    <li class="nav-item"><a href="#navigation" class="nav-link">Navigation & Screens</a></li>
                 </ul>
             </div>
 
             <div class="nav-group">
                 <div class="nav-group-title">Comparison</div>
                 <ul class="nav-group-list">
-                    <li class="nav-item"><a href="#comparison-js" class="nav-link">AbiLang vs JavaScript</a></li>
-                    <li class="nav-item"><a href="#comparison-python" class="nav-link">AbiLang vs Python</a></li>
-                    <li class="nav-item"><a href="#comparison-php" class="nav-link">AbiLang vs PHP</a></li>
                     <li class="nav-item"><a href="#comparison-table-sec" class="nav-link">Comparison Table</a></li>
                 </ul>
             </div>
@@ -100,8 +98,39 @@
                 <ul>
                     <li><strong>No Declarations:</strong> Assign variables directly. The interpreter handles allocations dynamically.</li>
                     <li><strong>Flexible Flow Control:</strong> Clean loop iterations and conditional checks with optional parentheses.</li>
-                    <li><strong>Integrated Framework Mechanics:</strong> Native controller configurations, model definitions, route bindings, and view render engine helpers.</li>
+                    <li><strong>Integrated Framework Mechanics:</strong> Native handler configurations, entity definitions, route bindings, and screen render engine helpers.</li>
                     <li><strong>Cloud Ready:</strong> Native cloud integrations featuring asynchronous <code>fetch</code> routines and <code>json_parse</code> parsing out of the box.</li>
+                </ul>
+            </section>
+
+            <!-- Section: Language Structure & Use -->
+            <section id="structure" class="docs-section">
+                <h1>Language Structure & Use</h1>
+                <p>AbiLang is designed around a three-tier architecture that tokenizes, parses, and executes code trees natively in safe environment contexts. Understanding its structure helps in leveraging its features for rapid scripting, backend logic orchestration, and lightweight browser playground views.</p>
+                
+                <h2>1. Framework Engine Architecture</h2>
+                <p>The compiler and runner pipelines are divided into three core stages:</p>
+                <ul>
+                    <li><strong>Lexical Analyzer (Lexer)</strong>: Converts raw script characters into structured language tokens (keywords, literals, operations).</li>
+                    <li><strong>Syntax Analyzer (Parser)</strong>: Arranges tokens into an Abstract Syntax Tree (AST) using recursive descent parsing. It enforces constraints on expressions and statements.</li>
+                    <li><strong>Evaluation Tree (Interpreter)</strong>: Evaluates AST nodes recursively, utilizing isolated lexical environments to execute instructions in real time.</li>
+                </ul>
+
+                <h2>2. What Makes AbiLang Different?</h2>
+                <p>Unlike standard languages (like JavaScript or PHP), AbiLang introduces a streamlined development experience:</p>
+                <ul>
+                    <li><strong>No Boilerplate Declarations</strong>: Variables are dynamically initialized on first assignment. No extra lexical keywords needed.</li>
+                    <li><strong>Native App Architecture</strong>: Built-in classes for logical Handlers and Entities, dynamic routes registration, and automatic Screens resolution.</li>
+                    <li><strong>Robust Variable Inspector</strong>: Dynamic inspection using the Laravel-like <code>dd()</code> helper without crashing the active environment.</li>
+                    <li><strong>Cross-Platform Portability</strong>: Designed to run identically inside terminal shells (using Node) and inside sandboxed web frames (using HTML5/JS).</li>
+                </ul>
+
+                <h2>3. Use Cases & Applications</h2>
+                <p>AbiLang is ideal for building dynamic, multi-platform applications, including:</p>
+                <ul>
+                    <li><strong>Backend Tasks & Helpers</strong>: Automate database migrations, connect to third-party endpoints, or run scheduled background scripts.</li>
+                    <li><strong>Web Portals & Endpoints</strong>: Register navigation path schemas to resolve handlers and screen layouts with active templating.</li>
+                    <li><strong>Lightweight UI Components</strong>: Embed screens dynamically inside web layouts using clean layout includes and esbuild transformation hooks.</li>
                 </ul>
             </section>
 
@@ -137,38 +166,10 @@ npm run web</code></pre>
                 <h1>Variables</h1>
                 <p>Variables in AbiLang store data dynamically. You do not need keywords like <code>var</code>, <code>let</code>, or <code>const</code>, and semicolons are completely optional.</p>
                 
-                <div class="code-tabs">
-                    <div class="tab-headers">
-                        <button class="tab-btn active" data-tab="var-abi">AbiLang</button>
-                        <button class="tab-btn" data-tab="var-js">JavaScript</button>
-                        <button class="tab-btn" data-tab="var-py">Python</button>
-                        <button class="tab-btn" data-tab="var-php">PHP</button>
-                    </div>
-                    <div class="tab-content active" id="var-abi">
-                        <pre><code>name = "Abinash"
+                <pre><code>name = "Abinash"
 age = 21
 pi = 3.14159
 print "Name: " + name</code></pre>
-                    </div>
-                    <div class="tab-content" id="var-js">
-                        <pre><code>const name = "Abinash";
-let age = 21;
-const pi = 3.14159;
-console.log("Name: " + name);</code></pre>
-                    </div>
-                    <div class="tab-content" id="var-py">
-                        <pre><code>name = "Abinash"
-age = 21
-pi = 3.14159
-print("Name: " + name)</code></pre>
-                    </div>
-                    <div class="tab-content" id="var-php">
-                        <pre><code>$name = "Abinash";
-$age = 21;
-$pi = 3.14159;
-echo "Name: " . $name;</code></pre>
-                    </div>
-                </div>
 
                 <div class="callout callout-tip">
                     <strong>Tip:</strong> Dynamic typing ensures variables can change their underlying representation on successive operations automatically.
@@ -180,15 +181,7 @@ echo "Name: " . $name;</code></pre>
                 <h1>Conditionals</h1>
                 <p>Conditionals allow branching execution. AbiLang utilizes modern block scoping via braces <code>{}</code> while making parentheses around expressions optional.</p>
 
-                <div class="code-tabs">
-                    <div class="tab-headers">
-                        <button class="tab-btn active" data-tab="cond-abi">AbiLang</button>
-                        <button class="tab-btn" data-tab="cond-js">JavaScript</button>
-                        <button class="tab-btn" data-tab="cond-py">Python</button>
-                        <button class="tab-btn" data-tab="cond-php">PHP</button>
-                    </div>
-                    <div class="tab-content active" id="cond-abi">
-                        <pre><code>score = 85
+                <pre><code>score = 85
 if score >= 90 {
     print "Grade A"
 } else if score >= 80 {
@@ -196,37 +189,6 @@ if score >= 90 {
 } else {
     print "Grade F"
 }</code></pre>
-                    </div>
-                    <div class="tab-content" id="cond-js">
-                        <pre><code>let score = 85;
-if (score >= 90) {
-    console.log("Grade A");
-} else if (score >= 80) {
-    console.log("Grade B");
-} else {
-    console.log("Grade F");
-}</code></pre>
-                    </div>
-                    <div class="tab-content" id="cond-py">
-                        <pre><code>score = 85
-if score >= 90:
-    print("Grade A")
-elif score >= 80:
-    print("Grade B")
-else:
-    print("Grade F")</code></pre>
-                    </div>
-                    <div class="tab-content" id="cond-php">
-                        <pre><code>$score = 85;
-if ($score >= 90) {
-    echo "Grade A";
-} elseif ($score >= 80) {
-    echo "Grade B";
-} else {
-    echo "Grade F";
-}</code></pre>
-                    </div>
-                </div>
             </section>
 
             <!-- Section: Loops -->
@@ -234,41 +196,11 @@ if ($score >= 90) {
                 <h1>Loops</h1>
                 <p>Iterate over code ranges efficiently. AbiLang supports standard <code>while</code> loops and native array iterations without parenthesis boilerplates.</p>
 
-                <div class="code-tabs">
-                    <div class="tab-headers">
-                        <button class="tab-btn active" data-tab="loop-abi">AbiLang</button>
-                        <button class="tab-btn" data-tab="loop-js">JavaScript</button>
-                        <button class="tab-btn" data-tab="loop-py">Python</button>
-                        <button class="tab-btn" data-tab="loop-php">PHP</button>
-                    </div>
-                    <div class="tab-content active" id="loop-abi">
-                        <pre><code>count = 1
+                <pre><code>count = 1
 while count <= 3 {
     print "Count: " + count
     count = count + 1
 }</code></pre>
-                    </div>
-                    <div class="tab-content" id="loop-js">
-                        <pre><code>let count = 1;
-while (count <= 3) {
-    console.log("Count: " + count);
-    count = count + 1;
-}</code></pre>
-                    </div>
-                    <div class="tab-content" id="loop-py">
-                        <pre><code>count = 1
-while count <= 3:
-    print("Count: " + str(count))
-    count = count + 1</code></pre>
-                    </div>
-                    <div class="tab-content" id="loop-php">
-                        <pre><code>$count = 1;
-while ($count <= 3) {
-    echo "Count: " . $count;
-    $count = $count + 1;
-}</code></pre>
-                    </div>
-                </div>
             </section>
 
             <!-- Section: Functions -->
@@ -276,46 +208,16 @@ while ($count <= 3) {
                 <h1>Functions</h1>
                 <p>Functions isolate modular calculations. AbiLang uses the <code>func</code> keyword to declare reusable code blocks that accept arguments and return evaluations.</p>
 
-                <div class="code-tabs">
-                    <div class="tab-headers">
-                        <button class="tab-btn active" data-tab="func-abi">AbiLang</button>
-                        <button class="tab-btn" data-tab="func-js">JavaScript</button>
-                        <button class="tab-btn" data-tab="func-py">Python</button>
-                        <button class="tab-btn" data-tab="func-php">PHP</button>
-                    </div>
-                    <div class="tab-content active" id="func-abi">
-                        <pre><code>func greet(name) {
+                <pre><code>func greet(name) {
     return "Hello, " + name + "!"
 }
 message = greet("Abinash")
 print message</code></pre>
-                    </div>
-                    <div class="tab-content" id="func-js">
-                        <pre><code>function greet(name) {
-    return "Hello, " + name + "!";
-}
-const message = greet("Abinash");
-console.log(message);</code></pre>
-                    </div>
-                    <div class="tab-content" id="func-py">
-                        <pre><code>def greet(name):
-    return "Hello, " + name + "!"
-message = greet("Abinash")
-print(message)</code></pre>
-                    </div>
-                    <div class="tab-content" id="func-php">
-                        <pre><code>function greet($name) {
-    return "Hello, " . $name . "!";
-}
-$message = greet("Abinash");
-echo $message;</code></pre>
-                    </div>
-                </div>
             </section>
 
-            <!-- Section: Controllers & Models -->
-            <section id="controllers" class="docs-section">
-                <h1>Controllers & Models (OOP Concepts)</h1>
+            <!-- Section: Handlers & Entities -->
+            <section id="handlers" class="docs-section">
+                <h1>Handlers & Entities (OOP Concepts)</h1>
                 <p>AbiLang utilizes **Object-Oriented Programming (OOP)** paradigms by leveraging the dynamic nature of dictionary literals and lexical closures. Since AbiLang focuses on a clean syntax without boilerplate class decorators, objects are instantiated using **Factory Constructor Patterns**.</p>
                 
                 <div class="callout callout-tip">
@@ -327,13 +229,13 @@ echo $message;</code></pre>
                     </ul>
                 </div>
 
-                <h2>Defining OOP Models</h2>
-                <p>In AbiLang, models represent database entities and domain objects. You can structure them as constructor classes using factory functions:</p>
+                <h2>Defining OOP Entities</h2>
+                <p>In AbiLang, entities represent database models and domain objects. You can structure them as constructor classes using factory functions:</p>
                 
-                <pre><code># file: model/user_model.abi
+                <pre><code># file: entities/user_entity.abi
 
-# Factory constructor for UserModel
-func UserModel(id, name, email) {
+# Factory constructor for UserEntity
+func UserEntity(id, name, email) {
     # 1. Instantiate the object dictionary
     self = {}
     self.id = id
@@ -355,49 +257,64 @@ func UserModel(id, name, email) {
     return self
 }</code></pre>
 
-                <p>To use this model in your application:</p>
-                <pre><code>include("model/user_model.abi")
+                <p>To use this entity in your application:</p>
+                <pre><code>include("entities/user_entity.abi")
 
 # Create user instances
-user1 = UserModel(1, "Abinash", "abinash@example.com")
-user2 = UserModel(2, "Developer", "dev@example.com")
+user1 = UserEntity(1, "Abinash", "abinash@example.com")
+user2 = UserEntity(2, "Developer", "dev@example.com")
 
 print user1.get_info()  # Outputs: User: Abinash (abinash@example.com)
 user1.update_email("abinash.official@example.com")
 print user1.get_info()  # Outputs: User: Abinash (abinash.official@example.com)</code></pre>
 
-                <h2>Controller Classes & OOP Inheritance</h2>
-                <p>Controllers manage application logic, coordinating between models and views. You can implement controller classes that encapsulate behavior and restrict access using visibility modifiers:</p>
+                <h2>Handler Classes & OOP Inheritance</h2>
+                <p>Handlers manage application logic, coordinating between entities and screens. You can implement handler classes that inherit behavior from other classes using the <code>extends</code> keyword:</p>
                 
-                <pre><code># file: controller/controller.abi
-include("model/model.abi")
+                <pre><code># file: handlers/base_handler.abi
+class BaseHandler {
+    public func init(name) {
+        this.name = name
+    }
 
-class Controller {
+    public func log_access() {
+        print "Access logged for: " + this.name
+    }
+}</code></pre>
+
+                <p>Then, extend the base class to inherit methods and properties:</p>
+                
+                <pre><code># file: handlers/handler.abi
+include("handlers/base_handler.abi")
+include("entities/entity.abi")
+
+class Handler extends BaseHandler {
     public func index() {
-        m = Model()
-        print "Calling model: " + m.data()
-        return view("index")
+        this.log_access()
+        e = Entity()
+        print "Calling entity: " + e.data()
+        return screen("index")
     }
 
     public func docs() {
-        return view("docs")
+        return screen("docs")
     }
 }</code></pre>
 
                 <p>Additionally, you can define classes with public and private methods, using <code>this</code> to reference instance properties and methods:</p>
                 
-                <pre><code># file: controller/user_controller.abi
-include("model/user_model.abi")
+                <pre><code># file: handlers/user_handler.abi
+include("entities/user_entity.abi")
 
-class UserController {
+class UserHandler {
     public func init(user_id) {
         this.user_id = user_id
     }
 
     public func show() {
         this.log_profile_view()
-        user_data = UserModel()
-        return view("profile")
+        user_data = UserEntity()
+        return screen("profile")
     }
 
     private func log_profile_view() {
@@ -405,108 +322,62 @@ class UserController {
     }
 }</code></pre>
 
-                <p>Finally, register the controller action in your routing system:</p>
-                <pre><code># file: routes/route.abi
-include("controller/user_controller.abi")
+                <p>Finally, register the handler action in your routing system:</p>
+                <pre><code># file: navigation/routes.abi
+include("handlers/user_handler.abi")
 
 # Routing maps actions to class methods:
-route("get", "/user/show", "user_controller@show", "user.show")</code></pre>
+route("get", "/user/show", "user_handler@show", "user.show")</code></pre>
+
+                <h2>Try / Catch / Finally</h2>
+                <p>AbiLang provides try-catch-finally block structures to safely capture and handle execution and syntax/runtime errors:</p>
+                <pre><code>try {
+    print undefined_var
+} catch (e) {
+    print "An error occurred: " + e
+} finally {
+    print "Clean execution finished"
+}</code></pre>
+
+                <h2>Built-in Database & Debugging Helpers</h2>
+                <p>Perform mock database connections, mutations, queries, and Laravel-like formatted variable dumping:</p>
+                <pre><code># Connect to DB
+conn = db_connect({ "host": "localhost", "port": 3306 })
+
+# Create a record
+record = db_create("users", { "username": "Abinash", "email": "abinash@example.com" })
+
+# Fetch records
+records = db_fetch("users", { "status": "active" })
+
+# Laravel-like DD Dump (shows type/values in console/logs without hard halting)
+dd(record)</code></pre>
             </section>
 
-            <!-- Section: Routing & Views -->
-            <section id="routing" class="docs-section">
-                <h1>Routing & Views</h1>
-                <p>AbiLang features standard routing structures built into the language engine, allowing you to define route schemas that map directly to controller actions.</p>
+            <!-- Section: Navigation & Screens -->
+            <section id="navigation" class="docs-section">
+                <h1>Navigation & Screens</h1>
+                <p>AbiLang features standard routing structures built into the language engine, allowing you to define route schemas that map directly to handler actions.</p>
                 
                 <h3>Route Registration</h3>
-                <p>Register routes using the native <code>route</code> statement, specifying HTTP verb, endpoint, target controller action, and route alias:</p>
-                <pre><code># file: routes/route.abi
-include("controller/controller.abi")
+                <p>Register routes using the native <code>route</code> statement, specifying HTTP verb, endpoint, target handler action, and route alias:</p>
+                <pre><code># file: navigation/routes.abi
+include("handlers/handler.abi")
 
-route("get", "/profile", "controller@show_profile", "user.profile")</code></pre>
+route("get", "/profile", "handler@show_profile", "user.profile")</code></pre>
 
-                <h3>Returning Views</h3>
-                <p>The built-in <code>view("filename")</code> helper automatically loads and processes the corresponding user interface definition from the project layout space:</p>
-                <pre><code># file: controller/controller.abi
-class Controller {
+                <h3>Returning Screens</h3>
+                <p>The built-in <code>screen("filename")</code> helper automatically loads and processes the corresponding user interface definition from the screens layout space:</p>
+                <pre><code># file: handlers/handler.abi
+class Handler {
     public func index() {
-        # Automatically resolves to view/index.ui template
-        return view("index")
+        # Automatically resolves to screens/index.ui template
+        return screen("index")
     }
 }</code></pre>
             </section>
 
-            <!-- Section: Comparison JS -->
-            <section id="comparison-js" class="docs-section">
-                <h1>AbiLang vs JavaScript</h1>
-                <p>While AbiLang is built on top of JavaScript/TypeScript runtimes, there are substantial differences in their syntactic execution structures.</p>
 
-                <div class="comparison-grid">
-                    <div class="comparison-card">
-                        <div class="comp-header">
-                            <span class="comp-logo logo-js">JS</span>
-                            <span class="comp-title">Variable Declarations</span>
-                        </div>
-                        <p><strong>JavaScript</strong> strictly requires lexical identifiers such as <code>let</code>, <code>const</code>, or <code>var</code> to allocate variables. Forgetting these in strict modes triggers runtime errors. In <strong>AbiLang</strong>, declarations are completely optional: variables are dynamically created upon assignment.</p>
-                    </div>
-
-                    <div class="comparison-card">
-                        <div class="comp-header">
-                            <span class="comp-logo logo-js">JS</span>
-                            <span class="comp-title">Module Imports</span>
-                        </div>
-                        <p>JavaScript uses ES modules (<code>import/export</code>) or CommonJS (<code>require</code>) to manage dependencies, which frequently result in scoping issues or bundler errors. AbiLang uses a simplified <code>include("path")</code> system that executes sub-scripts recursively in the parent global scope, offering an easy shared state model.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Section: Comparison Python -->
-            <section id="comparison-python" class="docs-section">
-                <h1>AbiLang vs Python</h1>
-                <p>Python is a script-oriented programming language, but AbiLang differs in its approach to structuring code blocks and target platforms.</p>
-
-                <div class="comparison-grid">
-                    <div class="comparison-card">
-                        <div class="comp-header">
-                            <span class="comp-logo logo-py">Py</span>
-                            <span class="comp-title">Block Scoping vs Whitespace</span>
-                        </div>
-                        <p><strong>Python</strong> relies on strict indentation (spaces/tabs) to define code blocks, which can lead to layout errors during formatting or copy-paste actions. <strong>AbiLang</strong> resolves block contexts using brackets (<code>{}</code>), creating robust, formatting-independent structures that look clean and readable.</p>
-                    </div>
-
-                    <div class="comparison-card">
-                        <div class="comp-header">
-                            <span class="comp-logo logo-py">Py</span>
-                            <span class="comp-title">Web Browser Runtime Integration</span>
-                        </div>
-                        <p>Python requires massive web-assembly runtime interpreters (e.g., Pyodide) to run inside web browsers, which slows down initial page loads. AbiLang compiles to lightweight JavaScript bundles natively, executing in the browser with minimal overhead.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Section: Comparison PHP -->
-            <section id="comparison-php" class="docs-section">
-                <h1>AbiLang vs PHP</h1>
-                <p>PHP has historically powered backend routing, but AbiLang optimizes script formatting and built-in architecture setups.</p>
-
-                <div class="comparison-grid">
-                    <div class="comparison-card">
-                        <div class="comp-header">
-                            <span class="comp-logo logo-php">PHP</span>
-                            <span class="comp-title">Clean Syntax (No Sigils)</span>
-                        </div>
-                        <p><strong>PHP</strong> requires variables to begin with a dollar sigil (e.g., <code>$variable</code>), adding syntactic noise to arithmetic and logical statements. <strong>AbiLang</strong> removes this noise, keeping variable references clean and readable (e.g., <code>variable</code>).</p>
-                    </div>
-
-                    <div class="comparison-card">
-                        <div class="comp-header">
-                            <span class="comp-logo logo-php">PHP</span>
-                            <span class="comp-title">Built-In Framework Model</span>
-                        </div>
-                        <p>PHP requires a web server (Nginx/Apache) or external frameworks (Laravel) to register routes and views. AbiLang integrates these concepts natively into the language kernel, permitting routing tables and controller resolutions straight out of the box.</p>
-                    </div>
-                </div>
-            </section>
 
             <!-- Section: Comparison Table -->
             <section id="comparison-table-sec" class="docs-section">
@@ -614,23 +485,7 @@ class Controller {
             applyTheme(activeTheme);
         }
 
-        // 2. Interactive Code Tabs Controller
-        const tabButtons = document.querySelectorAll(".tab-btn");
-        tabButtons.forEach(button => {
-            button.addEventListener("click", () => {
-                const group = button.parentElement;
-                const container = group.parentElement;
-                const targetTabId = button.getAttribute("data-tab");
-                
-                // Remove active classes
-                group.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-                container.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
-                
-                // Add active classes
-                button.classList.add("active");
-                container.querySelector(`#${targetTabId}`).classList.add("active");
-            });
-        });
+
 
         // 3. Search and Content Filtering
         const searchInput = document.getElementById("search-input");

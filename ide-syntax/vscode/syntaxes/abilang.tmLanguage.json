@@ -92,7 +92,7 @@
         },
         {
           "name": "keyword.other.abi",
-          "match": "\\b(print|input)\\b"
+          "match": "\\b(print|input|db_connect|db_create|db_update|db_delete|db_fetch|dd)\\b"
         },
         {
           "name": "constant.language.boolean.abi",

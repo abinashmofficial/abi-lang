@@ -1,6 +1,4 @@
-/* ==========================================================================
-   Vue.js Inspired Theme Stylesheet (AbiLang Playground)
-   ========================================================================== */
+
 
 :root {
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -47,7 +45,7 @@ body {
     opacity: 0.15;
 }
 
-/* --- Theme Switcher --- */
+
 .theme-toggle-floating {
     position: fixed;
     top: 14px;
@@ -71,12 +69,12 @@ body {
     transform: scale(1.08) rotate(20deg);
     border-color: var(--abi-green);
     color: #0a090e;
-    background: #ffffff; /* Previews light mode on hover */
+    background: #ffffff; 
     box-shadow: 0 0 15px rgba(174, 68, 90, 0.25);
 }
 
 body.light-theme .theme-toggle-floating:hover {
-    background: #111016; /* Previews dark mode on hover */
+    background: #111016; 
     color: #f4f4f5;
     border-color: var(--abi-green);
     box-shadow: 0 0 15px rgba(174, 68, 90, 0.25);
@@ -102,7 +100,7 @@ body.light-theme .theme-toggle-floating:hover {
     pointer-events: none;
 }
 
-/* Navbar */
+
 .portal-nav {
     border-bottom: 1px solid var(--border-color);
     background: var(--bg-app);
@@ -170,7 +168,7 @@ body.light-theme .theme-toggle-floating:hover {
     color: var(--abi-green);
 }
 
-/* Hero Section */
+
 .portal-hero {
     flex: 1;
     display: flex;
@@ -239,7 +237,7 @@ body.light-theme .theme-toggle-floating:hover {
     justify-content: center;
 }
 
-/* Custom Vue Styled Buttons */
+
 .btn {
     font-family: var(--font-sans);
     font-size: 14px;
@@ -283,7 +281,7 @@ body.light-theme .theme-toggle-floating:hover {
     height: 16px;
 }
 
-/* Features Grid */
+
 .portal-features {
     border-top: 1px solid var(--border-color);
     padding: 60px 24px;
@@ -328,9 +326,7 @@ body.light-theme .theme-toggle-floating:hover {
     line-height: 1.6;
 }
 
-/* ==========================================================================
-   Playground SFC Workspace View
-   ========================================================================== */
+
 
 .hud-container {
     width: 100%;
@@ -381,10 +377,10 @@ body.light-theme .theme-toggle-floating:hover {
 .hud-controls {
     display: flex;
     gap: 10px;
-    margin-right: 48px; /* Give room for floating theme toggle */
+    margin-right: 48px; 
 }
 
-/* Control Buttons */
+
 .btn-vue-run {
     background-color: var(--abi-green);
     color: var(--btn-text);
@@ -416,7 +412,7 @@ body.light-theme .theme-toggle-floating:hover {
     height: 12px;
 }
 
-/* Workspace Panels Split Layout */
+
 .workspace-main {
     flex: 1;
     display: grid;
@@ -435,7 +431,7 @@ body.light-theme .theme-toggle-floating:hover {
     border-right: 1px solid var(--border-color);
 }
 
-/* Top Tab bars */
+
 .pane-tabbar {
     height: 38px;
     background: var(--bg-pane);
@@ -446,7 +442,7 @@ body.light-theme .theme-toggle-floating:hover {
     flex-shrink: 0;
 }
 
-/* File explorer tabs (SFC Editor Style) */
+
 .file-explorer-tabs {
     display: flex;
     height: 100%;
@@ -511,7 +507,7 @@ body.light-theme .theme-toggle-floating:hover {
     border-radius: 3px;
 }
 
-/* Diagnostic view tabbar selector */
+
 .diagnostic-tabs {
     display: flex;
     height: 100%;
@@ -568,7 +564,7 @@ body.light-theme .theme-toggle-floating:hover {
     100% { opacity: 1; }
 }
 
-/* Panel Body Containers */
+
 .pane-body {
     flex: 1;
     display: flex;
@@ -671,7 +667,7 @@ body.light-theme #editor::selection {
 .token-function { color: var(--token-function); }
 .token-number { color: var(--token-number); }
 
-/* Viewer Body Box Panel Content */
+
 .viewer-body {
     background: var(--bg-app);
     min-height: 0;
@@ -689,19 +685,19 @@ body.light-theme #editor::selection {
     opacity: 0;
     transform: translateY(10px);
     transition: opacity 0.25s ease, transform 0.25s ease;
-    pointer-events: none; /* hide inactive tabs */
+    pointer-events: none; 
 }
 
 .tab-content.active {
     opacity: 1;
     transform: translateY(0);
-    pointer-events: auto; /* allow interaction when active */
+    pointer-events: auto; 
 }
 
 .console-box, .ast-box, .variables-box {
     flex: 1;
     font-family: var(--font-mono);
-    font-size: clamp(12px, 1vw, 16px); /* responsive logs */
+    font-size: clamp(12px, 1vw, 16px); 
     line-height: 1.65;
     padding: 20px;
     overflow-y: auto;
@@ -752,7 +748,7 @@ body.light-theme #editor::selection {
     font-weight: 600;
 }
 
-/* Inputs in Terminal */
+
 .terminal-input-wrapper {
     display: flex;
     align-items: center;
@@ -778,7 +774,7 @@ body.light-theme #editor::selection {
     margin: 0;
 }
 
-/* --- Variable Card Layout --- */
+
 .variables-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -830,7 +826,7 @@ body.light-theme #editor::selection {
     border: 1px solid var(--border-color);
 }
 
-/* --- AST Node cards --- */
+
 .ast-node-card {
     margin-left: 14px;
     border-left: 1px solid var(--border-color);
@@ -856,7 +852,7 @@ body.light-theme #editor::selection {
     font-family: var(--font-mono);
 }
 
-/* --- Smartphone Device Simulator --- */
+
 .mobile-box {
     flex: 1;
     display: flex;
@@ -866,7 +862,7 @@ body.light-theme #editor::selection {
     padding: 20px;
     min-height: 0;
     overflow-y: auto;
-    /* Ensure inner content respects container size */
+    
     max-width: 100%;
     box-sizing: border-box;
 }
@@ -878,7 +874,7 @@ body.light-theme #editor::selection {
     display: flex;
     flex-direction: column;
     position: relative;
-    /* Responsive adjustments */
+    
     max-width: 90vw;
     max-height: 80vh;
     width: 100%;
@@ -886,7 +882,7 @@ body.light-theme #editor::selection {
     margin: auto;
 }
 
-/* Responsive mobile simulator adjustments */
+
 @media (max-width: 480px) {
   .device-bezel {
     width: 180px;
@@ -978,7 +974,7 @@ body.light-theme .phone-screen-init h4 {
     animation: phoneBounce 2s infinite alternate ease-in-out;
 }
 
-/* Declarative UI Layout */
+
 .sim-column {
     display: flex;
     flex-direction: column;
@@ -1020,7 +1016,7 @@ body.light-theme .phone-screen-init h4 {
     transform: translateY(-0.5px);
 }
 
-/* --- HUD Footer --- */
+
 .hud-footer {
     height: 32px;
     border-top: 1px solid var(--border-color);
@@ -1039,7 +1035,7 @@ body.light-theme .phone-screen-init h4 {
     z-index: 100;
 }
 
-/* --- Responsive Panels --- */
+
 @media (max-width: 900px) {
     .workspace-main {
         grid-template-columns: 1fr;
@@ -1067,7 +1063,7 @@ body.light-theme .phone-screen-init h4 {
     }
 }
 
-/* Custom AbiLogo Badge replacement for Vue logo */
+
 .abi-logo-badge {
     background: linear-gradient(135deg, var(--abi-green), var(--abi-dark-blue));
     color: #ffffff;
@@ -1084,7 +1080,7 @@ body.light-theme .phone-screen-init h4 {
     user-select: none;
 }
 
-/* --- Local Installation Section --- */
+
 .portal-installation {
     padding: 60px 24px;
     background: var(--bg-app);
@@ -1190,7 +1186,7 @@ body.light-theme .phone-screen-init h4 {
     line-height: 1.5;
 }
 
-/* Light Mode Installation overrides */
+
 body.light-theme .os-content pre {
     background: #ffffff;
     border-color: #e2e2e3;
@@ -1225,8 +1221,8 @@ body.light-theme .cmd-desc code {
 
 
 
-/* ========================================================================== */
-/* Loading Screen Styles */
+
+
 .loading-screen {
     position: fixed;
     inset: 0;
@@ -1285,7 +1281,7 @@ body.light-theme .cmd-desc code {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
-/* removed counter-rotate keyframes */
+
 
 @keyframes counter-rotate {
     from { transform: rotate(0deg); }
@@ -1308,9 +1304,9 @@ body.light-theme .cmd-desc code {
     font-size: 1rem;
     opacity: 0.8;
 }
-/* End Loading Screen Styles */
 
-/* --- Copy Button Styling --- */
+
+
 .code-wrapper {
     position: relative;
     width: 100%;

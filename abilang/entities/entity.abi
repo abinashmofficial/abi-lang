@@ -1,0 +1,5 @@
+class Entity {
+    public func data() {
+        return "Entity data"
+    }
+}

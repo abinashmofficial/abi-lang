@@ -82,6 +82,42 @@ Visibility rules:
 * `public`: Methods are accessible from any context.
 * `private` / `protected`: Methods are restricted and only accessible from within methods of the class instance. External access attempts will throw a runtime error.
 
+Class inheritance is supported via the `extends` keyword:
+```
+class BaseController {
+    public func greet() {
+        print "Hello from Base"
+    }
+}
+
+class HomeController extends BaseController {
+    public func index() {
+        this.greet()
+    }
+}
+```
+
+### 7. Try / Catch / Finally
+Handle runtime exceptions safely using standard block scopes:
+```
+try {
+    print undefined_variable
+} catch (e) {
+    print "Caught error: " + e
+} finally {
+    print "Cleanup actions completed"
+}
+```
+
+### 8. Built-in Database & Debug Helpers
+Simulated Laravel-like rich debugging and database interactions:
+* `db_connect(config)`: Mock database connection.
+* `db_create(table, data)`: Create records (returns the created record with generated ID).
+* `db_update(table, id, data)`: Update records.
+* `db_delete(table, id)`: Delete records.
+* `db_fetch(table, query)`: Fetch mock record lists.
+* `dd(value)`: Print rich, structured dump of the value to the console without halting execution.
+
 ---
 
 ## Development & Execution

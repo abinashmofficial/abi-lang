@@ -68,6 +68,7 @@ export declare class Interpreter {
     private executeVarDecl;
     private executeFunctionDecl;
     private executeClassDecl;
+    private executeTryCatch;
     private isInsideClassContext;
     private executeReturn;
     private executeIf;

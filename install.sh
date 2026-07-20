@@ -6,14 +6,22 @@ if ! command -v node &> /dev/null; then
     exit 1
 fi
 
+# Detect non-interactive mode via flags or environment variables
+IS_INTERACTIVE=true
+for arg in "$@"; do
+    if [ "$arg" = "-y" ] || [ "$arg" = "--yes" ] || [ "$arg" = "--default" ] || [ "$arg" = "--non-interactive" ]; then
+        IS_INTERACTIVE=false
+    fi
+done
+
+if [ "$CI" = "true" ] || [ "$NONINTERACTIVE" = "1" ] || [ "$DEBIAN_FRONTEND" = "noninteractive" ] || [ -n "$GITHUB_ACTIONS" ]; then
+    IS_INTERACTIVE=false
+fi
+
 # Helper function to print to terminal
 print_msg() {
     local msg="$1"
-    if [ -c /dev/tty ]; then
-        echo "$msg" > /dev/tty
-    else
-        echo "$msg"
-    fi
+    echo "$msg"
 }
 
 # Helper function to prompt user for input (handles interactive and non-interactive cases)
@@ -24,9 +32,9 @@ prompt_user() {
     local allow_empty="$4"
     local input_val
     
-    if [ -c /dev/tty ]; then
-        printf "%s" "$prompt_msg" > /dev/tty
-        if read -r input_val < /dev/tty; then
+    if [ "$IS_INTERACTIVE" = "true" ] && [ -t 0 ] && [ -t 1 ]; then
+        printf "%s" "$prompt_msg"
+        if read -r input_val; then
             if [ -z "$input_val" ]; then
                 if [ "$allow_empty" != "true" ]; then
                     input_val="$default_val"
@@ -54,14 +62,14 @@ mkdir -p "$PROJECT_NAME"
 cd "$PROJECT_NAME"
 
 mkdir -p dist
-mkdir -p assets/css
-mkdir -p assets/js
-mkdir -p assets/images
-mkdir -p view/layout
-mkdir -p controller
-mkdir -p model
-mkdir -p routes
-mkdir -p helpers
+mkdir -p public/css
+mkdir -p public/js
+mkdir -p public/images
+mkdir -p screens/layout
+mkdir -p handlers
+mkdir -p entities
+mkdir -p navigation
+mkdir -p support
 mkdir -p constants
 mkdir -p lang/en
 
@@ -195,10 +203,15 @@ cat << EOF > package.json
   },
   "scripts": {
     "start": "node dist/cli.js",
-    "web": "node server.js"
+    "web": "node server.js",
+    "reload": "node server.js",
+    "dev": "node server.js"
   },
   "dependencies": {
-    "bootstrap": "^5.3.3"
+    "bootstrap": "^5.3.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "esbuild": "^0.19.11"
   },
   "devDependencies": {}
 }
@@ -219,7 +232,7 @@ else
     done
 fi
 
-cat << 'EOF' > view/layout/header.ui
+cat << 'EOF' > screens/layout/header.ui
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -230,8 +243,8 @@ cat << 'EOF' > view/layout/header.ui
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/theme.css?v=1.2">
-    <link rel="stylesheet" href="/assets/css/style.css?v=1.2">
+    <link rel="stylesheet" href="/public/css/theme.css?v=1.2">
+    <link rel="stylesheet" href="/public/css/style.css?v=1.2">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -324,8 +337,8 @@ cat << 'EOF' > lang/en/messages.json
 }
 EOF
 
-cat << 'EOF' > view/index.ui
-@include("view/layout/header.ui")
+cat << 'EOF' > screens/index.ui
+@include("screens/layout/header.ui")
 <%
 const fs = require('fs');
 const path = require('path');
@@ -452,10 +465,10 @@ try {
         </div>
     </div>
 </section>
-@include("view/layout/footer.ui")
+@include("screens/layout/footer.ui")
 EOF
 
-cat << 'EOF' > view/layout/footer.ui
+cat << 'EOF' > screens/layout/footer.ui
     <footer class="text-center">
         <div class="container">
             <div class="row align-items-center">
@@ -474,24 +487,24 @@ cat << 'EOF' > view/layout/footer.ui
         </div>
     </footer>
     <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/js/abilang.min.js?v=1.2"></script>
-    <script src="/assets/js/app.js?v=1.2"></script>
+    <script src="/public/js/abilang.min.js?v=1.2"></script>
+    <script src="/public/js/app.js?v=1.2"></script>
 </body>
 </html>
 EOF
 
-cat << 'EOF' > view/docs.ui
-@include("view/layout/header.ui")
+cat << 'EOF' > screens/docs.ui
+@include("screens/layout/header.ui")
 <section class="portal-installation" style="margin-top: 20px; border-top: none;">
     <div class="install-container">
         <h2 class="install-section-title">Documentation V1</h2>
-        <p class="install-section-subtitle">Discover what makes AbiLang unique and learn how to use its methods, controllers, and routing step-by-step.</p>
+        <p class="install-section-subtitle">Discover what makes AbiLang unique and learn how to use its methods, handlers, and routing step-by-step.</p>
         
         <div class="os-tabs">
             <button class="os-tab-btn active" data-os="intro">Overview & Uniqueness</button>
             <button class="os-tab-btn" data-os="syntax">Syntax & Basic Rules</button>
-            <button class="os-tab-btn" data-os="controllers">Controllers & Models</button>
-            <button class="os-tab-btn" data-os="routing">Routing & Views</button>
+            <button class="os-tab-btn" data-os="handlers">Handlers & Entities</button>
+            <button class="os-tab-btn" data-os="navigation">Navigation & Screens</button>
         </div>
 
         <div class="install-code-blocks">
@@ -541,38 +554,38 @@ while count <= 3 {
                 </div>
             </div>
 
-            <div class="os-content" id="os-controllers">
+            <div class="os-content" id="os-handlers">
                 <div class="cmd-group">
-                    <span class="cmd-label">1. Default Controller (controller/controller.abi)</span>
-                    <pre><code>include("model/model.abi")
+                    <span class="cmd-label">1. Default Handler (handlers/handler.abi)</span>
+                    <pre><code>include("entities/entity.abi")
 
 func index() {
-    return view("index")
+    return screen("index")
 }</code></pre>
                 </div>
                 <div class="cmd-group">
-                    <span class="cmd-label">2. Creating and Extending Controllers</span>
-                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">To create a custom controller and inherit all functions from the base controller, include both the model and the base controller:</p>
-                    <pre><code>include("model/model.abi")
+                    <span class="cmd-label">2. Creating and Extending Handlers</span>
+                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">To create a custom handler and inherit all functions from the base handler, include both the entity and the base handler:</p>
+                    <pre><code>include("entities/entity.abi")
 
-include("controller/controller.abi")
+include("handlers/handler.abi")
 
 func show_profile() {
-    return view("profile")
+    return screen("profile")
 }</code></pre>
                 </div>
             </div>
 
-            <div class="os-content" id="os-routing">
+            <div class="os-content" id="os-navigation">
                 <div class="cmd-group">
-                    <span class="cmd-label">1. Route Registrations (routes/route.abi)</span>
-                    <pre><code>include("controller/controller.abi")
+                    <span class="cmd-label">1. Route Registrations (navigation/routes.abi)</span>
+                    <pre><code>include("handlers/handler.abi")
 
-route("get", "/", "controller@index", "home")</code></pre>
+route("get", "/", "handler@index", "home")</code></pre>
                 </div>
                 <div class="cmd-group">
-                    <span class="cmd-label">2. Returning Views with the <code>view()</code> Method</span>
-                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>view("filename")</code> helper inside your controller actions. The view parser resolves filenames to <code>view/filename.ui</code> automatically, so you don't have to specify folders or file extensions.</p>
+                    <span class="cmd-label">2. Returning Screens with the <code>screen()</code> Method</span>
+                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.ui</code> automatically, so you don't have to specify folders or file extensions.</p>
                 </div>
             </div>
         </div>
@@ -588,6 +601,63 @@ const path = require('path');
 const { Interpreter, BuiltinFunction } = require('./dist/interpreter');
 const { Lexer } = require('./dist/lexer');
 const { Parser } = require('./dist/parser');
+
+require.extensions['.ui'] = function (module, filename) {
+    const content = fs.readFileSync(filename, 'utf8');
+    let script = 'const fs = require("fs");\nconst path = require("path");\nmodule.exports = function(require, console, context = {}) {\nconst __parts = [];\n';
+    let processedContent = content;
+    const includeRegex = /@include\(['"]([^'"]+)['"]\)/g;
+    processedContent = processedContent.replace(includeRegex, (match, subPath) => {
+        let includePath = path.resolve(path.dirname(filename), subPath);
+        if (!fs.existsSync(includePath)) {
+            includePath = path.resolve(process.cwd(), subPath);
+        }
+        return `<%= require(${JSON.stringify(includePath)})(require, console, context) %>`;
+    });
+    const pluginRegex = /@plugin\(['"]([^'"]+)['"](?:,\s*['"]([^'"]+)['"])?(?:,\s*(.+?))?\)/g;
+    processedContent = processedContent.replace(pluginRegex, (match, moduleName, funcName, argsStr) => {
+        return `<%= (function() {
+            const plugin = require(${JSON.stringify(moduleName)});
+            if (${JSON.stringify(funcName)}) {
+                const func = plugin[${JSON.stringify(funcName)}];
+                if (typeof func === "function") {
+                    let args = [];
+                    if (${JSON.stringify(argsStr || "")}) {
+                        args = eval("[" + ${JSON.stringify(argsStr || "")} + "]");
+                    }
+                    return func(...args);
+                }
+                return plugin[${JSON.stringify(funcName)}] || "";
+            }
+            if (typeof plugin === "function") {
+                return plugin();
+            }
+            return String(plugin);
+        })() %>`;
+    });
+    const codeRegex = /<%([\s\S]*?)%>/g;
+    let index = 0;
+    let match;
+    while ((match = codeRegex.exec(processedContent)) !== null) {
+        script += `__parts.push(${JSON.stringify(processedContent.slice(index, match.index))});\n`;
+        const code = match[1].trim();
+        if (code.startsWith('=')) {
+            script += `__parts.push(${code.slice(1)});\n`;
+        } else {
+            script += `${code}\n`;
+        }
+        index = codeRegex.lastIndex;
+    }
+    script += `__parts.push(${JSON.stringify(processedContent.slice(index))});\n`;
+    script += `return __parts.join("");\n};\n`;
+    const esbuild = require('esbuild');
+    const transpiled = esbuild.transformSync(script, {
+        loader: 'jsx',
+        target: 'node18',
+        format: 'cjs'
+    }).code;
+    module._compile(transpiled, filename);
+};
 
 const envFile = path.resolve('.env');
 if (fs.existsSync(envFile)) {
@@ -608,7 +678,8 @@ if (fs.existsSync(envFile)) {
     });
 }
 
-const routes = [];
+let routes = [];
+let interpreter;
 const mimeTypes = {
     '.html': 'text/html',
     '.ui': 'text/html',
@@ -620,70 +691,6 @@ const mimeTypes = {
     '.svg': 'image/svg+xml'
 };
 
-function renderTemplate(filePath) {
-    if (!fs.existsSync(filePath)) {
-        return `<!-- Template Error: File not found: ${filePath} -->`;
-    }
-    let content = fs.readFileSync(filePath, 'utf8');
-    
-    const includeRegex = /@include\(['"]([^'"]+)['"]\)/g;
-    content = content.replace(includeRegex, (match, subPath) => {
-        let includePath = path.resolve(__dirname, subPath);
-        if (!fs.existsSync(includePath)) {
-            includePath = path.resolve(path.dirname(filePath), subPath);
-        }
-        return renderTemplate(includePath);
-    });
-
-    const pluginRegex = /@plugin\(['"]([^'"]+)['"](?:,\s*['"]([^'"]+)['"])?(?:,\s*(.+?))?\)/g;
-    content = content.replace(pluginRegex, (match, moduleName, funcName, argsStr) => {
-        try {
-            const plugin = require(moduleName);
-            if (funcName) {
-                const func = plugin[funcName];
-                if (typeof func === 'function') {
-                    let args = [];
-                    if (argsStr) {
-                        args = eval(`[${argsStr}]`);
-                    }
-                    return func(...args);
-                }
-                return plugin[funcName] || '';
-            }
-            if (typeof plugin === 'function') {
-                return plugin();
-            }
-            return String(plugin);
-        } catch (err) {
-            return `<!-- Plugin Error (${moduleName}): ${err.message} -->`;
-        }
-    });
-
-    const codeRegex = /<%([\s\S]*?)%>/g;
-    let index = 0;
-    let script = 'const __parts = [];\n';
-    let match;
-    while ((match = codeRegex.exec(content)) !== null) {
-        script += `__parts.push(${JSON.stringify(content.slice(index, match.index))});\n`;
-        const code = match[1].trim();
-        if (code.startsWith('=')) {
-            script += `__parts.push(${code.slice(1)});\n`;
-        } else {
-            script += `${code}\n`;
-        }
-        index = codeRegex.lastIndex;
-    }
-    script += `__parts.push(${JSON.stringify(content.slice(index))});\n`;
-    script += `return __parts.join("");\n`;
-    
-    try {
-        const renderFunc = new Function('require', 'console', script);
-        return renderFunc(require, console);
-    } catch (err) {
-        return `<!-- Template Script Error: ${err.message} -->\n${content}`;
-    }
-}
-
 class ServerIO {
     print(msg) {
         console.log(msg);
@@ -691,10 +698,11 @@ class ServerIO {
     async input(prompt) { return ""; }
 }
 
-async function startServer() {
-    const io = new ServerIO();
-    const interpreter = new Interpreter(io);
+const io = new ServerIO();
 
+async function loadRoutes() {
+    routes = [];
+    interpreter = new Interpreter(io);
     interpreter.globals.define("include", new BuiltinFunction(1, async (args) => {
         const filePath = String(args[0]);
         const absolutePath = path.resolve(filePath);
@@ -709,13 +717,11 @@ async function startServer() {
         await interpreter.interpret(statements);
         return null;
     }));
-
-    interpreter.globals.define("view", new BuiltinFunction(1, async (args) => {
+    interpreter.globals.define("screen", new BuiltinFunction(1, async (args) => {
         const pathName = String(args[0]);
-        const cleanPath = pathName.startsWith("view/") ? pathName : "view/" + pathName;
+        const cleanPath = pathName.startsWith("screens/") ? pathName : "screens/" + pathName;
         return cleanPath.endsWith(".ui") ? cleanPath : cleanPath + ".ui";
     }));
-
     interpreter.globals.define("route", new BuiltinFunction(4, async (args) => {
         routes.push({
             method: String(args[0]).toLowerCase(),
@@ -725,19 +731,68 @@ async function startServer() {
         });
         return null;
     }));
-
-    const routeFile = path.resolve('routes/route.abi');
+    const routeFile = path.resolve('navigation/routes.abi');
     if (fs.existsSync(routeFile)) {
         const source = fs.readFileSync(routeFile, 'utf8');
         const lexer = new Lexer(source);
         const parser = new Parser(lexer.tokenize());
         await interpreter.interpret(parser.parse());
     }
+}
+
+function renderTemplate(filePath) {
+    const resolved = path.resolve(filePath);
+    if (require.cache[resolved]) {
+        delete require.cache[resolved];
+    }
+    const templateFunc = require(resolved);
+    return templateFunc(require, console, {});
+}
+
+function clearAllCache() {
+    Object.keys(require.cache).forEach(key => {
+        if (key.endsWith('.ui') || key.includes('/handlers/') || key.includes('/entities/') || key.includes('/support/')) {
+            delete require.cache[key];
+        }
+    });
+}
+
+function startWatcher() {
+    const dirs = ['navigation', 'handlers', 'entities', 'support', 'screens'];
+    dirs.forEach(dir => {
+        const dirPath = path.resolve(dir);
+        if (fs.existsSync(dirPath)) {
+            fs.watch(dirPath, { recursive: true }, (eventType, filename) => {
+                clearAllCache();
+                loadRoutes().catch(console.error);
+                console.log(`[Reload] Reloaded changes in ${dir}/${filename}`);
+            });
+        }
+    });
+}
+
+async function startServer() {
+    await loadRoutes();
+    startWatcher();
 
     const server = http.createServer(async (req, res) => {
         const urlPath = req.url.split('?')[0];
-        
-        if (urlPath.startsWith('/assets/')) {
+
+        if (urlPath === '/favicon.ico') {
+            res.writeHead(204);
+            res.end();
+            return;
+        }
+
+        if (urlPath === '/reload') {
+            clearAllCache();
+            await loadRoutes();
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            res.end('Cache cleared and routes reloaded successfully!');
+            return;
+        }
+
+        if (urlPath.startsWith('/public/')) {
             const filePath = path.join(__dirname, urlPath);
             if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
                 const ext = path.extname(filePath);
@@ -761,27 +816,27 @@ async function startServer() {
         const route = routes.find(r => r.method === req.method.toLowerCase() && r.path === urlPath);
         if (route) {
             const parts = route.action.split('@');
-            const controllerNamespace = parts[0];
+            const handlerNamespace = parts[0];
             const actionName = parts[1];
-            let controllerFunc = interpreter.globals.get(actionName);
-            
-            const controllerClass = interpreter.globals.get(controllerNamespace) || interpreter.globals.get(controllerNamespace.charAt(0).toUpperCase() + controllerNamespace.slice(1));
-            if (controllerClass && controllerClass.declaration && controllerClass.declaration.type === "ClassDeclStatement") {
-                const instance = await controllerClass.call(interpreter, []);
+            let handlerFunc = interpreter.globals.get(actionName);
+
+            const handlerClass = interpreter.globals.get(handlerNamespace) || interpreter.globals.get(handlerNamespace.charAt(0).toUpperCase() + handlerNamespace.slice(1));
+            if (handlerClass && handlerClass.declaration && handlerClass.declaration.type === "ClassDeclStatement") {
+                const instance = await handlerClass.call(interpreter, []);
                 const method = instance.klass.declaration.methods.find(m => m.name === actionName);
                 if (method) {
                     const { BoundMethod } = require("./dist/interpreter");
-                    controllerFunc = new BoundMethod(instance, method);
+                    handlerFunc = new BoundMethod(instance, method);
                 }
             }
 
-            if (controllerFunc && typeof controllerFunc.call === 'function') {
-                let viewFile = await controllerFunc.call(interpreter, []);
-                if (viewFile && typeof viewFile === 'string') {
-                    if (!viewFile.startsWith('view/')) {
-                        viewFile = 'view/' + viewFile;
+            if (handlerFunc && typeof handlerFunc.call === 'function') {
+                let screenFile = await handlerFunc.call(interpreter, []);
+                if (screenFile && typeof screenFile === 'string') {
+                    if (!screenFile.startsWith('screens/')) {
+                        screenFile = 'screens/' + screenFile;
                     }
-                    const filePath = path.join(__dirname, viewFile);
+                    const filePath = path.join(__dirname, screenFile);
                     if (fs.existsSync(filePath)) {
                         const content = renderTemplate(filePath);
                         res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -820,32 +875,32 @@ startServer().catch(err => {
 EOF
 
 # 7. Create routing and helper/constant components
-cat << 'EOF' > controller/controller.abi
-include("model/model.abi")
+cat << 'EOF' > handlers/handler.abi
+include("entities/entity.abi")
 
-class Controller {
+class Handler {
     public func index() {
-        m = Model()
-        print "Calling model: " + m.data()
-        return view("index")
+        e = Entity()
+        print "Calling entity: " + e.data()
+        return screen("index")
     }
 
     public func docs() {
-        return view("docs")
+        return screen("docs")
     }
 }
 EOF
 
-cat << 'EOF' > model/model.abi
-class Model {
+cat << 'EOF' > entities/entity.abi
+class Entity {
     public func data() {
-        return "Model data"
+        return "Entity data"
     }
 }
 EOF
 
-cat << 'EOF' > helpers/helpers.abi
-class Helpers {
+cat << 'EOF' > support/helpers.abi
+class Support {
     public func get_platform_info() {
         return "Running AbiLang " + VERSION + " by " + AUTHOR
     }
@@ -858,33 +913,33 @@ VERSION = "1.2.0"
 AUTHOR = "Abinash"
 EOF
 
-cat << 'EOF' > routes/route.abi
+cat << 'EOF' > navigation/routes.abi
 include("constants/constants.abi")
 
-include("helpers/helpers.abi")
+include("support/helpers.abi")
 
-include("controller/controller.abi")
+include("handlers/handler.abi")
 
-route("get", "/", "controller@index", "home")
+route("get", "/", "handler@index", "home")
 
-route("get", "/docs", "controller@docs", "docs")
+route("get", "/docs", "handler@docs", "docs")
 EOF
 
 # 8. Download or copy design assets (CSS, JS, layout etc.)
 if [ -d "$SCRIPT_DIR/web" ]; then
-    cp "$SCRIPT_DIR/web/app.js" assets/js/app.js
-    cp "$SCRIPT_DIR/web/style.css" assets/css/style.css
-    cp "$SCRIPT_DIR/web/theme.css" assets/css/theme.css
+    cp "$SCRIPT_DIR/web/app.js" public/js/app.js
+    cp "$SCRIPT_DIR/web/style.css" public/css/style.css
+    cp "$SCRIPT_DIR/web/theme.css" public/css/theme.css
     if [ -f "$SCRIPT_DIR/web/dist/abilang.min.js" ]; then
-        cp "$SCRIPT_DIR/web/dist/abilang.min.js" assets/js/abilang.min.js
+        cp "$SCRIPT_DIR/web/dist/abilang.min.js" public/js/abilang.min.js
     else
-        curl -fsSL "$BASE_URL/web/dist/abilang.min.js" -o assets/js/abilang.min.js
+        curl -fsSL "$BASE_URL/web/dist/abilang.min.js" -o public/js/abilang.min.js
     fi
 else
-    curl -fsSL "$BASE_URL/web/app.js" -o assets/js/app.js
-    curl -fsSL "$BASE_URL/web/style.css" -o assets/css/style.css
-    curl -fsSL "$BASE_URL/web/theme.css" -o assets/css/theme.css
-    curl -fsSL "$BASE_URL/web/dist/abilang.min.js" -o assets/js/abilang.min.js
+    curl -fsSL "$BASE_URL/web/app.js" -o public/js/app.js
+    curl -fsSL "$BASE_URL/web/style.css" -o public/css/style.css
+    curl -fsSL "$BASE_URL/web/theme.css" -o public/css/theme.css
+    curl -fsSL "$BASE_URL/web/dist/abilang.min.js" -o public/js/abilang.min.js
 fi
 
 # 9. Configure global executables
@@ -924,9 +979,9 @@ if (!content.includes("globals.define(\"include\"")) {
             }
             return null;
         }));
-        this.globals.define("view", new BuiltinFunction(1, async (args) => {
+        this.globals.define("screen", new BuiltinFunction(1, async (args) => {
             const pathName = String(args[0]);
-            const cleanPath = pathName.startsWith("view/") ? pathName : "view/" + pathName;
+            const cleanPath = pathName.startsWith("screens/") ? pathName : "screens/" + pathName;
             return cleanPath.endsWith(".ui") ? cleanPath : cleanPath + ".ui";
         }));
         this.globals.define("route", new BuiltinFunction(4, async (args) => {
@@ -937,22 +992,22 @@ if (!content.includes("globals.define(\"include\"")) {
             this.io.print(\`[Route Registered] \${method.toUpperCase()} \${path} -> \${action} (\${name})\\n\`);
             if (path === "/") {
                 const parts = action.split("@");
-                const controllerNamespace = parts[0];
+                const handlerNamespace = parts[0];
                 const actionName = parts[1];
-                let controllerFunc = this.globals.get(actionName);
+                let handlerFunc = this.globals.get(actionName);
 
-                const controllerClass = this.globals.get(controllerNamespace) || this.globals.get(controllerNamespace.charAt(0).toUpperCase() + controllerNamespace.slice(1));
-                if (controllerClass && controllerClass.declaration && controllerClass.declaration.type === "ClassDeclStatement") {
-                    const instance = await controllerClass.call(this, []);
+                const handlerClass = this.globals.get(handlerNamespace) || this.globals.get(handlerNamespace.charAt(0).toUpperCase() + handlerNamespace.slice(1));
+                if (handlerClass && handlerClass.declaration && handlerClass.declaration.type === "ClassDeclStatement") {
+                    const instance = await handlerClass.call(this, []);
                     const method = instance.klass.declaration.methods.find(m => m.name === actionName);
                     if (method) {
                         const { BoundMethod } = require("./interpreter");
-                        controllerFunc = new BoundMethod(instance, method);
+                        handlerFunc = new BoundMethod(instance, method);
                     }
                 }
 
-                if (controllerFunc && typeof controllerFunc.call === "function") {
-                    const result = await controllerFunc.call(this, []);
+                if (handlerFunc && typeof handlerFunc.call === "function") {
+                    const result = await handlerFunc.call(this, []);
                     this.io.print(\`[Route Executed] Result: \${result}\\n\`);
                 } else {
                     this.io.print(\`[Route Error] Action \\\x27\${actionName}\\\x27 not found in global scope.\\n\`);
@@ -969,10 +1024,10 @@ if (!content.includes("globals.define(\"include\"")) {
 # Ensure regular expression syntax error is fixed if present
 node -e '
 const fs = require("fs");
-let appJs = fs.readFileSync("assets/js/app.js", "utf8");
+let appJs = fs.readFileSync("public/js/app.js", "utf8");
 if (appJs.includes("(\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(?=\\s*\\(()")) {
     appJs = appJs.replace("(\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(?=\\s*\\(()", "(\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(?=\\s*\\())");
-    fs.writeFileSync("assets/js/app.js", appJs, "utf8");
+    fs.writeFileSync("public/js/app.js", appJs, "utf8");
 }
 '
 
@@ -980,7 +1035,7 @@ if (appJs.includes("(\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(?=\\s*\\(()")) {
 node -e '
 const fs = require("fs");
 ["style.css", "theme.css"].forEach(file => {
-    let path = "assets/css/" + file;
+    let path = "public/css/" + file;
     if (fs.existsSync(path)) {
         let code = fs.readFileSync(path, "utf8");
         code = code.replace(/\/\*[\s\S]*?\*\//g, "");

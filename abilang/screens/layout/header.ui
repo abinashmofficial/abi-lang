@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AbiLang - Modern Bootstrap Web Portal</title>
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/public/css/theme.css?v=1.2">
+    <link rel="stylesheet" href="/public/css/style.css?v=1.2">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-app);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-custom {
+            background: var(--bg-pane);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .hero-section {
+            background: radial-gradient(circle at top center, rgba(143, 92, 255, 0.18), transparent 60%);
+            padding: 90px 0;
+            flex: 1;
+        }
+        .card-custom {
+            background: var(--bg-pane);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-custom:hover {
+            transform: translateY(-6px);
+            border-color: var(--abi-dark-blue);
+            box-shadow: 0 12px 30px rgba(143, 92, 255, 0.15);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, var(--abi-rose), var(--abi-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--abi-dark-blue), var(--abi-cyan));
+            border: none;
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-gradient:hover {
+            opacity: 0.95;
+            transform: scale(1.02);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(143, 92, 255, 0.4);
+        }
+        footer {
+            background: var(--bg-app);
+            border-top: 1px solid var(--border-color);
+            padding: 24px 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <span class="badge me-2 fs-5 px-3 abi-logo-badge">A</span>
+                <span class="fw-bold tracking-wider brand-title-text">Abi<span class="text-gradient">Lang</span></span>
+            </a>
+            <div class="d-flex align-items-center gap-3 ms-auto">
+                <a href="/docs" style="color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500;" onmouseover="this.style.color='var(--abi-green)'" onmouseout="this.style.color='var(--text-muted)'">Documentation</a>
+                <button id="theme-toggle" class="btn btn-outline-secondary border-0" style="border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                    <span id="theme-toggle-icon">☀</span>
+                </button>
+            </div>
+        </div>
+    </nav>

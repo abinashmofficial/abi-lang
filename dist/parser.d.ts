@@ -34,4 +34,5 @@ export declare class Parser {
     private finishCall;
     private primary;
     private classDecl;
+    private tryCatchStatement;
 }

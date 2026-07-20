@@ -1,0 +1,45 @@
+class BaseController {
+    public func init(name) {
+        this.name = name
+    }
+
+    public func greet() {
+        print "Greetings from Base " + this.name
+    }
+}
+
+class HomeController extends BaseController {
+    public func test_inheritance() {
+        print "Calling inherited greet method:"
+        this.greet()
+    }
+}
+
+print "--- Testing Class Inheritance (extends) ---"
+h = HomeController()
+h.init("HomeController")
+h.test_inheritance()
+
+print ""
+print "--- Testing Try / Catch / Finally ---"
+try {
+    print "Inside try block..."
+    # Cause a runtime error by accessing undefined variable
+    print undefined_variable
+} catch (e) {
+    print "Caught error: " + e
+} finally {
+    print "Finally block executed!"
+}
+
+print ""
+print "--- Testing Database connect and Laravel-like helpers ---"
+conn = db_connect({ "host": "localhost", "port": 3306 })
+record = db_create("users", { "username": "Abinash", "email": "abinash@example.com" })
+records = db_fetch("users", { "status": "active" })
+
+print ""
+print "--- Testing Laravel-like dd() (without exiting) ---"
+dd(record)
+
+print "Execution finished successfully!"

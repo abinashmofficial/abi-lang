@@ -20,7 +20,8 @@ import {
   ListExpression,
   DictExpression,
   ClassDeclStatement,
-  MethodDecl
+  MethodDecl,
+  TryCatchStatement
 } from "./types";
 
 export interface IOHandler {
@@ -319,6 +320,54 @@ export class Interpreter {
         return null;
       })
     );
+
+    this.globals.define("db_connect", new BuiltinFunction(1, (args) => {
+      return { connected: true, config: args[0], host: "localhost" };
+    }));
+
+    this.globals.define("db_create", new BuiltinFunction(2, (args) => {
+      const table = args[0];
+      const data = args[1] || {};
+      const record = { id: Math.floor(Math.random() * 1000) + 1, ...data };
+      this.io.print(`[DB Create] Inserted into ${table}: ${JSON.stringify(record)}\n`);
+      return record;
+    }));
+
+    this.globals.define("db_update", new BuiltinFunction(3, (args) => {
+      const table = args[0];
+      const id = args[1];
+      const data = args[2] || {};
+      this.io.print(`[DB Update] Updated ${table} (ID: ${id}) with: ${JSON.stringify(data)}\n`);
+      return true;
+    }));
+
+    this.globals.define("db_delete", new BuiltinFunction(2, (args) => {
+      const table = args[0];
+      const id = args[1];
+      this.io.print(`[DB Delete] Deleted from ${table} (ID: ${id})\n`);
+      return true;
+    }));
+
+    this.globals.define("db_fetch", new BuiltinFunction(2, (args) => {
+      const table = args[0];
+      const query = args[1] || {};
+      const mockRecords = [
+        { id: 1, name: "Item A", status: "active" },
+        { id: 2, name: "Item B", status: "pending" }
+      ];
+      this.io.print(`[DB Fetch] Queried ${table} with: ${JSON.stringify(query)}\n`);
+      return mockRecords;
+    }));
+
+    this.globals.define("dd", new BuiltinFunction(1, (args) => {
+      const val = args[0];
+      const dumpStr = `\n================ [Laravel-like DD Dump] ================\n` +
+                      `Type: ${val === null ? 'null' : typeof val}\n` +
+                      `Value: ${this.stringify(val)}\n` +
+                      `=======================================================\n`;
+      this.io.print(dumpStr);
+      return val;
+    }));
   }
 
   public async interpret(statements: Statement[]): Promise<void> {
@@ -362,6 +411,9 @@ export class Interpreter {
       case "ClassDeclStatement":
         await this.executeClassDecl(stmt as ClassDeclStatement);
         break;
+      case "TryCatchStatement":
+        await this.executeTryCatch(stmt as TryCatchStatement);
+        break;
       case "ExpressionStatement":
         await this.evaluate(stmt.expression);
         break;
@@ -388,6 +440,29 @@ export class Interpreter {
   private async executeClassDecl(stmt: ClassDeclStatement): Promise<void> {
     const klass = new ClassCallable(stmt);
     this.environment.define(stmt.name, klass);
+  }
+
+  private async executeTryCatch(stmt: TryCatchStatement): Promise<void> {
+    try {
+      await this.executeBlock(stmt.tryBranch, new Environment(this.environment));
+    } catch (err: any) {
+      if (err instanceof ReturnException) {
+        throw err;
+      }
+      if (stmt.catchBranch) {
+        const catchEnv = new Environment(this.environment);
+        if (stmt.catchVar) {
+          catchEnv.define(stmt.catchVar, err.message || err);
+        }
+        await this.executeBlock(stmt.catchBranch, catchEnv);
+      } else {
+        throw err;
+      }
+    } finally {
+      if (stmt.finallyBranch) {
+        await this.executeBlock(stmt.finallyBranch, new Environment(this.environment));
+      }
+    }
   }
 
   private isInsideClassContext(instance: ClassInstance): boolean {
@@ -642,7 +717,19 @@ export class Interpreter {
     }
 
     if (obj instanceof ClassInstance) {
-      const method = obj.klass.declaration.methods.find(m => m.name === propKey);
+      let method = obj.klass.declaration.methods.find(m => m.name === propKey);
+      let currentClass = obj.klass;
+      while (!method && currentClass.declaration.parent) {
+        const parentName = currentClass.declaration.parent;
+        const parentClass = this.globals.get(parentName, expr.line);
+        if (parentClass instanceof ClassCallable) {
+          method = parentClass.declaration.methods.find(m => m.name === propKey);
+          currentClass = parentClass;
+        } else {
+          break;
+        }
+      }
+
       if (method) {
         if (method.visibility === "private" || method.visibility === "protected") {
           if (!this.isInsideClassContext(obj)) {

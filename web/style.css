@@ -1116,6 +1116,7 @@ body.light-theme .phone-screen-init h4 {
 .os-tabs {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
     gap: 12px;
     margin-bottom: 10px;
 }

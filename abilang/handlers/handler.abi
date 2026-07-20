@@ -1,0 +1,13 @@
+include("entities/entity.abi")
+
+class Handler {
+    public func index() {
+        e = Entity()
+        print "Calling entity: " + e.data()
+        return screen("index")
+    }
+
+    public func docs() {
+        return screen("docs")
+    }
+}

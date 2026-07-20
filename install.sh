@@ -16,10 +16,16 @@ echo "   AbiLang Installer"
 echo "============================================="
 echo ""
 
-read -r -p "Enter project name [abilang]: " PROJECT_NAME_INPUT
+if [ -t 0 ]; then
+    TTY_IN=/dev/stdin
+else
+    TTY_IN=/dev/tty
+fi
+
+read -r -p "Enter project name [abilang]: " PROJECT_NAME_INPUT <"$TTY_IN"
 PROJECT_NAME="${PROJECT_NAME_INPUT:-abilang}"
 
-read -r -p "Enter port number [3000]: " PORT_INPUT
+read -r -p "Enter port number [3000]: " PORT_INPUT <"$TTY_IN"
 PORT="${PORT_INPUT:-3000}"
 
 echo ""
@@ -29,7 +35,7 @@ echo "  2) PostgreSQL"
 echo "  3) MongoDB"
 echo "  4) SQLite"
 echo "  5) None"
-read -r -p "Enter choice [5]: " DB_CHOICE_INPUT
+read -r -p "Enter choice [5]: " DB_CHOICE_INPUT <"$TTY_IN"
 DB_CHOICE="${DB_CHOICE_INPUT:-5}"
 
 case "$DB_CHOICE" in
@@ -54,6 +60,18 @@ case "$DB_CHOICE" in
         DB_DEFAULT_PORT=""
         ;;
 esac
+
+if [ "$DB_DRIVER" != "none" ]; then
+    echo ""
+    read -r -p "Enter database name: " DB_DATABASE <"$TTY_IN"
+    read -r -p "Enter database username: " DB_USERNAME <"$TTY_IN"
+    read -r -s -p "Enter database password: " DB_PASSWORD <"$TTY_IN"
+    echo ""
+else
+    DB_DATABASE=""
+    DB_USERNAME=""
+    DB_PASSWORD=""
+fi
 
 mkdir -p "$PROJECT_NAME"
 cd "$PROJECT_NAME"
@@ -80,9 +98,9 @@ API_KEY="xyz123secret"
     echo "DB_DRIVER=$DB_DRIVER"
     echo "DB_HOST=127.0.0.1"
     echo "DB_PORT=$DB_DEFAULT_PORT"
-    echo "DB_DATABASE="
-    echo "DB_USERNAME="
-    echo "DB_PASSWORD="
+    echo "DB_DATABASE=$DB_DATABASE"
+    echo "DB_USERNAME=$DB_USERNAME"
+    echo "DB_PASSWORD=$DB_PASSWORD"
     echo "API_KEY=$API_KEY"
 } > .env
 
@@ -238,8 +256,9 @@ cat << 'EOF' > lang/en/messages.json
 EOF
 
 cat << 'EOF' > screens/index.ui
-@include("screens/layout/header.ui")
-<%
+load Header from "screens/layout/header.ui"
+
+<script setup>
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -255,7 +274,8 @@ try {
 } catch (e) {
     lang = { title: "AbiLang", subtitle: "Welcome" };
 }
-%>
+</script>
+
 <style>
     body {
         --bg-app: #f3f0ff;
@@ -285,21 +305,11 @@ try {
         --editor-bg: #272822;
     }
 
-    .text-white {
-        color: var(--text-main) !important;
-    }
-    .text-light {
-        color: var(--text-main) !important;
-    }
-    .text-muted {
-        color: var(--text-muted) !important;
-    }
-    .text-white-50 {
-        color: var(--text-muted) !important;
-    }
-    strong {
-        color: var(--text-main);
-    }
+    .text-white { color: var(--text-main) !important; }
+    .text-light { color: var(--text-main) !important; }
+    .text-muted { color: var(--text-muted) !important; }
+    .text-white-50 { color: var(--text-muted) !important; }
+    strong { color: var(--text-main); }
 
     .abi-logo-badge {
         background: linear-gradient(135deg, var(--abi-green), var(--abi-dark-blue)) !important;
@@ -307,9 +317,7 @@ try {
         font-weight: 800;
         box-shadow: 0 2px 8px rgba(66, 184, 131, 0.25);
     }
-    .brand-title-text {
-        color: var(--text-main) !important;
-    }
+    .brand-title-text { color: var(--text-main) !important; }
     .text-gradient {
         background: linear-gradient(135deg, var(--abi-green), var(--abi-cyan)) !important;
         -webkit-background-clip: text !important;
@@ -324,7 +332,6 @@ try {
         background: linear-gradient(135deg, var(--abi-dark-blue), var(--abi-cyan)) !important;
         color: var(--btn-text) !important;
     }
-
     #theme-toggle {
         border-radius: 50% !important;
         background: rgba(255, 255, 255, 0.08) !important;
@@ -337,10 +344,9 @@ try {
         background: var(--bg-pane) !important;
         border-color: var(--abi-green) !important;
     }
-    #view-portal-link {
-        color: var(--abi-green) !important;
-    }
+    #view-portal-link { color: var(--abi-green) !important; }
 </style>
+
 <section class="hero-section d-flex align-items-center">
     <div class="container">
         <div class="row align-items-center justify-content-center">
@@ -349,29 +355,30 @@ try {
                     AbiLang v1.2.0 (Bootstrap Cloud Release)
                 </div>
                 <h1 class="display-3 fw-bold mb-4 text-white">
-                    <%= lang.title %>
+                    {{ lang.title }}
                 </h1>
                 <p class="lead text-muted mb-5 fs-5">
-                    <%= lang.subtitle %>
+                    {{ lang.subtitle }}
                 </p>
                 <div class="d-flex justify-content-center gap-3 mb-5">
-                    <button class="btn btn-gradient btn-lg px-4" id="launch-btn"><%= lang.get_started %></button>
-                    <a class="btn btn-outline-secondary btn-lg px-4" href="https://github.com/abinashmofficial/abi-lang" target="_blank"><%= lang.view_docs %></a>
+                    <button class="btn btn-gradient btn-lg px-4" id="launch-btn">{{ lang.get_started }}</button>
+                    <a class="btn btn-outline-secondary btn-lg px-4" href="https://github.com/abinashmofficial/abi-lang" target="_blank">{{ lang.view_docs }}</a>
                 </div>
                 <div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;">
-                    <h5 class="text-white mb-3"><%= lang.system_info %></h5>
+                    <h5 class="text-white mb-3">{{ lang.system_info }}</h5>
                     <div class="row text-muted fs-6">
-                        <div class="col-6 mb-2"><strong><%= lang.platform %>:</strong> <%= os.platform() %></div>
-                        <div class="col-6 mb-2"><strong><%= lang.architecture %>:</strong> <%= os.arch() %></div>
-                        <div class="col-6 mb-2"><strong><%= lang.uptime %>:</strong> <%= Math.floor(os.uptime()) %> <%= lang.seconds %></div>
-                        <div class="col-6 mb-2"><strong><%= lang.memory %>:</strong> <%= Math.floor(os.freemem() / 1024 / 1024) %>MB / <%= Math.floor(os.totalmem() / 1024 / 1024) %>MB</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.platform }}:</strong> {{ os.platform() }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.architecture }}:</strong> {{ os.arch() }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.uptime }}:</strong> {{ Math.floor(os.uptime()) }} {{ lang.seconds }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.memory }}:</strong> {{ Math.floor(os.freemem() / 1024 / 1024) }}MB / {{ Math.floor(os.totalmem() / 1024 / 1024) }}MB</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-@include("screens/layout/footer.ui")
+
+load Footer from "screens/layout/footer.ui"
 EOF
 
 cat << 'EOF' > screens/layout/footer.ui
@@ -400,12 +407,19 @@ cat << 'EOF' > screens/layout/footer.ui
 EOF
 
 cat << 'EOF' > screens/docs.ui
-@include("screens/layout/header.ui")
+load Header from "screens/layout/header.ui"
+load Docx from "screens/docx.ui"
+load Footer from "screens/layout/footer.ui"
+EOF
+
+cat << 'EOF' > screens/docx.ui
+component
+
 <section class="portal-installation" style="margin-top: 20px; border-top: none;">
     <div class="install-container">
         <h2 class="install-section-title">Documentation V1</h2>
         <p class="install-section-subtitle">Discover what makes AbiLang unique and learn how to use its methods, handlers, and routing step-by-step.</p>
-        
+
         <div class="os-tabs">
             <button class="os-tab-btn active" data-os="intro">Overview & Uniqueness</button>
             <button class="os-tab-btn" data-os="syntax">Syntax & Basic Rules</button>
@@ -497,7 +511,6 @@ route("get", "/", "handler@index", "home")</code></pre>
         </div>
     </div>
 </section>
-@include("screens/layout/footer.ui")
 EOF
 
 cat << 'EOF' > server.js
@@ -512,6 +525,18 @@ require.extensions['.ui'] = function (module, filename) {
     const content = fs.readFileSync(filename, 'utf8');
     let script = 'const fs = require("fs");\nconst path = require("path");\nmodule.exports = function(require, console, context = {}) {\nconst __parts = [];\n';
     let processedContent = content;
+
+    processedContent = processedContent.replace(/^component\b[^\n]*/gm, '');
+
+    const importRegex = /^load\s+\w+\s+from\s+['"]([^'"]+)['"]\s*$/gm;
+    processedContent = processedContent.replace(importRegex, (match, subPath) => {
+        let includePath = path.resolve(path.dirname(filename), subPath);
+        if (!fs.existsSync(includePath)) {
+            includePath = path.resolve(process.cwd(), subPath);
+        }
+        return `<%= require(${JSON.stringify(includePath)})(require, console, context) %>`;
+    });
+
     const includeRegex = /@include\(['"]([^'"]+)['"]\)/g;
     processedContent = processedContent.replace(includeRegex, (match, subPath) => {
         let includePath = path.resolve(path.dirname(filename), subPath);
@@ -520,6 +545,7 @@ require.extensions['.ui'] = function (module, filename) {
         }
         return `<%= require(${JSON.stringify(includePath)})(require, console, context) %>`;
     });
+
     const pluginRegex = /@plugin\(['"]([^'"]+)['"](?:,\s*['"]([^'"]+)['"])?(?:,\s*(.+?))?\)/g;
     processedContent = processedContent.replace(pluginRegex, (match, moduleName, funcName, argsStr) => {
         return `<%= (function() {
@@ -541,6 +567,15 @@ require.extensions['.ui'] = function (module, filename) {
             return String(plugin);
         })() %>`;
     });
+
+    processedContent = processedContent.replace(/<script\s+setup>([\s\S]*?)<\/script>/g, (match, code) => {
+        return `<% ${code.trim()} %>`;
+    });
+
+    processedContent = processedContent.replace(/\{\{\s*([\s\S]*?)\s*\}\}/g, (match, expr) => {
+        return `<%= ${expr.trim()} %>`;
+    });
+
     const codeRegex = /<%([\s\S]*?)%>/g;
     let index = 0;
     let match;

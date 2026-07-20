@@ -450,7 +450,7 @@ route("get", "/", "handler@index", "home")</code></pre>
         </div>
     </div>
 </section>
-@include("view/layout/footer.ui")
+@include("screens/layout/footer.ui")
 EOF
 
 cat << 'EOF' > server.js

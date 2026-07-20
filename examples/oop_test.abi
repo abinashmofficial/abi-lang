@@ -1,0 +1,28 @@
+class Animal {
+    public func init(name) {
+        this.name = name
+    }
+
+    public func greet() {
+        print "Hello, I am " + this.name
+    }
+
+    private func secret() {
+        print "This is a private secret!"
+    }
+
+    public func callSecret() {
+        print "Calling private secret from inside class:"
+        this.secret()
+    }
+}
+
+print "--- Instantiating Class ---"
+a = Animal()
+a.init("Rex")
+
+print "--- Calling Public Method ---"
+a.greet()
+
+print "--- Calling Public Method that invokes Private Method ---"
+a.callSecret()

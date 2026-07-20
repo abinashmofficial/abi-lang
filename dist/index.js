@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Environment = exports.Interpreter = exports.Parser = exports.Lexer = exports.TokenType = void 0;
+exports.BoundMethod = exports.ClassInstance = exports.ClassCallable = exports.Environment = exports.Interpreter = exports.Parser = exports.Lexer = exports.TokenType = void 0;
 var types_1 = require("./types");
 Object.defineProperty(exports, "TokenType", { enumerable: true, get: function () { return types_1.TokenType; } });
 var lexer_1 = require("./lexer");
@@ -10,3 +10,6 @@ Object.defineProperty(exports, "Parser", { enumerable: true, get: function () { 
 var interpreter_1 = require("./interpreter");
 Object.defineProperty(exports, "Interpreter", { enumerable: true, get: function () { return interpreter_1.Interpreter; } });
 Object.defineProperty(exports, "Environment", { enumerable: true, get: function () { return interpreter_1.Environment; } });
+Object.defineProperty(exports, "ClassCallable", { enumerable: true, get: function () { return interpreter_1.ClassCallable; } });
+Object.defineProperty(exports, "ClassInstance", { enumerable: true, get: function () { return interpreter_1.ClassInstance; } });
+Object.defineProperty(exports, "BoundMethod", { enumerable: true, get: function () { return interpreter_1.BoundMethod; } });

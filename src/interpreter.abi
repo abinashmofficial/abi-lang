@@ -18,7 +18,9 @@ import {
   CallExpression,
   GetExpression,
   ListExpression,
-  DictExpression
+  DictExpression,
+  ClassDeclStatement,
+  MethodDecl
 } from "./types";
 
 export interface IOHandler {
@@ -88,6 +90,67 @@ export class UserFunction implements Callable {
   }
 }
 
+export class ClassCallable implements Callable {
+  public declaration: ClassDeclStatement;
+
+  constructor(declaration: ClassDeclStatement) {
+    this.declaration = declaration;
+  }
+
+  arity(): number {
+    return 0;
+  }
+
+  async call(interpreter: Interpreter, args: any[]): Promise<any> {
+    return new ClassInstance(this);
+  }
+}
+
+export class ClassInstance {
+  public klass: ClassCallable;
+  public fields: Map<string, any> = new Map();
+
+  constructor(klass: ClassCallable) {
+    this.klass = klass;
+  }
+
+  toString(): string {
+    return `<instance of ${this.klass.declaration.name}>`;
+  }
+}
+
+export class BoundMethod implements Callable {
+  private instance: ClassInstance;
+  private method: MethodDecl;
+
+  constructor(instance: ClassInstance, method: MethodDecl) {
+    this.instance = instance;
+    this.method = method;
+  }
+
+  arity(): number {
+    return this.method.params.length;
+  }
+
+  async call(interpreter: Interpreter, args: any[]): Promise<any> {
+    const env = new Environment(interpreter.globals);
+    env.define("this", this.instance);
+    for (let i = 0; i < this.method.params.length; i++) {
+      env.define(this.method.params[i], args[i]);
+    }
+
+    try {
+      await interpreter.executeBlock(this.method.body, env);
+    } catch (err: any) {
+      if (err instanceof ReturnException) {
+        return err.value;
+      }
+      throw err;
+    }
+    return null;
+  }
+}
+
 export class Environment {
   private values: Map<string, any> = new Map();
   private outer: Environment | null;
@@ -138,7 +201,7 @@ export class Environment {
 
 export class Interpreter {
   private io: IOHandler;
-  private globals: Environment = new Environment();
+  public globals: Environment = new Environment();
   private environment: Environment = this.globals;
 
   public getVariables(): Record<string, any> {
@@ -296,6 +359,9 @@ export class Interpreter {
       case "ForStatement":
         await this.executeFor(stmt as ForStatement);
         break;
+      case "ClassDeclStatement":
+        await this.executeClassDecl(stmt as ClassDeclStatement);
+        break;
       case "ExpressionStatement":
         await this.evaluate(stmt.expression);
         break;
@@ -317,6 +383,27 @@ export class Interpreter {
   private async executeFunctionDecl(stmt: FunctionDeclStatement): Promise<void> {
     const fn = new UserFunction(stmt, this.environment);
     this.environment.define(stmt.name, fn);
+  }
+
+  private async executeClassDecl(stmt: ClassDeclStatement): Promise<void> {
+    const klass = new ClassCallable(stmt);
+    this.environment.define(stmt.name, klass);
+  }
+
+  private isInsideClassContext(instance: ClassInstance): boolean {
+    let env: Environment | null = this.environment;
+    while (env !== null) {
+      if (env.getVariables().has("this")) {
+        try {
+          const thisVal = env.get("this", 0);
+          if (thisVal === instance) {
+            return true;
+          }
+        } catch (e) {}
+      }
+      env = env.getOuter();
+    }
+    return false;
   }
 
   private async executeReturn(stmt: ReturnStatement): Promise<void> {
@@ -508,7 +595,11 @@ export class Interpreter {
         propKey = (target.property as LiteralExpression).value;
       }
 
-      obj[propKey] = value;
+      if (obj instanceof ClassInstance) {
+        obj.fields.set(propKey, value);
+      } else {
+        obj[propKey] = value;
+      }
     } else {
       throw new Error(`[Runtime Error] Invalid assignment target at line ${expr.line}.`);
     }
@@ -548,6 +639,19 @@ export class Interpreter {
       propKey = await this.evaluate(expr.property);
     } else {
       propKey = (expr.property as LiteralExpression).value;
+    }
+
+    if (obj instanceof ClassInstance) {
+      const method = obj.klass.declaration.methods.find(m => m.name === propKey);
+      if (method) {
+        if (method.visibility === "private" || method.visibility === "protected") {
+          if (!this.isInsideClassContext(obj)) {
+            throw new Error(`[Runtime Error] Cannot access ${method.visibility} method '${propKey}' of class '${obj.klass.declaration.name}' from outside context at line ${expr.line}.`);
+          }
+        }
+        return new BoundMethod(obj, method);
+      }
+      return obj.fields.get(propKey);
     }
 
     const val = obj[propKey];
@@ -603,6 +707,15 @@ export class Interpreter {
     if (typeof val === "object") {
       if (val instanceof UserFunction || val instanceof BuiltinFunction) {
         return `<function>`;
+      }
+      if (val instanceof ClassInstance) {
+        return val.toString();
+      }
+      if (val instanceof ClassCallable) {
+        return `<class ${val.declaration.name}>`;
+      }
+      if (val instanceof BoundMethod) {
+        return `<method>`;
       }
       return JSON.stringify(val);
     }

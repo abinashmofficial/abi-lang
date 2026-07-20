@@ -23,6 +23,10 @@ class Lexer {
         and: types_1.TokenType.AND,
         or: types_1.TokenType.OR,
         not: types_1.TokenType.NOT,
+        class: types_1.TokenType.CLASS,
+        public: types_1.TokenType.PUBLIC,
+        private: types_1.TokenType.PRIVATE,
+        protected: types_1.TokenType.PROTECTED,
     };
     constructor(source) {
         this.source = source.replace(/\r\n/g, "\n");

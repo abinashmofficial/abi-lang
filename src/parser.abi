@@ -1,4 +1,4 @@
-import { Token, TokenType, Statement, Expression } from "./types";
+import { Token, TokenType, Statement, Expression, ClassDeclStatement, MethodDecl } from "./types";
 
 export class Parser {
   private tokens: Token[];
@@ -64,6 +64,7 @@ export class Parser {
     if (this.match(TokenType.FOR)) return this.forStatement();
     if (this.match(TokenType.FUNC)) return this.functionDecl();
     if (this.match(TokenType.RETURN)) return this.returnStatement();
+    if (this.match(TokenType.CLASS)) return this.classDecl();
 
     return this.expressionStatement();
   }
@@ -490,5 +491,56 @@ export class Parser {
     }
 
     this.error(token, "Expect expression.");
+  }
+
+  private classDecl(): Statement {
+    const line = this.previous().line;
+    const name = this.consume(TokenType.IDENTIFIER, "Expect class name.").value;
+    this.consume(TokenType.LBRACE, "Expect '{' before class body.");
+
+    const methods: MethodDecl[] = [];
+    while (!this.check(TokenType.RBRACE) && !this.isAtEnd()) {
+      let visibility: "public" | "private" | "protected" = "public";
+
+      if (this.match(TokenType.PUBLIC)) {
+        visibility = "public";
+      } else if (this.match(TokenType.PRIVATE)) {
+        visibility = "private";
+      } else if (this.match(TokenType.PROTECTED)) {
+        visibility = "protected";
+      }
+
+      this.consume(TokenType.FUNC, "Expect 'func' for method declaration.");
+      const methodLine = this.previous().line;
+      const methodName = this.consume(TokenType.IDENTIFIER, "Expect method name.").value;
+
+      this.consume(TokenType.LPAREN, "Expect '(' after method name.");
+      const params: string[] = [];
+      if (!this.check(TokenType.RPAREN)) {
+        do {
+          params.push(this.consume(TokenType.IDENTIFIER, "Expect parameter name.").value);
+        } while (this.match(TokenType.COMMA));
+      }
+      this.consume(TokenType.RPAREN, "Expect ')' after parameters.");
+
+      this.consume(TokenType.LBRACE, "Expect '{' before method body.");
+      const body = this.block();
+
+      methods.push({
+        name: methodName,
+        params,
+        body,
+        visibility,
+        line: methodLine
+      });
+    }
+    this.consume(TokenType.RBRACE, "Expect '}' after class body.");
+
+    return {
+      type: "ClassDeclStatement",
+      name,
+      methods,
+      line
+    };
   }
 }

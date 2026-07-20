@@ -1,4 +1,4 @@
-import { Statement, FunctionDeclStatement } from "./types";
+import { Statement, FunctionDeclStatement, ClassDeclStatement, MethodDecl } from "./types";
 export interface IOHandler {
     print(message: string): void;
     input(prompt: string): Promise<string>;
@@ -26,6 +26,25 @@ export declare class UserFunction implements Callable {
     arity(): number;
     call(interpreter: Interpreter, args: any[]): Promise<any>;
 }
+export declare class ClassCallable implements Callable {
+    declaration: ClassDeclStatement;
+    constructor(declaration: ClassDeclStatement);
+    arity(): number;
+    call(interpreter: Interpreter, args: any[]): Promise<any>;
+}
+export declare class ClassInstance {
+    klass: ClassCallable;
+    fields: Map<string, any>;
+    constructor(klass: ClassCallable);
+    toString(): string;
+}
+export declare class BoundMethod implements Callable {
+    private instance;
+    private method;
+    constructor(instance: ClassInstance, method: MethodDecl);
+    arity(): number;
+    call(interpreter: Interpreter, args: any[]): Promise<any>;
+}
 export declare class Environment {
     private values;
     private outer;
@@ -38,7 +57,7 @@ export declare class Environment {
 }
 export declare class Interpreter {
     private io;
-    private globals;
+    globals: Environment;
     private environment;
     getVariables(): Record<string, any>;
     constructor(io: IOHandler);
@@ -48,6 +67,8 @@ export declare class Interpreter {
     private executePrint;
     private executeVarDecl;
     private executeFunctionDecl;
+    private executeClassDecl;
+    private isInsideClassContext;
     private executeReturn;
     private executeIf;
     private executeWhile;

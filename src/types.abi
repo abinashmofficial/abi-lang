@@ -48,6 +48,10 @@ export enum TokenType {
   RETURN = "RETURN",
   FOR = "FOR",
   IN = "IN",
+  CLASS = "CLASS",
+  PUBLIC = "PUBLIC",
+  PRIVATE = "PRIVATE",
+  PROTECTED = "PROTECTED",
 
   EOF = "EOF"
 }
@@ -70,7 +74,23 @@ export type Statement =
   | ForStatement
   | FunctionDeclStatement
   | ReturnStatement
-  | ExpressionStatement;
+  | ExpressionStatement
+  | ClassDeclStatement;
+
+export interface MethodDecl {
+  name: string;
+  params: string[];
+  body: Statement[];
+  visibility: "public" | "private" | "protected";
+  line: number;
+}
+
+export interface ClassDeclStatement {
+  type: "ClassDeclStatement";
+  name: string;
+  methods: MethodDecl[];
+  line: number;
+}
 
 export interface PrintStatement {
   type: "PrintStatement";

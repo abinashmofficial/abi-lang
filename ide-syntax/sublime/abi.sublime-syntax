@@ -1,0 +1,40 @@
+%YAML 1.2
+---
+name: AbiLang
+file_extensions: [abi]
+scope: source.abi
+
+contexts:
+  main:
+    - match: '#.*|//.*'
+      scope: comment.line.abi
+    - match: '\b(class|func|print|input|return|if|else|while|for|in|and|or|not|public|private|protected|import|export|from|const|let|interface|implements|extends|new|async|await|throw|try|catch|finally)\b'
+      scope: keyword.control.abi
+    - match: '\b(true|false|null)\b'
+      scope: constant.language.abi
+    - match: '\bthis\b'
+      scope: variable.language.this.abi
+    - match: '\b\d+(\.\d+)?\b'
+      scope: constant.numeric.abi
+    - match: '"'
+      scope: punctuation.definition.string.begin.abi
+      push: string_double
+    - match: "'"
+      scope: punctuation.definition.string.begin.abi
+      push: string_single
+
+  string_double:
+    - meta_scope: string.quoted.double.abi
+    - match: '\\.'
+      scope: constant.character.escape.abi
+    - match: '"'
+      scope: punctuation.definition.string.end.abi
+      pop: true
+
+  string_single:
+    - meta_scope: string.quoted.single.abi
+    - match: '\\.'
+      scope: constant.character.escape.abi
+    - match: "'"
+      scope: punctuation.definition.string.end.abi
+      pop: true

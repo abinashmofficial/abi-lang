@@ -33,4 +33,5 @@ export declare class Parser {
     private call;
     private finishCall;
     private primary;
+    private classDecl;
 }

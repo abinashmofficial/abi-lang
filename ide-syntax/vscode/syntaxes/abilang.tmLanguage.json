@@ -1,0 +1,129 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "AbiLang",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#identifiers"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.abi",
+          "match": "//.*"
+        },
+        {
+          "name": "comment.line.number-sign.abi",
+          "match": "#.*"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.abi",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.abi",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.abi",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.abi",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.template.abi",
+          "begin": "`",
+          "end": "`",
+          "patterns": [
+            {
+              "name": "constant.character.escape.abi",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.abi",
+          "match": "\\b\\d+(\\.\\d+)?\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.abi",
+          "match": "\\b(if|else|while|return|for|in|try|catch|finally|import|export|from|implements|extends)\\b"
+        },
+        {
+          "name": "keyword.declaration.abi",
+          "match": "\\b(func|class|const|let|interface|var|new|async|await|throw)\\b"
+        },
+        {
+          "name": "storage.modifier.abi",
+          "match": "\\b(public|private|protected)\\b"
+        },
+        {
+          "name": "keyword.other.abi",
+          "match": "\\b(print|input)\\b"
+        },
+        {
+          "name": "constant.language.boolean.abi",
+          "match": "\\b(true|false)\\b"
+        },
+        {
+          "name": "constant.language.null.abi",
+          "match": "\\bnull\\b"
+        },
+        {
+          "name": "keyword.operator.logical.abi",
+          "match": "\\b(and|or|not)\\b"
+        },
+        {
+          "name": "variable.language.this.abi",
+          "match": "\\bthis\\b"
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "entity.name.function.abi",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=\\s*\\()"
+        },
+        {
+          "name": "entity.name.type.class.abi",
+          "match": "\\b[A-Z][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.abi"
+}

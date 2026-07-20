@@ -1,0 +1,44 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "AbiLang UI",
+  "patterns": [
+    {
+      "name": "keyword.control.directive.abiui",
+      "match": "@include\\s*\\(\\s*\"[^\"]*\"\\s*\\)|@include\\s*\\(\\s*'[^']*'\\s*\\)"
+    },
+    {
+      "name": "keyword.control.directive.abiui",
+      "match": "@plugin\\s*\\(\\s*\"[^\"]*\"(?:,\\s*\"[^\"]*\")*(?:,\\s*[^)]*)?\\)"
+    },
+    {
+      "name": "comment.block.abiui",
+      "begin": "<%--",
+      "end": "--%>"
+    },
+    {
+      "begin": "<%(=)?",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.begin.abiui"
+        }
+      },
+      "end": "%>",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.end.abiui"
+        }
+      },
+      "name": "meta.embedded.block.abiui",
+      "contentName": "source.js",
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    {
+      "include": "text.html.basic"
+    }
+  ],
+  "scopeName": "text.html.abilangui"
+}

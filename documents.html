@@ -367,59 +367,50 @@ user1.update_email("abinash.official@example.com")
 print user1.get_info()  # Outputs: User: Abinash (abinash.official@example.com)</code></pre>
 
                 <h2>Controller Classes & OOP Inheritance</h2>
-                <p>Controllers manage application logic, coordinating between models and views. You can implement controller classes that inherit base behavior through dictionary compositions:</p>
+                <p>Controllers manage application logic, coordinating between models and views. You can implement controller classes that encapsulate behavior and restrict access using visibility modifiers:</p>
                 
-                <pre><code># file: controller/base_controller.abi
+                <pre><code># file: controller/controller.abi
+include("model/model.abi")
 
-# Base Controller Class/Factory
-func BaseController(controller_name) {
-    self = {}
-    self.name = controller_name
-
-    # Shared rendering utility method
-    func render_view(view_name, data) {
-        print "[BaseController] Preparing layout context for: " + self.name
-        return view(view_name, data)
+class Controller {
+    public func index() {
+        m = Model()
+        print "Calling model: " + m.data()
+        return view("index")
     }
-    self.render_view = render_view
 
-    return self
+    public func docs() {
+        return view("docs")
+    }
 }</code></pre>
 
-                <p>Next, inherit from the <code>BaseController</code> to construct specific controller implementations:</p>
+                <p>Additionally, you can define classes with public and private methods, using <code>this</code> to reference instance properties and methods:</p>
                 
                 <pre><code># file: controller/user_controller.abi
-include("controller/base_controller.abi")
 include("model/user_model.abi")
 
-# Derived UserController Class/Factory
-func UserController(user_id) {
-    # 1. Inherit attributes and methods from BaseController
-    self = BaseController("UserController")
-    self.user_id = user_id
-
-    # 2. Define controller actions (derived methods)
-    func show() {
-        # Fetch data using UserModel
-        user = UserModel(self.user_id, "Abinash", "abinash@example.com")
-        
-        # Invoke inherited render_view method
-        return self.render_view("profile", user)
+class UserController {
+    public func init(user_id) {
+        this.user_id = user_id
     }
-    self.show = show
 
-    return self
+    public func show() {
+        this.log_profile_view()
+        user_data = UserModel()
+        return view("profile")
+    }
+
+    private func log_profile_view() {
+        print "Accessing user profile for: " + this.user_id
+    }
 }</code></pre>
 
                 <p>Finally, register the controller action in your routing system:</p>
                 <pre><code># file: routes/route.abi
 include("controller/user_controller.abi")
 
-# Routing to OOP Controller Instance Action
-func handle_request(req_id) {
-    controller = UserController(req_id)
-    return controller.show()
-}</code></pre>
+# Routing maps actions to class methods:
+route("get", "/user/show", "user_controller@show", "user.show")</code></pre>
             </section>
 
             <!-- Section: Routing & Views -->
@@ -437,9 +428,11 @@ route("get", "/profile", "controller@show_profile", "user.profile")</code></pre>
                 <h3>Returning Views</h3>
                 <p>The built-in <code>view("filename")</code> helper automatically loads and processes the corresponding user interface definition from the project layout space:</p>
                 <pre><code># file: controller/controller.abi
-func index() {
-    # Automatically resolves to view/index.ui template
-    return view("index")
+class Controller {
+    public func index() {
+        # Automatically resolves to view/index.ui template
+        return view("index")
+    }
 }</code></pre>
             </section>
 

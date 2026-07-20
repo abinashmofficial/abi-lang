@@ -142,19 +142,32 @@ while count <= 3 {
                             <span class="cmd-label">1. Default Controller (controller/controller.abi)</span>
                             <pre><code>include("model/model.abi")
 
-func index() {
-    return view("index")
+class Controller {
+    public func index() {
+        m = Model()
+        print "Calling model: " + m.data()
+        return view("index")
+    }
+
+    public func docs() {
+        return view("docs")
+    }
 }</code></pre>
                         </div>
                         <div class="cmd-group">
                             <span class="cmd-label">2. Creating and Extending Controllers</span>
-                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">To create a custom controller and inherit all functions from the base controller, include both the model and the base controller:</p>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Controllers use object-oriented class syntax and support public, private, and protected visibility modifiers for methods. Member data can be assigned to <code>this</code>. To define dynamic route handlers, map paths to class action methods:</p>
                             <pre><code>include("model/model.abi")
 
-include("controller/controller.abi")
+class ProfileController {
+    public func show_profile() {
+        this.log_profile_view()
+        return view("profile")
+    }
 
-func show_profile() {
-    return view("profile")
+    private func log_profile_view() {
+        print "Accessing user profile..."
+    }
 }</code></pre>
                         </div>
                     </div>

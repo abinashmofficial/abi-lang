@@ -52,6 +52,36 @@ while count <= 5 {
 }
 ```
 
+### 6. Object-Oriented Programming (OOP) & Classes
+Define structured classes with class methods, member variables (using `this`), and visibility-based access control (`public`, `private`, `protected`):
+```
+class Controller {
+    public func init(name) {
+        this.name = name
+    }
+
+    public func index() {
+        this.log_access()
+        return view("index")
+    }
+
+    private func log_access() {
+        print "Internal action logged for: " + this.name
+    }
+}
+
+# Instantiate class
+c = Controller()
+c.init("HomeController")
+
+# Call public method
+c.index() 
+```
+
+Visibility rules:
+* `public`: Methods are accessible from any context.
+* `private` / `protected`: Methods are restricted and only accessible from within methods of the class instance. External access attempts will throw a runtime error.
+
 ---
 
 ## Development & Execution

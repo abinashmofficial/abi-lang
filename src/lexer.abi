@@ -22,6 +22,10 @@ export class Lexer {
     and: TokenType.AND,
     or: TokenType.OR,
     not: TokenType.NOT,
+    class: TokenType.CLASS,
+    public: TokenType.PUBLIC,
+    private: TokenType.PRIVATE,
+    protected: TokenType.PROTECTED,
   };
 
   constructor(source: string) {

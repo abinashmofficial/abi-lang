@@ -1,0 +1,25 @@
+%YAML 1.2
+---
+name: AbiLang UI
+file_extensions: [ui]
+scope: text.html.abilangui
+
+contexts:
+  main:
+    - match: '@include\s*\(\s*["''][^"'']*["'']\s*\)'
+      scope: keyword.control.directive.abiui
+    - match: '@plugin\s*\(\s*["''][^"'']*["''](?:,\s*["''][^"'']*["''])*(?:,\s*[^)]*)?\)'
+      scope: keyword.control.directive.abiui
+    - match: '<%'
+      scope: punctuation.section.embedded.begin.abiui
+      push: embedded_js
+    - match: ''
+      push: scope:text.html.basic
+
+  embedded_js:
+    - meta_scope: source.js.embedded.abiui
+    - match: '%>'
+      scope: punctuation.section.embedded.end.abiui
+      pop: true
+    - match: ''
+      push: scope:source.js

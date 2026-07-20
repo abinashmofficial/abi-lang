@@ -12,7 +12,8 @@
     "start": "node dist/cli.js",
     "test": "node dist/cli.js examples/name.abi",
     "dev:cli": "npx tsx src/cli.abi",
-    "web": "node scripts/dev.js"
+    "web": "node scripts/dev.js",
+    "install-syntax": "node scripts/install-syntax.js"
   },
   "dependencies": {},
   "devDependencies": {

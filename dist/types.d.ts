@@ -37,6 +37,10 @@ export declare enum TokenType {
     RETURN = "RETURN",
     FOR = "FOR",
     IN = "IN",
+    CLASS = "CLASS",
+    PUBLIC = "PUBLIC",
+    PRIVATE = "PRIVATE",
+    PROTECTED = "PROTECTED",
     EOF = "EOF"
 }
 export interface Token {
@@ -46,7 +50,20 @@ export interface Token {
     column: number;
 }
 export type ASTNode = Statement | Expression;
-export type Statement = PrintStatement | VarDeclStatement | IfStatement | WhileStatement | ForStatement | FunctionDeclStatement | ReturnStatement | ExpressionStatement;
+export type Statement = PrintStatement | VarDeclStatement | IfStatement | WhileStatement | ForStatement | FunctionDeclStatement | ReturnStatement | ExpressionStatement | ClassDeclStatement;
+export interface MethodDecl {
+    name: string;
+    params: string[];
+    body: Statement[];
+    visibility: "public" | "private" | "protected";
+    line: number;
+}
+export interface ClassDeclStatement {
+    type: "ClassDeclStatement";
+    name: string;
+    methods: MethodDecl[];
+    line: number;
+}
 export interface PrintStatement {
     type: "PrintStatement";
     expression: Expression;

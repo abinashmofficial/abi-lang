@@ -760,8 +760,21 @@ async function startServer() {
 
         const route = routes.find(r => r.method === req.method.toLowerCase() && r.path === urlPath);
         if (route) {
-            const actionName = route.action.split('@')[1];
-            const controllerFunc = interpreter.globals.get(actionName);
+            const parts = route.action.split('@');
+            const controllerNamespace = parts[0];
+            const actionName = parts[1];
+            let controllerFunc = interpreter.globals.get(actionName);
+            
+            const controllerClass = interpreter.globals.get(controllerNamespace) || interpreter.globals.get(controllerNamespace.charAt(0).toUpperCase() + controllerNamespace.slice(1));
+            if (controllerClass && controllerClass.declaration && controllerClass.declaration.type === "ClassDeclStatement") {
+                const instance = await controllerClass.call(interpreter, []);
+                const method = instance.klass.declaration.methods.find(m => m.name === actionName);
+                if (method) {
+                    const { BoundMethod } = require("./dist/interpreter");
+                    controllerFunc = new BoundMethod(instance, method);
+                }
+            }
+
             if (controllerFunc && typeof controllerFunc.call === 'function') {
                 let viewFile = await controllerFunc.call(interpreter, []);
                 if (viewFile && typeof viewFile === 'string') {
@@ -810,24 +823,32 @@ EOF
 cat << 'EOF' > controller/controller.abi
 include("model/model.abi")
 
-func index() {
-    return view("index")
-}
+class Controller {
+    public func index() {
+        m = Model()
+        print "Calling model: " + m.data()
+        return view("index")
+    }
 
-func docs() {
-    return view("docs")
+    public func docs() {
+        return view("docs")
+    }
 }
 EOF
 
 cat << 'EOF' > model/model.abi
-func data() {
-    return "Model data"
+class Model {
+    public func data() {
+        return "Model data"
+    }
 }
 EOF
 
 cat << 'EOF' > helpers/helpers.abi
-func get_platform_info() {
-    return "Running AbiLang " + VERSION + " by " + AUTHOR
+class Helpers {
+    public func get_platform_info() {
+        return "Running AbiLang " + VERSION + " by " + AUTHOR
+    }
 }
 EOF
 
@@ -916,8 +937,20 @@ if (!content.includes("globals.define(\"include\"")) {
             this.io.print(\`[Route Registered] \${method.toUpperCase()} \${path} -> \${action} (\${name})\\n\`);
             if (path === "/") {
                 const parts = action.split("@");
+                const controllerNamespace = parts[0];
                 const actionName = parts[1];
-                const controllerFunc = this.globals.get(actionName);
+                let controllerFunc = this.globals.get(actionName);
+
+                const controllerClass = this.globals.get(controllerNamespace) || this.globals.get(controllerNamespace.charAt(0).toUpperCase() + controllerNamespace.slice(1));
+                if (controllerClass && controllerClass.declaration && controllerClass.declaration.type === "ClassDeclStatement") {
+                    const instance = await controllerClass.call(this, []);
+                    const method = instance.klass.declaration.methods.find(m => m.name === actionName);
+                    if (method) {
+                        const { BoundMethod } = require("./interpreter");
+                        controllerFunc = new BoundMethod(instance, method);
+                    }
+                }
+
                 if (controllerFunc && typeof controllerFunc.call === "function") {
                     const result = await controllerFunc.call(this, []);
                     this.io.print(\`[Route Executed] Result: \${result}\\n\`);
@@ -959,6 +992,12 @@ const fs = require("fs");
 # Complete dependency link
 npm install --omit=dev
 npm link --force
+
+# Install syntax highlighting support for local IDEs
+if [ -f "$SCRIPT_DIR/scripts/install-syntax.js" ]; then
+    echo "Configuring local IDE syntax coloring..."
+    node "$SCRIPT_DIR/scripts/install-syntax.js"
+fi
 
 echo ""
 echo "============================================="

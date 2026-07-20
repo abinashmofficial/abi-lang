@@ -10,10 +10,51 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Project name: use first argument if provided, otherwise default to 'abilang'
-PROJECT_NAME="${1:-abilang}"
+echo ""
+echo "============================================="
+echo "   AbiLang Installer"
+echo "============================================="
+echo ""
 
-# Create and navigate to the project directory
+read -r -p "Enter project name [abilang]: " PROJECT_NAME_INPUT
+PROJECT_NAME="${PROJECT_NAME_INPUT:-abilang}"
+
+read -r -p "Enter port number [3000]: " PORT_INPUT
+PORT="${PORT_INPUT:-3000}"
+
+echo ""
+echo "Select a database type:"
+echo "  1) MySQL"
+echo "  2) PostgreSQL"
+echo "  3) MongoDB"
+echo "  4) SQLite"
+echo "  5) None"
+read -r -p "Enter choice [5]: " DB_CHOICE_INPUT
+DB_CHOICE="${DB_CHOICE_INPUT:-5}"
+
+case "$DB_CHOICE" in
+    1)
+        DB_DRIVER="mysql"
+        DB_DEFAULT_PORT="3306"
+        ;;
+    2)
+        DB_DRIVER="pgsql"
+        DB_DEFAULT_PORT="5432"
+        ;;
+    3)
+        DB_DRIVER="mongodb"
+        DB_DEFAULT_PORT="27017"
+        ;;
+    4)
+        DB_DRIVER="sqlite"
+        DB_DEFAULT_PORT=""
+        ;;
+    *)
+        DB_DRIVER="none"
+        DB_DEFAULT_PORT=""
+        ;;
+esac
+
 mkdir -p "$PROJECT_NAME"
 cd "$PROJECT_NAME"
 
@@ -29,8 +70,6 @@ mkdir -p support
 mkdir -p constants
 mkdir -p lang/en
 
-# Auto-create .env with defaults — no questions asked
-PORT=3000
 APP_NAME=$(echo "$PROJECT_NAME" | tr '[:lower:]' '[:upper:]')
 API_KEY="xyz123secret"
 
@@ -38,8 +77,9 @@ API_KEY="xyz123secret"
     echo "PORT=$PORT"
     echo "APP_NAME=$APP_NAME"
     echo "APP_LANG=en"
-    echo "DB_HOST="
-    echo "DB_PORT="
+    echo "DB_DRIVER=$DB_DRIVER"
+    echo "DB_HOST=127.0.0.1"
+    echo "DB_PORT=$DB_DEFAULT_PORT"
     echo "DB_DATABASE="
     echo "DB_USERNAME="
     echo "DB_PASSWORD="

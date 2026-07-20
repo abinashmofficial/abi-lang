@@ -5,7 +5,7 @@ const { Interpreter, BuiltinFunction } = require('./dist/interpreter');
 const { Lexer } = require('./dist/lexer');
 const { Parser } = require('./dist/parser');
 
-require.extensions['.ui'] = function (module, filename) {
+require.extensions['.jsx'] = function (module, filename) {
     const content = fs.readFileSync(filename, 'utf8');
     let script = 'const fs = require("fs");\nconst path = require("path");\nmodule.exports = function(require, console, context = {}) {\nconst __parts = [];\n';
     let processedContent = content;
@@ -85,7 +85,7 @@ let routes = [];
 let interpreter;
 const mimeTypes = {
     '.html': 'text/html',
-    '.ui': 'text/html',
+    '.jsx': 'text/html',
     '.css': 'text/css',
     '.js': 'text/javascript',
     '.png': 'image/png',
@@ -123,7 +123,7 @@ async function loadRoutes() {
     interpreter.globals.define("screen", new BuiltinFunction(1, async (args) => {
         const pathName = String(args[0]);
         const cleanPath = pathName.startsWith("screens/") ? pathName : "screens/" + pathName;
-        return cleanPath.endsWith(".ui") ? cleanPath : cleanPath + ".ui";
+        return cleanPath.endsWith(".jsx") ? cleanPath : cleanPath + ".jsx";
     }));
     interpreter.globals.define("route", new BuiltinFunction(4, async (args) => {
         routes.push({
@@ -154,7 +154,7 @@ function renderTemplate(filePath) {
 
 function clearAllCache() {
     Object.keys(require.cache).forEach(key => {
-        if (key.endsWith('.ui') || key.includes('/handlers/') || key.includes('/entities/') || key.includes('/support/')) {
+        if (key.endsWith('.jsx') || key.includes('/handlers/') || key.includes('/entities/') || key.includes('/support/')) {
             delete require.cache[key];
         }
     });
@@ -231,10 +231,10 @@ async function startServer() {
             })();
             if (handlerClass && handlerClass.declaration && handlerClass.declaration.type === "ClassDeclStatement") {
                 const instance = await handlerClass.call(interpreter, []);
-                const method = instance.klass.declaration.methods.find(m => m.name === actionName);
+                const method = instance.klass.findMethod(actionName);
                 if (method) {
                     const { BoundMethod } = require("./dist/interpreter");
-                    handlerFunc = new BoundMethod(instance, method);
+                    handlerFunc = new BoundMethod(instance, method, instance.klass.closure);
                 }
             }
 

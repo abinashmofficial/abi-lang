@@ -1,0 +1,38 @@
+import { Token, Statement } from "./types";
+export declare class Parser {
+    private tokens;
+    private current;
+    constructor(tokens: Token[]);
+    private isAtEnd;
+    private peek;
+    private previous;
+    private advance;
+    private check;
+    private match;
+    private consume;
+    private error;
+    parse(): Statement[];
+    private statement;
+    private printStatement;
+    private functionDecl;
+    private returnStatement;
+    private ifStatement;
+    private whileStatement;
+    private forStatement;
+    private block;
+    private expressionStatement;
+    private expression;
+    private assignment;
+    private logicalOr;
+    private logicalAnd;
+    private equality;
+    private comparison;
+    private term;
+    private factor;
+    private unary;
+    private call;
+    private finishCall;
+    private primary;
+    private classDecl;
+    private tryCatchStatement;
+}

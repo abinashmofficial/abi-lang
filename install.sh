@@ -150,7 +150,7 @@ else
     done
 fi
 
-cat << 'EOF' > screens/layout/header.ui
+cat << 'EOF' > screens/layout/header.jsx
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -255,8 +255,8 @@ cat << 'EOF' > lang/en/messages.json
 }
 EOF
 
-cat << 'EOF' > screens/index.ui
-load Header from "screens/layout/header.ui"
+cat << 'EOF' > screens/index.jsx
+load Header from "screens/layout/header.jsx"
 
 <script setup>
 const fs = require('fs');
@@ -378,10 +378,10 @@ try {
     </div>
 </section>
 
-load Footer from "screens/layout/footer.ui"
+load Footer from "screens/layout/footer.jsx"
 EOF
 
-cat << 'EOF' > screens/layout/footer.ui
+cat << 'EOF' > screens/layout/footer.jsx
     <footer class="text-center">
         <div class="container">
             <div class="row align-items-center">
@@ -406,13 +406,13 @@ cat << 'EOF' > screens/layout/footer.ui
 </html>
 EOF
 
-cat << 'EOF' > screens/docs.ui
-load Header from "screens/layout/header.ui"
-load Docx from "screens/docx.ui"
-load Footer from "screens/layout/footer.ui"
+cat << 'EOF' > screens/docs.jsx
+load Header from "screens/layout/header.jsx"
+load Docx from "screens/docx.jsx"
+load Footer from "screens/layout/footer.jsx"
 EOF
 
-cat << 'EOF' > screens/docx.ui
+cat << 'EOF' > screens/docx.jsx
 component
 
 <section class="portal-installation" style="margin-top: 20px; border-top: none;">
@@ -506,7 +506,7 @@ route("get", "/", "handler@index", "home")</code></pre>
                 </div>
                 <div class="cmd-group">
                     <span class="cmd-label">2. Returning Screens with the <code>screen()</code> Method</span>
-                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.ui</code> automatically, so you don't have to specify folders or file extensions.</p>
+                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.jsx</code> automatically, so you don't have to specify folders or file extensions.</p>
                 </div>
             </div>
 
@@ -521,18 +521,18 @@ route("get", "/", "handler@index", "home")</code></pre>
                     <pre><code>node scripts/install-syntax.js</code></pre>
                 </div>
                 <div class="cmd-group">
-                    <span class="cmd-label">Highlighting for .ui Components</span>
+                    <span class="cmd-label">Highlighting for .jsx Components</span>
                     <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Syntax coloring highlights components, import constructs, and expression placeholders identically to modern frontend codebases:</p>
                     <pre><code>component # Highlights component declarations
 
-load Header from "screens/layout/header.ui" # Highlights load & from keywords
-load Footer from "screens/layout/footer.ui"
+load Header from "screens/layout/header.jsx" # Highlights load & from keywords
+load Footer from "screens/layout/footer.jsx"
 
 &lt;script setup&gt;
 # Highlighting enabled inside script setup logic blocks
 &lt;/script&gt;
 
-&lt;h1&gt;{{ lang.title }}&lt;/h1&gt; # Highlighting enabled inside output placeholders</code></pre>
+&lt;h1&gt;&#x7b;&#x7b; lang.title &#x7d;&#x7d;&lt;/h1&gt; # Highlighting enabled inside output placeholders</code></pre>
                 </div>
             </div>
         </div>
@@ -548,7 +548,7 @@ const { Interpreter, BuiltinFunction } = require('./dist/interpreter');
 const { Lexer } = require('./dist/lexer');
 const { Parser } = require('./dist/parser');
 
-require.extensions['.ui'] = function (module, filename) {
+require.extensions['.jsx'] = function (module, filename) {
     const content = fs.readFileSync(filename, 'utf8');
     let script = 'const fs = require("fs");\nconst path = require("path");\nmodule.exports = function(require, console, context = {}) {\nconst __parts = [];\n';
     let processedContent = content;
@@ -650,7 +650,7 @@ let routes = [];
 let interpreter;
 const mimeTypes = {
     '.html': 'text/html',
-    '.ui': 'text/html',
+    '.jsx': 'text/html',
     '.css': 'text/css',
     '.js': 'text/javascript',
     '.png': 'image/png',
@@ -688,7 +688,7 @@ async function loadRoutes() {
     interpreter.globals.define("screen", new BuiltinFunction(1, async (args) => {
         const pathName = String(args[0]);
         const cleanPath = pathName.startsWith("screens/") ? pathName : "screens/" + pathName;
-        return cleanPath.endsWith(".ui") ? cleanPath : cleanPath + ".ui";
+        return cleanPath.endsWith(".jsx") ? cleanPath : cleanPath + ".jsx";
     }));
     interpreter.globals.define("route", new BuiltinFunction(4, async (args) => {
         routes.push({
@@ -719,7 +719,7 @@ function renderTemplate(filePath) {
 
 function clearAllCache() {
     Object.keys(require.cache).forEach(key => {
-        if (key.endsWith('.ui') || key.includes('/handlers/') || key.includes('/entities/') || key.includes('/support/')) {
+        if (key.endsWith('.jsx') || key.includes('/handlers/') || key.includes('/entities/') || key.includes('/support/')) {
             delete require.cache[key];
         }
     });
@@ -955,7 +955,7 @@ if (!content.includes("globals.define(\"include\"")) {
         this.globals.define("screen", new BuiltinFunction(1, async (args) => {
             const pathName = String(args[0]);
             const cleanPath = pathName.startsWith("screens/") ? pathName : "screens/" + pathName;
-            return cleanPath.endsWith(".ui") ? cleanPath : cleanPath + ".ui";
+            return cleanPath.endsWith(".jsx") ? cleanPath : cleanPath + ".jsx";
         }));
         this.globals.define("route", new BuiltinFunction(4, async (args) => {
             const method = String(args[0]);
@@ -972,10 +972,10 @@ if (!content.includes("globals.define(\"include\"")) {
                 const handlerClass = this.globals.get(handlerNamespace) || this.globals.get(handlerNamespace.charAt(0).toUpperCase() + handlerNamespace.slice(1));
                 if (handlerClass && handlerClass.declaration && handlerClass.declaration.type === "ClassDeclStatement") {
                     const instance = await handlerClass.call(this, []);
-                    const method = instance.klass.declaration.methods.find(m => m.name === actionName);
+                    const method = instance.klass.findMethod(actionName);
                     if (method) {
                         const { BoundMethod } = require("./interpreter");
-                        handlerFunc = new BoundMethod(instance, method);
+                        handlerFunc = new BoundMethod(instance, method, instance.klass.closure);
                     }
                 }
 

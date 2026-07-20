@@ -53,14 +53,40 @@ class UserFunction {
 exports.UserFunction = UserFunction;
 class ClassCallable {
     declaration;
-    constructor(declaration) {
+    closure;
+    constructor(declaration, closure) {
         this.declaration = declaration;
+        this.closure = closure;
+    }
+    findMethod(name) {
+        let method = this.declaration.methods.find(m => m.name === name);
+        if (method)
+            return method;
+        if (this.declaration.parent) {
+            try {
+                const parentClass = this.closure.get(this.declaration.parent, this.declaration.line);
+                if (parentClass instanceof ClassCallable) {
+                    return parentClass.findMethod(name);
+                }
+            }
+            catch (e) { }
+        }
+        return null;
     }
     arity() {
+        const initializer = this.findMethod("init");
+        if (initializer !== null) {
+            return initializer.params.length;
+        }
         return 0;
     }
     async call(interpreter, args) {
-        return new ClassInstance(this);
+        const instance = new ClassInstance(this);
+        const initializer = this.findMethod("init");
+        if (initializer !== null && args.length > 0) {
+            await (new BoundMethod(instance, initializer, this.closure)).call(interpreter, args);
+        }
+        return instance;
     }
 }
 exports.ClassCallable = ClassCallable;
@@ -78,15 +104,17 @@ exports.ClassInstance = ClassInstance;
 class BoundMethod {
     instance;
     method;
-    constructor(instance, method) {
+    closure;
+    constructor(instance, method, closure) {
         this.instance = instance;
         this.method = method;
+        this.closure = closure;
     }
     arity() {
         return this.method.params.length;
     }
     async call(interpreter, args) {
-        const env = new Environment(interpreter.globals);
+        const env = new Environment(this.closure);
         env.define("this", this.instance);
         for (let i = 0; i < this.method.params.length; i++) {
             env.define(this.method.params[i], args[i]);
@@ -334,7 +362,7 @@ class Interpreter {
         this.environment.define(stmt.name, fn);
     }
     async executeClassDecl(stmt) {
-        const klass = new ClassCallable(stmt);
+        const klass = new ClassCallable(stmt, this.environment);
         this.environment.define(stmt.name, klass);
     }
     async executeTryCatch(stmt) {
@@ -564,8 +592,16 @@ class Interpreter {
             throw new Error(`[Runtime Error] Can only call functions and classes at line ${expr.line}.`);
         }
         const callable = callee;
-        if (args.length !== callable.arity()) {
-            throw new Error(`[Runtime Error] Expected ${callable.arity()} arguments but got ${args.length} at line ${expr.line}.`);
+        if (callee instanceof ClassCallable) {
+            const initArity = callable.arity();
+            if (args.length !== 0 && args.length !== initArity) {
+                throw new Error(`[Runtime Error] Expected 0 or ${initArity} arguments but got ${args.length} at line ${expr.line}.`);
+            }
+        }
+        else {
+            if (args.length !== callable.arity()) {
+                throw new Error(`[Runtime Error] Expected ${callable.arity()} arguments but got ${args.length} at line ${expr.line}.`);
+            }
         }
         return await callable.call(this, args);
     }
@@ -582,26 +618,14 @@ class Interpreter {
             propKey = expr.property.value;
         }
         if (obj instanceof ClassInstance) {
-            let method = obj.klass.declaration.methods.find(m => m.name === propKey);
-            let currentClass = obj.klass;
-            while (!method && currentClass.declaration.parent) {
-                const parentName = currentClass.declaration.parent;
-                const parentClass = this.globals.get(parentName, expr.line);
-                if (parentClass instanceof ClassCallable) {
-                    method = parentClass.declaration.methods.find(m => m.name === propKey);
-                    currentClass = parentClass;
-                }
-                else {
-                    break;
-                }
-            }
+            const method = obj.klass.findMethod(propKey);
             if (method) {
                 if (method.visibility === "private" || method.visibility === "protected") {
                     if (!this.isInsideClassContext(obj)) {
                         throw new Error(`[Runtime Error] Cannot access ${method.visibility} method '${propKey}' of class '${obj.klass.declaration.name}' from outside context at line ${expr.line}.`);
                     }
                 }
-                return new BoundMethod(obj, method);
+                return new BoundMethod(obj, method, obj.klass.closure);
             }
             return obj.fields.get(propKey);
         }

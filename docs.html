@@ -182,7 +182,7 @@ route("get", "/", "handler@index", "home")</code></pre>
                         </div>
                         <div class="cmd-group">
                             <span class="cmd-label">2. Returning Screens with the <code>screen()</code> Method</span>
-                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.ui</code> automatically, so you don't have to specify folders or file extensions.</p>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.jsx</code> automatically, so you don't have to specify folders or file extensions.</p>
                         </div>
                     </div>
 
@@ -197,12 +197,12 @@ route("get", "/", "handler@index", "home")</code></pre>
                             <pre><code>node scripts/install-syntax.js</code></pre>
                         </div>
                         <div class="cmd-group">
-                            <span class="cmd-label">Highlighting for .ui Components</span>
+                            <span class="cmd-label">Highlighting for .jsx Components</span>
                             <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Syntax coloring highlights components, import constructs, and expression placeholders identically to modern frontend codebases:</p>
                             <pre><code>component # Highlights component declarations
 
-load Header from "screens/layout/header.ui" # Highlights load & from keywords
-load Footer from "screens/layout/footer.ui"
+load Header from "screens/layout/header.jsx" # Highlights load & from keywords
+load Footer from "screens/layout/footer.jsx"
 
 &lt;script setup&gt;
 # Highlighting enabled inside script setup logic blocks

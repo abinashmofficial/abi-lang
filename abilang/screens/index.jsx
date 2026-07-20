@@ -1,4 +1,4 @@
-@include("screens/layout/header.ui")
+@include("screens/layout/header.jsx")
 <%
 const fs = require('fs');
 const path = require('path');
@@ -131,4 +131,4 @@ try {
         </div>
     </div>
 </section>
-@include("screens/layout/footer.ui")
+@include("screens/layout/footer.jsx")

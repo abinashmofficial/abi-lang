@@ -65,6 +65,14 @@ function buildProject() {
     // 3. Run tsc (strictly local)
     try {
         execSync('npx --no-install tsc --project tsconfig.build.json', { stdio: 'pipe' });
+        const rootDist = path.resolve(__dirname, '../dist');
+        const abilangDist = path.resolve(__dirname, '../abilang/dist');
+        if (!fs.existsSync(abilangDist)) {
+            fs.mkdirSync(abilangDist, { recursive: true });
+        }
+        fs.readdirSync(rootDist).forEach(file => {
+            fs.copyFileSync(path.join(rootDist, file), path.join(abilangDist, file));
+        });
     } catch (error) {
         const stderr = error.stdout ? error.stdout.toString() : (error.message || "");
         formatAndPrintTscErrors(stderr);

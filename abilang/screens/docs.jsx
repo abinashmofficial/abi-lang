@@ -1,4 +1,4 @@
-@include("screens/layout/header.ui")
+@include("screens/layout/header.jsx")
 <section class="portal-installation" style="margin-top: 20px; border-top: none;">
     <div class="install-container">
         <h2 class="install-section-title">Documentation V1</h2>
@@ -89,10 +89,10 @@ route("get", "/", "handler@index", "home")</code></pre>
                 </div>
                 <div class="cmd-group">
                     <span class="cmd-label">2. Returning Screens with the <code>screen()</code> Method</span>
-                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.ui</code> automatically, so you don't have to specify folders or file extensions.</p>
+                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.jsx</code> automatically, so you don't have to specify folders or file extensions.</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
-@include("screens/layout/footer.ui")
+@include("screens/layout/footer.jsx")

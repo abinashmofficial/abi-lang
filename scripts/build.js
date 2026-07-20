@@ -23,8 +23,16 @@ files.forEach(file => {
 
 try {
     // 3. Compile using tsc
-    console.log("Compiling TypeScript compiler...");
     execSync('npx tsc --project tsconfig.build.json', { stdio: 'inherit' });
+
+    const rootDist = path.join(__dirname, '../dist');
+    const abilangDist = path.join(__dirname, '../abilang/dist');
+    if (!fs.existsSync(abilangDist)) {
+        fs.mkdirSync(abilangDist, { recursive: true });
+    }
+    fs.readdirSync(rootDist).forEach(file => {
+        fs.copyFileSync(path.join(rootDist, file), path.join(abilangDist, file));
+    });
 
     // 4. Bundle for browser using esbuild
     console.log("Bundling for web...");

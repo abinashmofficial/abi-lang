@@ -71,7 +71,7 @@
                 <ul class="nav-group-list">
                     <li class="nav-item"><a href="#handlers" class="nav-link">Handlers & Entities</a></li>
                     <li class="nav-item"><a href="#navigation" class="nav-link">Navigation & Screens</a></li>
-                    <li class="nav-item"><a href="#ui-template" class="nav-link">.ui Template Syntax</a></li>
+                    <li class="nav-item"><a href="#ui-template" class="nav-link">.jsx Template Syntax</a></li>
                 </ul>
             </div>
 
@@ -372,37 +372,37 @@ route("get", "/profile", "handler@show_profile", "user.profile")</code></pre>
                 <pre><code># file: handlers/handler.abi
 class Handler {
     public func index() {
-        # Automatically resolves to screens/index.ui template
+        # Automatically resolves to screens/index.jsx template
         return screen("index")
     }
 }</code></pre>
             </section>
 
 
-            <!-- Section: .ui Template Syntax -->
+            <!-- Section: .jsx Template Syntax -->
             <section id="ui-template" class="docs-section">
-                <h1>.ui Template Syntax</h1>
-                <p>AbiLang uses <code>.ui</code> files as its screen/view layer — similar to <code>.jsx</code> or <code>.tsx</code> in React. Every <code>.ui</code> file is a server-side template that renders to plain HTML. AbiLang introduces its own clean keywords so the syntax feels natural and easy to read.</p>
+                <h1>.jsx Template Syntax</h1>
+                <p>AbiLang uses <code>.jsx</code> files as its screen/view layer — similar to <code>.jsx</code> or <code>.tsx</code> in React. Every <code>.jsx</code> file is a server-side template that renders to plain HTML. AbiLang introduces its own clean keywords so the syntax feels natural and easy to read.</p>
 
                 <div class="callout callout-info">
-                    <strong>Philosophy:</strong> The <code>.ui</code> template syntax is designed to look like React/JSX — without any of the JavaScript build tooling complexity. Write HTML, add logic, compose screens — that's it.
+                    <strong>Philosophy:</strong> The <code>.jsx</code> template syntax is designed to look like React/JSX — without any of the JavaScript build tooling complexity. Write HTML, add logic, compose screens — that's it.
                 </div>
 
                 <h2>1. <code>load</code> — Include a Screen or Component</h2>
-                <p>The <code>load</code> keyword pulls another <code>.ui</code> file into the current screen, exactly where the statement appears. Think of it like React's <code>import</code> + JSX usage combined into one line.</p>
+                <p>The <code>load</code> keyword pulls another <code>.jsx</code> file into the current screen, exactly where the statement appears. Think of it like React's <code>import</code> + JSX usage combined into one line.</p>
 
-                <pre><code>load Header from "screens/layout/header.ui"
-load Docx   from "screens/docx.ui"
-load Footer from "screens/layout/footer.ui"</code></pre>
+                <pre><code>load Header from "screens/layout/header.jsx"
+load Docx   from "screens/docx.jsx"
+load Footer from "screens/layout/footer.jsx"</code></pre>
 
                 <div class="callout callout-tip">
                     <strong>Tip:</strong> The alias name (e.g. <code>Header</code>, <code>Docx</code>) is just a label for readability — it does not create a variable. The file is inlined at render time.
                 </div>
 
                 <h2>2. <code>component</code> — Mark a Reusable Component</h2>
-                <p>Place <code>component</code> at the top of any <code>.ui</code> file to mark it as a reusable partial. This is the AbiLang equivalent of <code>export default</code> in React. The keyword is stripped at render time — it is purely a semantic marker for developers and IDE tools.</p>
+                <p>Place <code>component</code> at the top of any <code>.jsx</code> file to mark it as a reusable partial. This is the AbiLang equivalent of <code>export default</code> in React. The keyword is stripped at render time — it is purely a semantic marker for developers and IDE tools.</p>
 
-                <pre><code># screens/docx.ui
+                <pre><code># screens/docx.jsx
 component
 
 &lt;section class="docs-section"&gt;
@@ -411,10 +411,10 @@ component
 &lt;/section&gt;</code></pre>
 
                 <p>Then use it inside any other screen:</p>
-                <pre><code># screens/docs.ui
-load Header from "screens/layout/header.ui"
-load Docx   from "screens/docx.ui"
-load Footer from "screens/layout/footer.ui"</code></pre>
+                <pre><code># screens/docs.jsx
+load Header from "screens/layout/header.jsx"
+load Docx   from "screens/docx.jsx"
+load Footer from "screens/layout/footer.jsx"</code></pre>
 
                 <h2>3. <code>&lt;script setup&gt;</code> — Logic Block</h2>
                 <p>Wrap server-side JavaScript logic inside a <code>&lt;script setup&gt;&lt;/script&gt;</code> block. This runs before the HTML is rendered. Use it to load language files, read environment variables, or prepare data for the template.</p>
@@ -450,9 +450,9 @@ try {
 &lt;/div&gt;</code></pre>
 
                 <h2>5. Complete Screen Example</h2>
-                <p>Here is a full <code>screens/index.ui</code> showing all four features working together:</p>
+                <p>Here is a full <code>screens/index.jsx</code> showing all four features working together:</p>
 
-                <pre><code>load Header from "screens/layout/header.ui"
+                <pre><code>load Header from "screens/layout/header.jsx"
 
 &lt;script setup&gt;
 const fs   = require('fs');
@@ -475,7 +475,7 @@ try {
     &lt;/div&gt;
 &lt;/section&gt;
 
-load Footer from "screens/layout/footer.ui"</code></pre>
+load Footer from "screens/layout/footer.jsx"</code></pre>
 
                 <h2>6. Keyword Reference</h2>
                 <table class="comparison-table">
@@ -490,7 +490,7 @@ load Footer from "screens/layout/footer.ui"</code></pre>
                     <tbody>
                         <tr>
                             <td class="strong"><code>load X from "path"</code></td>
-                            <td>Include another .ui file inline</td>
+                            <td>Include another .jsx file inline</td>
                             <td class="check-yes"><code>import X from "./X"</code> + <code>&lt;X /&gt;</code></td>
                             <td><code>@include("path")</code></td>
                         </tr>

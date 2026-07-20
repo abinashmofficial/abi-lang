@@ -6,56 +6,12 @@ if ! command -v node &> /dev/null; then
     exit 1
 fi
 
-# Detect non-interactive mode via flags or environment variables
-IS_INTERACTIVE=true
-for arg in "$@"; do
-    if [ "$arg" = "-y" ] || [ "$arg" = "--yes" ] || [ "$arg" = "--default" ] || [ "$arg" = "--non-interactive" ]; then
-        IS_INTERACTIVE=false
-    fi
-done
 
-if [ "$CI" = "true" ] || [ "$NONINTERACTIVE" = "1" ] || [ "$DEBIAN_FRONTEND" = "noninteractive" ] || [ -n "$GITHUB_ACTIONS" ]; then
-    IS_INTERACTIVE=false
-fi
-
-# Helper function to print to terminal
-print_msg() {
-    local msg="$1"
-    echo "$msg"
-}
-
-# Helper function to prompt user for input (handles interactive and non-interactive cases)
-prompt_user() {
-    local prompt_msg="$1"
-    local default_val="$2"
-    local result_var="$3"
-    local allow_empty="$4"
-    local input_val
-    
-    if [ "$IS_INTERACTIVE" = "true" ] && [ -t 0 ] && [ -t 1 ]; then
-        printf "%s" "$prompt_msg"
-        if read -r input_val; then
-            if [ -z "$input_val" ]; then
-                if [ "$allow_empty" != "true" ]; then
-                    input_val="$default_val"
-                else
-                    input_val=""
-                fi
-            fi
-        else
-            input_val="$default_val"
-        fi
-    else
-        input_val="$default_val"
-    fi
-    
-    eval "$result_var=\"$input_val\""
-}
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# 1. Ask for project name (defaults to abilang if empty)
-prompt_user "Enter project name [abilang]: " "abilang" PROJECT_NAME
+# Project name: use first argument if provided, otherwise default to 'abilang'
+PROJECT_NAME="${1:-abilang}"
 
 # Create and navigate to the project directory
 mkdir -p "$PROJECT_NAME"
@@ -73,120 +29,23 @@ mkdir -p support
 mkdir -p constants
 mkdir -p lang/en
 
-# 2. Ask if they want to configure environment variables (.env)
-prompt_user "Do you want to configure environment variables (.env)? (y/n) [y]: " "y" CREATE_ENV
+# Auto-create .env with defaults — no questions asked
+PORT=3000
+APP_NAME=$(echo "$PROJECT_NAME" | tr '[:lower:]' '[:upper:]')
+API_KEY="xyz123secret"
 
-if [[ "$CREATE_ENV" =~ ^[Yy]$ ]]; then
-    # Ask port question - if not given, leave empty (first value is empty default)
-    prompt_user "Enter PORT [3000]: " "3000" PORT "true"
-    
-    prompt_user "Do you want to configure database details? (y/n) [y]: " "y" CONFIGURE_DB
-    
-    DATABASE_TYPE=""
-    DATABASE_URL=""
-    
-    if [[ "$CONFIGURE_DB" =~ ^[Yy]$ ]]; then
-        print_msg ""
-        print_msg "Select Database Type:"
-        print_msg "1) mysql"
-        print_msg "2) postgres"
-        print_msg "3) mongodb"
-        print_msg "4) supabase"
-        print_msg "5) sqlite"
-        print_msg "6) sqlite3"
-        
-        prompt_user "Enter choice (1-6) [3]: " "3" DB_CHOICE
-        
-        case $DB_CHOICE in
-            1)
-                DATABASE_TYPE="mysql"
-                prompt_user "Enter DB_HOST [localhost]: " "localhost" DB_HOST
-                prompt_user "Enter DB_PORT [3306]: " "3306" DB_PORT
-                prompt_user "Enter DB_DATABASE [proflujo_academy]: " "proflujo_academy" DB_DATABASE
-                prompt_user "Enter DB_USERNAME [proflujo]: " "proflujo" DB_USERNAME
-                prompt_user "Enter DB_PASSWORD [letmein1!]: " "letmein1!" DB_PASSWORD
-                DEFAULT_URL="mysql://$DB_USERNAME:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE"
-                ;;
-            2)
-                DATABASE_TYPE="postgres"
-                prompt_user "Enter DB_HOST [localhost]: " "localhost" DB_HOST
-                prompt_user "Enter DB_PORT [5432]: " "5432" DB_PORT
-                prompt_user "Enter DB_DATABASE [proflujo_academy]: " "proflujo_academy" DB_DATABASE
-                prompt_user "Enter DB_USERNAME [proflujo]: " "proflujo" DB_USERNAME
-                prompt_user "Enter DB_PASSWORD [letmein1!]: " "letmein1!" DB_PASSWORD
-                DEFAULT_URL="postgres://$DB_USERNAME:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE"
-                ;;
-            3)
-                DATABASE_TYPE="mongodb"
-                DEFAULT_URL="mongodb://localhost:27017/$PROJECT_NAME"
-                ;;
-            4)
-                DATABASE_TYPE="supabase"
-                DEFAULT_URL="postgresql://postgres:password@db.supabase.co:5432/postgres"
-                ;;
-            5)
-                DATABASE_TYPE="sqlite"
-                DEFAULT_URL="sqlite://database.db"
-                ;;
-            6)
-                DATABASE_TYPE="sqlite3"
-                DEFAULT_URL="sqlite3://database.db"
-                ;;
-            *)
-                DATABASE_TYPE="mongodb"
-                DEFAULT_URL="mongodb://localhost:27017/$PROJECT_NAME"
-                ;;
-        esac
-        
-        if [ "$DATABASE_TYPE" != "postgres" ] && [ "$DATABASE_TYPE" != "mysql" ]; then
-            prompt_user "Enter DATABASE_URL [$DEFAULT_URL]: " "$DEFAULT_URL" DATABASE_URL
-        fi
-    fi
-    
-    prompt_user "Enter API_KEY [xyz123secret]: " "xyz123secret" API_KEY
-    
-    # Generate default uppercase APP_NAME matching project name
-    APP_NAME=$(echo "$PROJECT_NAME" | tr '[:lower:]' '[:upper:]')
-    
-    # Write .env file
-    {
-        if [ -n "$PORT" ]; then
-            echo "PORT=$PORT"
-        fi
-        if [ -n "$APP_NAME" ]; then
-            echo "APP_NAME=$APP_NAME"
-        fi
-        if [ "$DATABASE_TYPE" = "postgres" ]; then
-            echo "DB_CONNECTION=pgsql"
-            echo "DB_HOST=$DB_HOST"
-            echo "DB_PORT=$DB_PORT"
-            echo "DB_DATABASE=$DB_DATABASE"
-            echo "DB_USERNAME=$DB_USERNAME"
-            echo "DB_PASSWORD=$DB_PASSWORD"
-        elif [ "$DATABASE_TYPE" = "mysql" ]; then
-            echo "DB_CONNECTION=mysql"
-            echo "DB_HOST=$DB_HOST"
-            echo "DB_PORT=$DB_PORT"
-            echo "DB_DATABASE=$DB_DATABASE"
-            echo "DB_USERNAME=$DB_USERNAME"
-            echo "DB_PASSWORD=$DB_PASSWORD"
-        elif [ -n "$DATABASE_TYPE" ]; then
-            echo "DATABASE_TYPE=\"$DATABASE_TYPE\""
-            echo "DATABASE_URL=\"$DATABASE_URL\""
-        else
-            echo "DB_HOST="
-            echo "DB_PORT="
-            echo "DB_DATABASE="
-            echo "DB_USERNAME="
-            echo "DB_PASSWORD="
-        fi
-        if [ -n "$API_KEY" ]; then
-            echo "API_KEY=$API_KEY"
-        fi
-    } > .env
-    
-    echo ".env file created successfully!"
-fi
+{
+    echo "PORT=$PORT"
+    echo "APP_NAME=$APP_NAME"
+    echo "DB_HOST="
+    echo "DB_PORT="
+    echo "DB_DATABASE="
+    echo "DB_USERNAME="
+    echo "DB_PASSWORD="
+    echo "API_KEY=$API_KEY"
+} > .env
+
+echo ".env file created successfully!"
 
 # Base repository URL
 BASE_URL="https://raw.githubusercontent.com/abinashmofficial/abi-lang/main"
@@ -818,9 +677,14 @@ async function startServer() {
             const parts = route.action.split('@');
             const handlerNamespace = parts[0];
             const actionName = parts[1];
-            let handlerFunc = interpreter.globals.get(actionName);
+            let handlerFunc = null;
+            try { handlerFunc = interpreter.globals.get(actionName); } catch (e) { /* not a global func, check class below */ }
 
-            const handlerClass = interpreter.globals.get(handlerNamespace) || interpreter.globals.get(handlerNamespace.charAt(0).toUpperCase() + handlerNamespace.slice(1));
+            const handlerClass = (() => {
+                try { return interpreter.globals.get(handlerNamespace); } catch (e) {}
+                try { return interpreter.globals.get(handlerNamespace.charAt(0).toUpperCase() + handlerNamespace.slice(1)); } catch (e) {}
+                return null;
+            })();
             if (handlerClass && handlerClass.declaration && handlerClass.declaration.type === "ClassDeclStatement") {
                 const instance = await handlerClass.call(interpreter, []);
                 const method = instance.klass.declaration.methods.find(m => m.name === actionName);

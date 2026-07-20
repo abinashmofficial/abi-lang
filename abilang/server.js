@@ -221,9 +221,14 @@ async function startServer() {
             const parts = route.action.split('@');
             const handlerNamespace = parts[0];
             const actionName = parts[1];
-            let handlerFunc = interpreter.globals.get(actionName);
+            let handlerFunc = null;
+            try { handlerFunc = interpreter.globals.get(actionName); } catch (e) { /* not a global func, check class below */ }
 
-            const handlerClass = interpreter.globals.get(handlerNamespace) || interpreter.globals.get(handlerNamespace.charAt(0).toUpperCase() + handlerNamespace.slice(1));
+            const handlerClass = (() => {
+                try { return interpreter.globals.get(handlerNamespace); } catch (e) {}
+                try { return interpreter.globals.get(handlerNamespace.charAt(0).toUpperCase() + handlerNamespace.slice(1)); } catch (e) {}
+                return null;
+            })();
             if (handlerClass && handlerClass.declaration && handlerClass.declaration.type === "ClassDeclStatement") {
                 const instance = await handlerClass.call(interpreter, []);
                 const method = instance.klass.declaration.methods.find(m => m.name === actionName);

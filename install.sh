@@ -406,6 +406,14 @@ cat << 'EOF' > screens/layout/footer.abx
 </html>
 EOF
 
+cat << 'EOF' > screens/layout/layout.abx
+render Header from "screens/layout/header.abx"
+
+render Body from context.viewPage
+
+render Footer from "screens/layout/footer.abx"
+EOF
+
 cat << 'EOF' > screens/docs.abx
 render Header from "screens/layout/header.abx"
 render Docx from "screens/docx.abx"
@@ -560,14 +568,39 @@ require.extensions['.abx'] = function (module, filename) {
         let processedContent = content;
 
         processedContent = processedContent.replace(/^component\b[^\n]*/gm, '');
+        processedContent = processedContent.replace(/export\s+(\w+)\s*\{([\s\S]*?)\}/g, '$2');
 
-        const importRegex = /^load\s+\w+\s+from\s+['"]([^'"]+)['"]\s*$/gm;
-        processedContent = processedContent.replace(importRegex, (match, subPath) => {
-            let includePath = path.resolve(path.dirname(filename), subPath);
-            if (!fs.existsSync(includePath)) {
-                includePath = path.resolve(process.cwd(), subPath);
+        const importRegex = /^(?:export\s+)?(?:load|import|inject|render)\s+(\w+)\s+from\s+(?:['"]([^'"]+)['"]|([a-zA-Z0-9_\.]+))\s*$/gm;
+        let m;
+        const imports = [];
+        while ((m = importRegex.exec(processedContent)) !== null) {
+            imports.push({
+                match: m[0],
+                alias: m[1],
+                quotedPath: m[2],
+                varName: m[3]
+            });
+        }
+        imports.reverse().forEach(imp => {
+            const alias = imp.alias;
+            const tagRegex = new RegExp('<' + alias + '\\s*\\/?\\s*>(?:<\\/' + alias + '>)?', 'g');
+            const hasTag = tagRegex.test(processedContent);
+            let replacement = '';
+            if (imp.quotedPath) {
+                let includePath = path.resolve(path.dirname(filename), imp.quotedPath);
+                if (!fs.existsSync(includePath)) {
+                    includePath = path.resolve(process.cwd(), imp.quotedPath);
+                }
+                replacement = `<%= require(${JSON.stringify(includePath)})(require, console, context) %>`;
+            } else {
+                replacement = `<%= require(path.resolve(process.cwd(), ${imp.varName}))(require, console, context) %>`;
             }
-            return `<%= require(${JSON.stringify(includePath)})(require, console, context) %>`;
+            if (hasTag) {
+                processedContent = processedContent.replace(imp.match, '');
+                processedContent = processedContent.replace(tagRegex, replacement);
+            } else {
+                processedContent = processedContent.replace(imp.match, replacement);
+            }
         });
 
         const includeRegex = /@include\(['"]([^'"]+)['"]\)/g;
@@ -741,6 +774,24 @@ function renderTemplate(filePath) {
     if (require.cache[resolved]) {
         delete require.cache[resolved];
     }
+    
+    const layoutPath = path.resolve(path.dirname(filePath), 'layout/layout.abx');
+    const isLayoutFile = resolved.includes('/layout/');
+    
+    if (!isLayoutFile && fs.existsSync(layoutPath)) {
+        const fileContent = fs.readFileSync(resolved, 'utf8');
+        const needsLayoutWrapper = !fileContent.includes('Header') && !fileContent.includes('Layout');
+        if (needsLayoutWrapper) {
+            if (require.cache[layoutPath]) {
+                delete require.cache[layoutPath];
+            }
+            const exportedLayout = require(layoutPath);
+            if (exportedLayout && exportedLayout.isAbiLangTemplate) {
+                return exportedLayout(require, console, { viewPage: resolved });
+            }
+        }
+    }
+    
     const exported = require(resolved);
     if (exported && exported.isAbiLangTemplate) {
         return exported(require, console, {});

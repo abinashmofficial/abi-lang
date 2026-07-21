@@ -145,7 +145,7 @@
                 <h2>macOS & Linux Setup</h2>
                 <p>To run the single-click remote automated installation script, copy the command below:</p>
                 <pre><code class="language-bash"># Fetch and execute bash auto-installer script
-curl -fsSL https://raw.githubusercontent.com/abinashmofficial/abi-lang/main/install.sh | bash</code></pre>
+<span class="token-builtin">curl</span> <span class="token-string">-fsSL</span> <span class="token-constant">https://raw.githubusercontent.com/abinashmofficial/abi-lang/main/install.sh</span> <span class="token-logical">|</span> <span class="token-keyword">bash</span></code></pre>
 
                 <h2>Manual Compilation & Local Run</h2>
                 <p>If you prefer a manual setup, clone the repository, install its packages, and boot up the visual playground:</p>
@@ -567,6 +567,50 @@ render Sidebar from "screens/layout/sidebar.abx"
     &lt;p&gt;Available Links: {{ context.sidebarLinks.join(', ') }}&lt;/p&gt;
 &lt;/footer&gt;</code></pre>
 
+                <h2>8. Reusing the Profile Component</h2>
+                <p>Configure a component file, import/export its scope variables, and render it in multiple places with custom parameters.</p>
+                
+                <h3>1. Component View: <code>screens/components/profile_card.abx</code></h3>
+                <pre><code>&lt;script setup&gt;
+const os = require('os');
+const name = context.profileName || "Guest User";
+const role = context.profileRole || "Viewer";
+const platform = os.platform();
+const memory = Math.floor(os.freemem() / 1024 / 1024);
+&lt;/script&gt;
+
+&lt;div class="profile-card"&gt;
+    &lt;h2&gt;User Profile&lt;/h2&gt;
+    &lt;hr&gt;
+    &lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; {{ name }}&lt;/p&gt;
+    &lt;p&gt;&lt;strong&gt;Role:&lt;/strong&gt; {{ role }}&lt;/p&gt;
+    
+    &lt;div class="system-stats"&gt;
+        &lt;h3&gt;System Details&lt;/h3&gt;
+        &lt;ul&gt;
+            &lt;li&gt;&lt;strong&gt;OS Platform:&lt;/strong&gt; {{ platform }}&lt;/li&gt;
+            &lt;li&gt;&lt;strong&gt;Free Memory:&lt;/strong&gt; {{ memory }} MB&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+                <h3>2. Reusing in Main Screen: <code>screens/dashboard.abx</code></h3>
+                <pre><code>render Header from "screens/layout/header.abx"
+
+&lt;script setup&gt;
+context.profileName = "Abinash";
+context.profileRole = "Administrator";
+&lt;/script&gt;
+render ProfileCard1 from "screens/components/profile_card.abx"
+
+&lt;script setup&gt;
+context.profileName = "Jane Doe";
+context.profileRole = "Support Manager";
+&lt;/script&gt;
+render ProfileCard2 from "screens/components/profile_card.abx"
+
+render Footer from "screens/layout/footer.abx"</code></pre>
+
                 <div class="callout callout-info">
                     <strong>Backward Compatibility:</strong> The old <code>@include()</code> and <code>&lt;% %&gt;</code> / <code>&lt;%= %&gt;</code> syntax still works. You can mix old and new syntax in the same project during migration.
                 </div>
@@ -576,6 +620,70 @@ render Sidebar from "screens/layout/sidebar.abx"
             <section id="step-by-step-guide" class="docs-section">
                 <h1>Step-by-Step MVC Setup</h1>
                 <p>Configure a complete full-stack web application with handlers, entities, template views (using the unique <code>.abx</code> format), Node modules, and API mutators.</p>
+                
+                <h2>9. Master Layout Wrapper (Automatic Wrapping)</h2>
+                <p>Instead of rendering header and footer layouts manually on every page, you can define a single global layout template at <code>screens/layout/layout.abx</code>. The framework automatically detects this file and wraps your page screens in it.</p>
+                
+                <h3>1. Master Layout: <code>screens/layout/layout.abx</code></h3>
+                <p>Define the header, dynamic body view, and footer. Use the dynamic <code>context.viewPage</code> variable to import the targeted page view:</p>
+                <pre><code>render Header from "screens/layout/header.abx"
+render Body from context.viewPage
+render Footer from "screens/layout/footer.abx"</code></pre>
+
+                <h3>2. The Page View: <code>screens/dashboard.abx</code></h3>
+                <p>Since the header and footer are wrapped automatically, your screen file only needs to contain the middle content and setup block:</p>
+                <pre><code>&lt;script setup&gt;
+context.pageTitle = "My Dashboard";
+&lt;/script&gt;
+
+&lt;div class="container"&gt;
+    &lt;h1&gt;Dashboard Area&lt;/h1&gt;
+    &lt;p&gt;This content is injected directly in the middle of the screen layout.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+                
+                <h2>10. React-like Component Tag Rendering</h2>
+                <p>To write cleaner, component-driven layouts, declare imports at the top of your page using the standard <code>render</code> statement, and then render them inline inside your markup using custom component tags (like <code>&lt;ProfileCard /&gt;</code>).</p>
+                
+                <h3>Sample View Page: <code>screens/dashboard.abx</code></h3>
+                <pre><code>render ProfileCard from "screens/components/profile_card.abx"
+
+&lt;script setup&gt;
+context.profileName = "Abinash";
+context.profileRole = "Administrator";
+&lt;/script&gt;
+
+&lt;div class="container"&gt;
+    &lt;ProfileCard /&gt;
+&lt;/div&gt;</code></pre>
+                
+                <h2>11. Named Component Wrapping (Export Blocks)</h2>
+                <p>You can optionally wrap your HTML templates inside an <code>export ComponentName { ... }</code> block to define named layout structures explicitly:</p>
+                
+                <h3>Sample Component: <code>screens/components/profile_card.abx</code></h3>
+                <pre><code>&lt;script setup&gt;
+const os = require('os');
+export const name = context.profileName || "Guest User";
+export const role = context.profileRole || "Viewer";
+export const platform = os.platform();
+export const memory = Math.floor(os.freemem() / 1024 / 1024);
+&lt;/script&gt;
+
+export ProfileCard {
+    &lt;div class="profile-card"&gt;
+        &lt;h2&gt;User Profile&lt;/h2&gt;
+        &lt;hr&gt;
+        &lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; {{ name }}&lt;/p&gt;
+        &lt;p&gt;&lt;strong&gt;Role:&lt;/strong&gt; {{ role }}&lt;/p&gt;
+        
+        &lt;div class="system-stats"&gt;
+            &lt;h3&gt;System Details&lt;/h3&gt;
+            &lt;ul&gt;
+                &lt;li&gt;&lt;strong&gt;OS Platform:&lt;/strong&gt; {{ platform }}&lt;/li&gt;
+                &lt;li&gt;&lt;strong&gt;Free Memory:&lt;/strong&gt; {{ memory }} MB&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+}</code></pre>
                 
                 <h2>Step 1: Scaffolding files</h2>
                 <p>Create these directories in your workspace: <code>navigation/</code>, <code>handlers/</code>, <code>entities/</code>, <code>screens/</code>, <code>support/</code>, <code>constants/</code>.</p>

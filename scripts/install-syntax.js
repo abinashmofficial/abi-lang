@@ -139,12 +139,13 @@ const abilangUiTmGrammar = {
   "patterns": [
     {
       "name": "meta.keyword.load.abiui",
-      "match": "\\b(load|import|inject|render)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(from)\\s+(\"[^\"]*\"|'[^']*')",
+      "match": "\\b(?:(export)\\s+)?(load|import|inject|render)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(from)\\s+(\"[^\"]*\"|'[^']*')",
       "captures": {
         "1": { "name": "keyword.control.import.abiui" },
-        "2": { "name": "variable.other.readwrite.abiui" },
-        "3": { "name": "keyword.control.import.abiui" },
-        "4": { "name": "string.quoted.double.abiui" }
+        "2": { "name": "keyword.control.import.abiui" },
+        "3": { "name": "entity.name.type.class.abiui" },
+        "4": { "name": "keyword.control.import.abiui" },
+        "5": { "name": "string.quoted.double.abiui" }
       }
     },
     {

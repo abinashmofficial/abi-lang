@@ -550,80 +550,93 @@ const { Parser } = require('./dist/parser');
 
 require.extensions['.jsx'] = function (module, filename) {
     const content = fs.readFileSync(filename, 'utf8');
-    let script = 'const fs = require("fs");\nconst path = require("path");\nmodule.exports = function(require, console, context = {}) {\nconst __parts = [];\n';
-    let processedContent = content;
-
-    processedContent = processedContent.replace(/^component\b[^\n]*/gm, '');
-
-    const importRegex = /^load\s+\w+\s+from\s+['"]([^'"]+)['"]\s*$/gm;
-    processedContent = processedContent.replace(importRegex, (match, subPath) => {
-        let includePath = path.resolve(path.dirname(filename), subPath);
-        if (!fs.existsSync(includePath)) {
-            includePath = path.resolve(process.cwd(), subPath);
-        }
-        return `<%= require(${JSON.stringify(includePath)})(require, console, context) %>`;
-    });
-
-    const includeRegex = /@include\(['"]([^'"]+)['"]\)/g;
-    processedContent = processedContent.replace(includeRegex, (match, subPath) => {
-        let includePath = path.resolve(path.dirname(filename), subPath);
-        if (!fs.existsSync(includePath)) {
-            includePath = path.resolve(process.cwd(), subPath);
-        }
-        return `<%= require(${JSON.stringify(includePath)})(require, console, context) %>`;
-    });
-
-    const pluginRegex = /@plugin\(['"]([^'"]+)['"](?:,\s*['"]([^'"]+)['"])?(?:,\s*(.+?))?\)/g;
-    processedContent = processedContent.replace(pluginRegex, (match, moduleName, funcName, argsStr) => {
-        return `<%= (function() {
-            const plugin = require(${JSON.stringify(moduleName)});
-            if (${JSON.stringify(funcName)}) {
-                const func = plugin[${JSON.stringify(funcName)}];
-                if (typeof func === "function") {
-                    let args = [];
-                    if (${JSON.stringify(argsStr || "")}) {
-                        args = eval("[" + ${JSON.stringify(argsStr || "")} + "]");
-                    }
-                    return func(...args);
-                }
-                return plugin[${JSON.stringify(funcName)}] || "";
-            }
-            if (typeof plugin === "function") {
-                return plugin();
-            }
-            return String(plugin);
-        })() %>`;
-    });
-
-    processedContent = processedContent.replace(/<script\s+setup>([\s\S]*?)<\/script>/g, (match, code) => {
-        return `<% ${code.trim()} %>`;
-    });
-
-    processedContent = processedContent.replace(/\{\{\s*([\s\S]*?)\s*\}\}/g, (match, expr) => {
-        return `<%= ${expr.trim()} %>`;
-    });
-
-    const codeRegex = /<%([\s\S]*?)%>/g;
-    let index = 0;
-    let match;
-    while ((match = codeRegex.exec(processedContent)) !== null) {
-        script += `__parts.push(${JSON.stringify(processedContent.slice(index, match.index))});\n`;
-        const code = match[1].trim();
-        if (code.startsWith('=')) {
-            script += `__parts.push(${code.slice(1)});\n`;
-        } else {
-            script += `${code}\n`;
-        }
-        index = codeRegex.lastIndex;
-    }
-    script += `__parts.push(${JSON.stringify(processedContent.slice(index))});\n`;
-    script += `return __parts.join("");\n};\n`;
     const esbuild = require('esbuild');
-    const transpiled = esbuild.transformSync(script, {
-        loader: 'jsx',
-        target: 'node18',
-        format: 'cjs'
-    }).code;
+    const isReact = /require\(['"]react['"]\)/.test(content) || 
+                    /from\s+['"]react['"]/i.test(content) || 
+                    /import\s+React/i.test(content);
+    const isTemplate = !isReact;
+    let transpiled;
+    if (isTemplate) {
+        let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nconst __parts = [];\n';
+        let processedContent = content;
+
+        processedContent = processedContent.replace(/^component\b[^\n]*/gm, '');
+
+        const importRegex = /^load\s+\w+\s+from\s+['"]([^'"]+)['"]\s*$/gm;
+        processedContent = processedContent.replace(importRegex, (match, subPath) => {
+            let includePath = path.resolve(path.dirname(filename), subPath);
+            if (!fs.existsSync(includePath)) {
+                includePath = path.resolve(process.cwd(), subPath);
+            }
+            return `<%= require(${JSON.stringify(includePath)})(require, console, context) %>`;
+        });
+
+        const includeRegex = /@include\(['"]([^'"]+)['"]\)/g;
+        processedContent = processedContent.replace(includeRegex, (match, subPath) => {
+            let includePath = path.resolve(path.dirname(filename), subPath);
+            if (!fs.existsSync(includePath)) {
+                includePath = path.resolve(process.cwd(), subPath);
+            }
+            return `<%= require(${JSON.stringify(includePath)})(require, console, context) %>`;
+        });
+
+        const pluginRegex = /@plugin\(['"]([^'"]+)['"](?:,\s*['"]([^'"]+)['"])?(?:,\s*(.+?))?\)/g;
+        processedContent = processedContent.replace(pluginRegex, (match, moduleName, funcName, argsStr) => {
+            return `<%= (function() {
+                const plugin = require(${JSON.stringify(moduleName)});
+                if (${JSON.stringify(funcName)}) {
+                    const func = plugin[${JSON.stringify(funcName)}];
+                    if (typeof func === "function") {
+                        let args = [];
+                        if (${JSON.stringify(argsStr || "")}) {
+                            args = eval("[" + ${JSON.stringify(argsStr || "")} + "]");
+                        }
+                        return func(...args);
+                    }
+                    return plugin[${JSON.stringify(funcName)}] || "";
+                }
+                if (typeof plugin === "function") {
+                    return plugin();
+                }
+                return String(plugin);
+            })() %>`;
+        });
+
+        processedContent = processedContent.replace(/<script\s+setup>([\s\S]*?)<\/script>/g, (match, code) => {
+            return `<% ${code.trim()} %>`;
+        });
+
+        processedContent = processedContent.replace(/\{\{\s*([\s\S]*?)\s*\}\}/g, (match, expr) => {
+            return `<%= ${expr.trim()} %>`;
+        });
+
+        const codeRegex = /<%([\s\S]*?)%>/g;
+        let index = 0;
+        let match;
+        while ((match = codeRegex.exec(processedContent)) !== null) {
+            script += `__parts.push(${JSON.stringify(processedContent.slice(index, match.index))});\n`;
+            const code = match[1].trim();
+            if (code.startsWith('=')) {
+                script += `__parts.push(${code.slice(1)});\n`;
+            } else {
+                script += `${code}\n`;
+            }
+            index = codeRegex.lastIndex;
+        }
+        script += `__parts.push(${JSON.stringify(processedContent.slice(index))});\n`;
+        script += `return __parts.join("");\n};\nfn.isAbiLangTemplate = true;\nmodule.exports = fn;\n`;
+        transpiled = esbuild.transformSync(script, {
+            loader: 'js',
+            target: 'node18',
+            format: 'cjs'
+        }).code;
+    } else {
+        transpiled = esbuild.transformSync(content, {
+            loader: 'jsx',
+            target: 'node18',
+            format: 'cjs'
+        }).code;
+    }
     module._compile(transpiled, filename);
 };
 
@@ -713,8 +726,14 @@ function renderTemplate(filePath) {
     if (require.cache[resolved]) {
         delete require.cache[resolved];
     }
-    const templateFunc = require(resolved);
-    return templateFunc(require, console, {});
+    const exported = require(resolved);
+    if (exported && exported.isAbiLangTemplate) {
+        return exported(require, console, {});
+    }
+    const React = require('react');
+    const ReactDOMServer = require('react-dom/server');
+    const element = React.isValidElement(exported) ? exported : React.createElement(exported);
+    return ReactDOMServer.renderToStaticMarkup(element);
 }
 
 function clearAllCache() {

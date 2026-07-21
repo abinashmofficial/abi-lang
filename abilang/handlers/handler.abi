@@ -10,4 +10,8 @@ class Handler {
     public func docs() {
         return screen("docs")
     }
+
+    public func testReact() {
+        return screen("test_react")
+    }
 }

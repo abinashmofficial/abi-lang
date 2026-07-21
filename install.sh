@@ -799,7 +799,7 @@ async function startServer() {
                 const method = instance.klass.declaration.methods.find(m => m.name === actionName);
                 if (method) {
                     const { BoundMethod } = require("./dist/interpreter");
-                    handlerFunc = new BoundMethod(instance, method);
+                    handlerFunc = new BoundMethod(instance, method, instance.klass.closure);
                 }
             }
 
@@ -924,17 +924,7 @@ node -e '
 const fs = require("fs");
 let content = fs.readFileSync("dist/interpreter.js", "utf8");
 if (!content.includes("globals.define(\"include\"")) {
-    content = content.replace("this.globals.define(\"render_ui\", new BuiltinFunction(1, async (args) => {\n            const uiElement = args[0];\n            if (this.io && \"renderUI\" in this.io && typeof this.io.renderUI === \"function\") {\n                await this.io.renderUI(uiElement);\n            }\n            else {\n                this.io.print(`[UI Render Log] ${JSON.stringify(uiElement, null, 2)}\\n`);\n            }\n            return null;\n        }));\n    }", `this.globals.define("render_ui", new BuiltinFunction(1, async (args) => {
-            const uiElement = args[0];
-            if (this.io && "renderUI" in this.io && typeof this.io.renderUI === "function") {
-                await this.io.renderUI(uiElement);
-            }
-            else {
-                this.io.print(\`[UI Render Log] \${JSON.stringify(uiElement, null, 2)}\\n\`);
-            }
-            return null;
-        }));
-        this.globals.define("include", new BuiltinFunction(1, async (args) => {
+    content = content.replace("this.globals.define(\"render_ui\",", `this.globals.define("include", new BuiltinFunction(1, async (args) => {
             const filePath = String(args[0]);
             const fs = require("fs");
             const path = require("path");
@@ -988,7 +978,7 @@ if (!content.includes("globals.define(\"include\"")) {
             }
             return null;
         }));
-    }`);
+        this.globals.define("render_ui",`);
     fs.writeFileSync("dist/interpreter.js", content, "utf8");
 }
 '

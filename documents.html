@@ -72,7 +72,7 @@
                 <ul class="nav-group-list">
                     <li class="nav-item"><a href="#handlers" class="nav-link">Handlers & Entities</a></li>
                     <li class="nav-item"><a href="#navigation" class="nav-link">Navigation & Screens</a></li>
-                    <li class="nav-item"><a href="#ui-template" class="nav-link">.abx Template Syntax</a></li>
+                    <li class="nav-item"><a href="#ui-template" class="nav-link">Component & View Syntax</a></li>
                     <li class="nav-item"><a href="#step-by-step-guide" class="nav-link">Step-by-Step MVC Setup</a></li>
                 </ul>
             </div>
@@ -403,9 +403,9 @@ class Handler {
             </section>
 
 
-            <!-- Section: .abx Template Syntax -->
+            <!-- Section: Component & View Syntax -->
             <section id="ui-template" class="docs-section">
-                <h1>.abx Template Syntax</h1>
+                <h1>Component & View Syntax</h1>
                 <p>AbiLang uses <code>.abx</code> files as its screen/view layer — similar to <code>.jsx</code> or <code>.tsx</code> in React. Every <code>.abx</code> file is a server-side template that renders to plain HTML. AbiLang introduces its own clean keywords so the syntax feels natural and easy to read.</p>
 
                 <div class="callout callout-info">
@@ -415,9 +415,9 @@ class Handler {
                 <h2>1. <code>render</code> — Include a Screen or Component</h2>
                 <p>The <code>render</code> keyword pulls another <code>.abx</code> file into the current screen, exactly where the statement appears. This makes rendering UI components feel extremely natural and explicit.</p>
 
-                <pre><code>render Header from "screens/layout/header.abx"
-render Docx   from "screens/docx.abx"
-render Footer from "screens/layout/footer.abx"</code></pre>
+                <pre><code>render Header from "layout/header"
+render Docx   from "docx"
+render Footer from "layout/footer"</code></pre>
 
                 <div class="callout callout-tip">
                     <strong>Tip:</strong> The alias name (e.g. <code>Header</code>, <code>Docx</code>) is just a label for readability — it does not create a variable. The file is inlined at render time.
@@ -439,9 +439,9 @@ render Footer from "screens/layout/footer.abx"</code></pre>
 
                 <p>Then render it inside another screen:</p>
                 <pre><code># file: screens/docs.abx
-render Header from "screens/layout/header.abx"
-render Docx   from "screens/docx.abx"
-render Footer from "screens/layout/footer.abx"</code></pre>
+render Header from "layout/header"
+render Docx   from "docx"
+render Footer from "layout/footer"</code></pre>
 
                 <h2>3. <code>&lt;script setup&gt;</code> — Logic Block</h2>
                 <p>Wrap server-side JavaScript logic inside a <code>&lt;script setup&gt;&lt;/script&gt;</code> block. This runs before the HTML is rendered. Use it to load language files, read environment variables, or prepare data for the template.</p>
@@ -479,7 +479,7 @@ try {
                 <h2>5. Complete Screen Example</h2>
                 <p>Here is a full <code>screens/index.abx</code> showing all four features working together:</p>
 
-                <pre><code>render Header from "screens/layout/header.abx"
+                <pre><code>render Header from "layout/header"
 
 &lt;script setup&gt;
 const fs   = require('fs');
@@ -502,7 +502,7 @@ try {
     &lt;/div&gt;
 &lt;/section>
 
-render Footer from "screens/layout/footer.abx"</code></pre>
+render Footer from "layout/footer"</code></pre>
 
                 <h2>6. Keyword Reference</h2>
                 <table class="comparison-table">

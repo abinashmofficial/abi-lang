@@ -563,13 +563,22 @@ require.extensions['.abx'] = function (module, filename) {
                     /import\s+React/i.test(content);
     const isTemplate = !isReact;
     let transpiled;
+    const resolveTemplatePath = (importPath) => {
+        let directPath = path.resolve(path.dirname(filename), importPath);
+        if (fs.existsSync(directPath)) return directPath;
+        if (fs.existsSync(directPath + '.abx')) return directPath + '.abx';
+        
+        let relativeToScreens = importPath.startsWith('screens/') ? importPath : 'screens/' + importPath;
+        let screensPath = path.resolve(process.cwd(), relativeToScreens);
+        if (fs.existsSync(screensPath)) return screensPath;
+        if (fs.existsSync(screensPath + '.abx')) return screensPath + '.abx';
+        
+        return directPath;
+    };
+
     if (isTemplate) {
         let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nconst __parts = [];\nwith(context) {\n';
-        let processedContent = content;
-
-        processedContent = processedContent.replace(/^component\b[^\n]*/gm, '');
-        processedContent = processedContent.replace(/export\s+(\w+)\s*\{([\s\S]*?)\}/g, '$2');
-
+        let processedContent = content;        processedContent = processedContent.replace(/(?:export\s+component|export|component)\s+(\w+)\s*\{([\s\S]*?)\}/g, '$2');
         const importRegex = /^(?:export\s+)?(?:load|import|inject|render)\s+(\w+)\s+from\s+(?:['"]([^'"]+)['"]|([a-zA-Z0-9_\.]+))\s*$/gm;
         let m;
         const imports = [];
@@ -583,33 +592,53 @@ require.extensions['.abx'] = function (module, filename) {
         }
         imports.reverse().forEach(imp => {
             const alias = imp.alias;
-            const tagRegex = new RegExp('<' + alias + '\\s*\\/?\\s*>(?:<\\/' + alias + '>)?', 'g');
+            const tagRegex = new RegExp('<' + alias + '([^>]*?)(?:\\/>|>(?:[\\s\\S]*?<\\/' + alias + '>)?)', 'g');
             const hasTag = tagRegex.test(processedContent);
-            let replacement = '';
+            
+            let inlineReplacement = '';
             if (imp.quotedPath) {
-                let includePath = path.resolve(path.dirname(filename), imp.quotedPath);
-                if (!fs.existsSync(includePath)) {
-                    includePath = path.resolve(process.cwd(), imp.quotedPath);
-                }
-                replacement = `<%= require(${JSON.stringify(includePath)})(require, console, context) %>`;
+                let resolved = resolveTemplatePath(imp.quotedPath);
+                inlineReplacement = `<%= require(${JSON.stringify(resolved)})(require, console, Object.assign({}, context)) %>`;
             } else {
-                replacement = `<%= require(path.resolve(process.cwd(), ${imp.varName}))(require, console, context) %>`;
+                inlineReplacement = `<%= require(path.resolve(process.cwd(), ${imp.varName}))(require, console, Object.assign({}, context)) %>`;
             }
+
             if (hasTag) {
                 processedContent = processedContent.replace(imp.match, '');
-                processedContent = processedContent.replace(tagRegex, replacement);
+                processedContent = processedContent.replace(tagRegex, (match, attrStr) => {
+                    const attrs = [];
+                    const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*(?:['"]([^'"]*)['"]|{([\s\S]*?)}|([a-zA-Z0-9_\.]+))/g;
+                    let am;
+                    while ((am = attrRegex.exec(attrStr)) !== null) {
+                        const key = am[1];
+                        let valExpr = '';
+                        if (am[2] !== undefined) {
+                            valExpr = JSON.stringify(am[2]);
+                        } else if (am[3] !== undefined) {
+                            valExpr = am[3].trim();
+                        } else if (am[4] !== undefined) {
+                            valExpr = am[4];
+                        }
+                        attrs.push(`${JSON.stringify(key)}: ${valExpr}`);
+                    }
+                    const attrsObj = `{ ${attrs.join(', ')} }`;
+                    
+                    if (imp.quotedPath) {
+                        let resolved = resolveTemplatePath(imp.quotedPath);
+                        return `<%= require(${JSON.stringify(resolved)})(require, console, Object.assign({}, context, ${attrsObj})) %>`;
+                    } else {
+                        return `<%= require(path.resolve(process.cwd(), ${imp.varName}))(require, console, Object.assign({}, context, ${attrsObj})) %>`;
+                    }
+                });
             } else {
-                processedContent = processedContent.replace(imp.match, replacement);
+                processedContent = processedContent.replace(imp.match, inlineReplacement);
             }
         });
 
         const includeRegex = /@include\(['"]([^'"]+)['"]\)/g;
         processedContent = processedContent.replace(includeRegex, (match, subPath) => {
-            let includePath = path.resolve(path.dirname(filename), subPath);
-            if (!fs.existsSync(includePath)) {
-                includePath = path.resolve(process.cwd(), subPath);
-            }
-            return `<%= require(${JSON.stringify(includePath)})(require, console, context) %>`;
+            let resolved = resolveTemplatePath(subPath);
+            return `<%= require(${JSON.stringify(resolved)})(require, console, context) %>`;
         });
 
         const pluginRegex = /@plugin\(['"]([^'"]+)['"](?:,\s*['"]([^'"]+)['"])?(?:,\s*(.+?))?\)/g;

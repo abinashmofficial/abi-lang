@@ -9,6 +9,7 @@
             <button class="os-tab-btn" data-os="syntax">Syntax & Basic Rules</button>
             <button class="os-tab-btn" data-os="handlers">Handlers & Entities</button>
             <button class="os-tab-btn" data-os="navigation">Navigation & Screens</button>
+            <button class="os-tab-btn" data-os="idesyntax">IDE Syntax & Extensions</button>
         </div>
 
         <div class="install-code-blocks">
@@ -90,6 +91,18 @@ route("get", "/", "handler@index", "home")</code></pre>
                 <div class="cmd-group">
                     <span class="cmd-label">2. Returning Screens with the <code>screen()</code> Method</span>
                     <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.jsx</code> automatically, so you don't have to specify folders or file extensions.</p>
+                </div>
+            </div>
+
+            <div class="os-content" id="os-idesyntax">
+                <div class="cmd-group">
+                    <span class="cmd-label">IDE Syntax & Extensions Integration</span>
+                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">AbiLang supports standard file extensions (<code>.abi</code>, <code>.ab</code>, and <code>.abilang</code>) and provides customized, Laravel/PHP-like class highlighting configurations for popular code editors (VS Code, Vim, and Sublime Text). This formats classes, class declarations, visibility scopes, and parameters seamlessly with zero IDE errors.</p>
+                </div>
+                <div class="cmd-group">
+                    <span class="cmd-label">Configuring Syntax Highlighting</span>
+                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">To configure syntax highlighting globally for all editors on your device, execute the installer script:</p>
+                    <pre><code>node scripts/install-syntax.js</code></pre>
                 </div>
             </div>
         </div>

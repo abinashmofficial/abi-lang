@@ -27,5 +27,5 @@ Write-Host "4. Configuring local IDE syntax coloring..." -ForegroundColor Cyan
 node scripts/install-syntax.js
 
 Write-Host "`nInstallation Completed Successfully!" -ForegroundColor Green
-Write-Host "You can now run AbiLang scripts from any directory using: abi <script.vue>" -ForegroundColor Yellow
+Write-Host "You can now run AbiLang scripts from any directory using: abi <script.abi>" -ForegroundColor Yellow
 Write-Host "Try starting the interactive console by typing: abi" -ForegroundColor Yellow

@@ -8,10 +8,10 @@
   },
   "scripts": {
     "build": "node scripts/build.js",
-    "cli": "npx tsx src/cli.abi",
+    "cli": "npx tsx src/cli.ts",
     "start": "node dist/cli.js",
     "test": "node dist/cli.js examples/name.abi",
-    "dev:cli": "npx tsx src/cli.abi",
+    "dev:cli": "npx tsx src/cli.ts",
     "web": "node scripts/dev.js",
     "install-syntax": "node scripts/install-syntax.js"
   },

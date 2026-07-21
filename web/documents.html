@@ -53,6 +53,7 @@
                     <li class="nav-item"><a href="#introduction" class="nav-link active">Introduction</a></li>
                     <li class="nav-item"><a href="#structure" class="nav-link">Language Structure & Use</a></li>
                     <li class="nav-item"><a href="#installation" class="nav-link">Installation & CLI</a></li>
+                    <li class="nav-item"><a href="#ide-integration" class="nav-link">IDE Syntax & Extensions</a></li>
                 </ul>
             </div>
 
@@ -159,7 +160,28 @@ npm run build
 
 # 4. Spin up local interactive web playground
 npm run web</code></pre>
-                <p>Once running, navigate to <a href="http://127.0.0.1:8080" target="_blank" style="color: var(--abi-green);">http://127.0.0.1:8080</a> to access the sandbox interface locally.</p>
+            </section>
+
+            <!-- Section: IDE Syntax & Extensions -->
+            <section id="ide-integration" class="docs-section">
+                <h1>IDE Syntax & Extensions</h1>
+                <p>AbiLang provides official syntax highlighting and file extension configurations for popular IDEs (VS Code, Vim, and Sublime Text). This ensures developers get a seamless editing experience with zero error flags.</p>
+                
+                <h2>Supported File Extensions</h2>
+                <p>You can write and execute AbiLang script files using any of these standard extensions:</p>
+                <ul>
+                    <li><code>.abi</code> - Standard default extension</li>
+                    <li><code>.ab</code> - Short unique extension</li>
+                    <li><code>.abilang</code> - Explicit verbose extension</li>
+                </ul>
+
+                <h2>Laravel/PHP Style Highlights</h2>
+                <p>Classes, methods, and visibility scopes (<code>public</code>, <code>private</code>, <code>protected</code>) are configured to match standard Laravel PHP color profiles, highlighting classes and function namespaces dynamically.</p>
+                
+                <h2>Auto-Installer Script</h2>
+                <p>To register the file type associations and coloring configurations on your machine, run:</p>
+                <pre><code class="language-bash"># Run syntax installer globally
+node scripts/install-syntax.js</code></pre>
             </section>
 
             <!-- Section: Variables -->
@@ -671,7 +693,12 @@ load Footer from "screens/layout/footer.jsx"</code></pre>
                 pre.appendChild(btn);
 
                 btn.addEventListener("click", () => {
-                    navigator.clipboard.writeText(code.innerText).then(() => {
+                    const textLines = code.innerText.split("\n");
+                    const cleanText = textLines
+                        .filter(line => !line.trim().startsWith("#"))
+                        .join("\n")
+                        .trim();
+                    navigator.clipboard.writeText(cleanText).then(() => {
                         btn.innerText = "Copied!";
                         setTimeout(() => {
                             btn.innerText = "Copy";

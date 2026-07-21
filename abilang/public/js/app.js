@@ -776,7 +776,11 @@ window.addEventListener('DOMContentLoaded', () => {
       }
 
       copyBtn.addEventListener('click', () => {
-          const cleanText = codeElement.textContent.trim();
+          const textLines = codeElement.textContent.split("\n");
+          const cleanText = textLines
+              .filter(line => !line.trim().startsWith("#"))
+              .join("\n")
+              .trim();
           if (navigator.clipboard && navigator.clipboard.writeText) {
               navigator.clipboard.writeText(cleanText).then(() => {
                   showCopiedState();

@@ -6,6 +6,12 @@
       "include": "#comments"
     },
     {
+      "include": "#class-declarations"
+    },
+    {
+      "include": "#function-declarations"
+    },
+    {
       "include": "#strings"
     },
     {
@@ -28,6 +34,42 @@
         {
           "name": "comment.line.number-sign.abi",
           "match": "#.*"
+        }
+      ]
+    },
+    "class-declarations": {
+      "patterns": [
+        {
+          "match": "\\b(class)\\s+([a-zA-Z_][a-zA-Z0-9_]*)(?:\\s+(extends)\\s+([a-zA-Z_][a-zA-Z0-9_]*))?",
+          "captures": {
+            "1": {
+              "name": "storage.type.class.abi"
+            },
+            "2": {
+              "name": "entity.name.type.class.abi"
+            },
+            "3": {
+              "name": "keyword.control.abi"
+            },
+            "4": {
+              "name": "entity.other.inherited-class.abi"
+            }
+          }
+        }
+      ]
+    },
+    "function-declarations": {
+      "patterns": [
+        {
+          "match": "\\b(func)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "storage.type.function.abi"
+            },
+            "2": {
+              "name": "entity.name.function.abi"
+            }
+          }
         }
       ]
     },
@@ -83,8 +125,16 @@
           "match": "\\b(if|else|while|return|for|in|try|catch|finally|import|export|from|implements|extends|extents)\\b"
         },
         {
+          "name": "storage.type.class.abi",
+          "match": "\\bclass\\b"
+        },
+        {
+          "name": "storage.type.function.abi",
+          "match": "\\bfunc\\b"
+        },
+        {
           "name": "keyword.declaration.abi",
-          "match": "\\b(func|class|const|let|interface|var|new|async|await|throw)\\b"
+          "match": "\\b(const|let|interface|var|new|async|await|throw)\\b"
         },
         {
           "name": "storage.modifier.abi",

@@ -2,21 +2,20 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-// Helper to expand environment variables or tilde in paths
 function resolvePath(p) {
     if (p.startsWith('~')) {
         return path.join(os.homedir(), p.slice(1));
     }
-    // Resolve Windows env vars
     return p.replace(/%([^%]+)%/g, (_, name) => process.env[name] || '');
 }
 
-// 1. Define Grammar File Contents
 const abilangTmGrammar = {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "AbiLang",
   "patterns": [
     { "include": "#comments" },
+    { "include": "#class-declarations" },
+    { "include": "#function-declarations" },
     { "include": "#strings" },
     { "include": "#numbers" },
     { "include": "#keywords" },
@@ -27,6 +26,30 @@ const abilangTmGrammar = {
       "patterns": [
         { "name": "comment.line.double-slash.abi", "match": "//.*" },
         { "name": "comment.line.number-sign.abi", "match": "#.*" }
+      ]
+    },
+    "class-declarations": {
+      "patterns": [
+        {
+          "match": "\\b(class)\\s+([a-zA-Z_][a-zA-Z0-9_]*)(?:\\s+(extends)\\s+([a-zA-Z_][a-zA-Z0-9_]*))?",
+          "captures": {
+            "1": { "name": "storage.type.class.abi" },
+            "2": { "name": "entity.name.type.class.abi" },
+            "3": { "name": "keyword.control.abi" },
+            "4": { "name": "entity.other.inherited-class.abi" }
+          }
+        }
+      ]
+    },
+    "function-declarations": {
+      "patterns": [
+        {
+          "match": "\\b(func)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": { "name": "storage.type.function.abi" },
+            "2": { "name": "entity.name.function.abi" }
+          }
+        }
       ]
     },
     "strings": {
@@ -63,8 +86,16 @@ const abilangTmGrammar = {
           "match": "\\b(if|else|while|return|for|in|try|catch|finally|import|export|from|implements|extends|extents)\\b"
         },
         {
+          "name": "storage.type.class.abi",
+          "match": "\\bclass\\b"
+        },
+        {
+          "name": "storage.type.function.abi",
+          "match": "\\bfunc\\b"
+        },
+        {
           "name": "keyword.declaration.abi",
-          "match": "\\b(func|class|const|let|interface|var|new|async|await|throw)\\b"
+          "match": "\\b(const|let|interface|var|new|async|await|throw)\\b"
         },
         {
           "name": "storage.modifier.abi",
@@ -178,7 +209,7 @@ const vscodePackageJson = {
       {
         "id": "abilang",
         "aliases": ["AbiLang", "abilang"],
-        "extensions": [".abi"],
+        "extensions": [".abi", ".ab", ".abilang"],
         "configuration": "./language-configuration.json"
       },
       {
@@ -235,7 +266,9 @@ const vimAbiSyntax = `if exists("b:current_syntax")
   finish
 endif
 
-syn keyword abiKeyword class func print input return if else while for in and or not public private protected import export from const let interface implements extends extents new async await throw try catch finally this db_connect db_create db_update db_delete db_fetch dd
+syn keyword abiKeyword print input return if else while for in and or not import export from const let interface implements extends extents new async await throw try catch finally this db_connect db_create db_update db_delete db_fetch dd
+syn keyword abiStorage class func
+syn keyword abiModifier public private protected
 syn keyword abiConstant true false null
 syn match abiClass "\\b[A-Z][a-zA-Z0-9_]*\\b"
 syn match abiNumber "\\b\\d\\+\\(\\.\\d\\+\\)\\?\\b"
@@ -247,6 +280,8 @@ syn match abiComment "#.*"
 syn match abiComment "//.*"
 
 hi def link abiKeyword Keyword
+hi def link abiStorage StorageClass
+hi def link abiModifier StorageClass
 hi def link abiConstant Constant
 hi def link abiClass Type
 hi def link abiNumber Number
@@ -257,7 +292,7 @@ hi def link abiComment Comment
 let b:current_syntax = "abi"
 `;
 
-const vimAbiDetect = `au BufRead,BufNewFile *.abi set filetype=abi
+const vimAbiDetect = `au BufRead,BufNewFile *.abi,*.ab,*.abilang set filetype=abi
 `;
 
 const vimUiSyntax = `if exists("b:current_syntax")
@@ -289,14 +324,26 @@ const vimUiDetect = `au BufRead,BufNewFile *.ui set filetype=ui
 const sublimeAbiSyntax = `%YAML 1.2
 ---
 name: AbiLang
-file_extensions: [abi]
+file_extensions: [abi, ab, abilang]
 scope: source.abi
 
 contexts:
   main:
     - match: '#.*|//.*'
       scope: comment.line.abi
-    - match: '\\b(class|func|print|input|return|if|else|while|for|in|and|or|not|public|private|protected|import|export|from|const|let|interface|implements|extends|extents|new|async|await|throw|try|catch|finally|db_connect|db_create|db_update|db_delete|db_fetch|dd)\\b'
+    - match: '\\b(class)\\s+([a-zA-Z_][a-zA-Z0-9_]*)(?:\\s+(extends)\\s+([a-zA-Z_][a-zA-Z0-9_]*))?'
+      captures:
+        1: storage.type.class.abi
+        2: entity.name.type.class.abi
+        3: keyword.control.abi
+        4: entity.other.inherited-class.abi
+    - match: '\\b(func)\\s+([a-zA-Z_][a-zA-Z0-9_]*)'
+      captures:
+        1: storage.type.function.abi
+        2: entity.name.function.abi
+    - match: '\\b(public|private|protected)\\b'
+      scope: storage.modifier.abi
+    - match: '\\b(print|input|return|if|else|while|for|in|and|or|not|import|export|from|const|let|interface|implements|extends|extents|new|async|await|throw|try|catch|finally|db_connect|db_create|db_update|db_delete|db_fetch|dd)\\b'
       scope: keyword.control.abi
     - match: '\\b[A-Z][a-zA-Z0-9_]*\\b'
       scope: entity.name.type.class.abi
@@ -384,7 +431,6 @@ contexts:
       push: scope:source.js
 `;
 
-// 2. Generate Local Files in the Project (ide-syntax/)
 const localDir = path.join(__dirname, '../ide-syntax');
 console.log(`Writing local syntax files to ${localDir}...`);
 
@@ -407,10 +453,8 @@ fs.writeFileSync(path.join(localDir, 'vim/ftdetect/ui.vim'), vimUiDetect);
 fs.writeFileSync(path.join(localDir, 'sublime/abi.sublime-syntax'), sublimeAbiSyntax);
 fs.writeFileSync(path.join(localDir, 'sublime/ui.sublime-syntax'), sublimeUiSyntax);
 
-// 3. Install Syntax Support Globally for Local User IDEs
 console.log('\nInstalling syntax support globally on the local system...');
 
-// --- VS Code Extension Installation ---
 const vscodeDest = process.platform === 'win32'
     ? resolvePath('%USERPROFILE%\\.vscode\\extensions\\abilang-support')
     : resolvePath('~/.vscode/extensions/abilang-support');
@@ -427,7 +471,6 @@ try {
     console.warn(`! Failed to install VS Code extension: ${e.message}`);
 }
 
-// --- Vim/Neovim Installation ---
 const vimDest = process.platform === 'win32'
     ? resolvePath('%USERPROFILE%\\vimfiles')
     : resolvePath('~/.vim');
@@ -444,7 +487,6 @@ try {
     console.warn(`! Failed to install Vim files: ${e.message}`);
 }
 
-// --- Sublime Text Installation ---
 let sublimeDest = '';
 if (process.platform === 'win32') {
     sublimeDest = resolvePath('%APPDATA%\\Sublime Text\\Packages\\User');

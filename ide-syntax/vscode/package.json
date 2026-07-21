@@ -19,7 +19,9 @@
           "abilang"
         ],
         "extensions": [
-          ".abi"
+          ".abi",
+          ".ab",
+          ".abilang"
         ],
         "configuration": "./language-configuration.json"
       },

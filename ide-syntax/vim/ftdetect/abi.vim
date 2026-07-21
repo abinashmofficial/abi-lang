@@ -1,1 +1,1 @@
-au BufRead,BufNewFile *.abi set filetype=abi
+au BufRead,BufNewFile *.abi,*.ab,*.abilang set filetype=abi

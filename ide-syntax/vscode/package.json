@@ -1,7 +1,7 @@
 {
   "name": "abilang-support",
   "displayName": "AbiLang Support",
-  "description": "Syntax highlighting support for AbiLang (.abi) and AbiLang UI templates (.ui)",
+  "description": "Syntax highlighting support for AbiLang (.abi) and AbiLang UI templates (.ui and .abx)",
   "version": "1.0.0",
   "publisher": "abinashm",
   "engines": {
@@ -32,7 +32,8 @@
           "abilangui"
         ],
         "extensions": [
-          ".ui"
+          ".ui",
+          ".abx"
         ],
         "configuration": "./ui-language-configuration.json"
       }

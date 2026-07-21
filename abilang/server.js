@@ -14,7 +14,7 @@ require.extensions['.abx'] = function (module, filename) {
     const isTemplate = !isReact;
     let transpiled;
     if (isTemplate) {
-        let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nconst __parts = [];\n';
+        let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nconst __parts = [];\nwith(context) {\n';
         let processedContent = content;
         processedContent = processedContent.replace(/^component\b[^\n]*/gm, '');
         processedContent = processedContent.replace(/export\s+(\w+)\s*\{([\s\S]*?)\}/g, '$2');
@@ -115,7 +115,7 @@ require.extensions['.abx'] = function (module, filename) {
             index = codeRegex.lastIndex;
         }
         script += `__parts.push(${JSON.stringify(processedContent.slice(index))});\n`;
-        script += `return __parts.join("");\n};\nfn.isAbiLangTemplate = true;\nmodule.exports = fn;\n`;
+        script += `}\nreturn __parts.join("");\n};\nfn.isAbiLangTemplate = true;\nmodule.exports = fn;\n`;
         transpiled = esbuild.transformSync(script, {
             loader: 'js',
             target: 'node18',
@@ -278,6 +278,17 @@ async function startServer() {
     startWatcher();
 
     const server = http.createServer(async (req, res) => {
+        // CORS Headers
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+        if (req.method === 'OPTIONS') {
+            res.writeHead(204);
+            res.end();
+            return;
+        }
+
         const urlPath = req.url.split('?')[0];
 
         if (urlPath === '/favicon.ico') {

@@ -166,21 +166,22 @@ npm run web</code></pre>
             <!-- Section: IDE Syntax & Extensions -->
             <section id="ide-integration" class="docs-section">
                 <h1>IDE Syntax & Extensions</h1>
-                <p>AbiLang provides official syntax highlighting and file extension configurations for popular IDEs (VS Code, Vim, and Sublime Text). This ensures developers get a seamless editing experience with zero error flags.</p>
+                <p>AbiLang provides official syntax highlighting and file extension configurations for popular IDEs (VS Code, VS Code Insiders, Vim, and Sublime Text). This ensures developers get a seamless editing experience with zero error flags.</p>
                 
                 <h2>Supported File Extensions</h2>
-                <p>You can write and execute AbiLang script files using any of these standard extensions:</p>
+                <p>You can write and execute AbiLang script files and templates using any of these standard extensions:</p>
                 <ul>
                     <li><code>.abi</code> - Standard default extension</li>
                     <li><code>.ab</code> - Short unique extension</li>
                     <li><code>.abilang</code> - Explicit verbose extension</li>
+                    <li><code>.abx</code> - Component template and layouts extension</li>
                 </ul>
 
                 <h2>Laravel/PHP Style Highlights</h2>
-                <p>Classes, methods, and visibility scopes (<code>public</code>, <code>private</code>, <code>protected</code>) are configured to match standard Laravel PHP color profiles, highlighting classes and function namespaces dynamically.</p>
+                <p>Classes, methods, and visibility scopes (<code>public</code>, <code>private</code>, <code>protected</code>) are configured to match standard Laravel PHP color profiles, highlighting classes and function namespaces dynamically. This works natively for <code>.abi</code> files and <code>.abx</code> templates without requiring opening <code>&lt;?php</code> tags.</p>
                 
                 <h2>Auto-Installer Script</h2>
-                <p>To register the file type associations and coloring configurations on your machine, run:</p>
+                <p>To register the file type associations and coloring configurations globally for all editors on your machine (including VS Code and VS Code Insiders), run:</p>
                 <pre><code class="language-bash"># Run syntax installer globally
 node scripts/install-syntax.js</code></pre>
             </section>
@@ -423,7 +424,11 @@ render Footer from "screens/layout/footer.abx"</code></pre>
                 </div>
 
                 <h2>2. Reusable Layouts & Components</h2>
-                <p>In AbiLang, child layouts and reusable templates are simply plain <code>.abx</code> files. You do not need any special headers or keywords (like <code>component</code> or <code>export</code>) at the top of the file. Just write standard HTML and templating syntax.</p>
+                <p>In AbiLang, child layouts and reusable templates are simply plain <code>.abx</code> files. You do not need any special headers or keywords (like <code>component</code> or <code>export</code>) at the top of the file. Just write standard HTML and templating syntax. The rendering context is automatically scoped to the component (via <code>with(context)</code>), meaning properties can be outputted directly using <code>{{ variableName }}</code> instead of <code>{{ context.variableName }}</code>.</p>
+
+                <div class="callout callout-info">
+                    <strong>CORS Support:</strong> The built-in web server automatically configures CORS methods (<code>GET, POST, PUT, DELETE, OPTIONS</code>) and handles preflight options requests, ensuring backend APIs can be reached from external clients and browsers seamlessly.
+                </div>
 
                 <p>For example, a sub-screen component:</p>
                 <pre><code># file: screens/docx.abx
@@ -900,6 +905,7 @@ import Footer from "screens/layout/footer.abx"</code></pre>
         preElements.forEach(pre => {
             const code = pre.querySelector("code");
             if (code) {
+                if (pre.querySelector('.code-copy-btn')) return;
                 const btn = document.createElement("button");
                 btn.className = "code-copy-btn";
                 btn.innerText = "Copy";

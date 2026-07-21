@@ -200,7 +200,7 @@ const abilangUiTmGrammar = {
 const vscodePackageJson = {
   "name": "abilang-support",
   "displayName": "AbiLang Support",
-  "description": "Syntax highlighting support for AbiLang (.abi) and AbiLang UI templates (.ui)",
+  "description": "Syntax highlighting support for AbiLang (.abi) and AbiLang UI templates (.ui and .abx)",
   "version": "1.0.0",
   "publisher": "abinashm",
   "engines": { "vscode": "^1.0.0" },
@@ -216,7 +216,7 @@ const vscodePackageJson = {
       {
         "id": "abilangui",
         "aliases": ["AbiLang UI", "abilangui"],
-        "extensions": [".ui"],
+        "extensions": [".ui", ".abx"],
         "configuration": "./ui-language-configuration.json"
       }
     ],
@@ -472,6 +472,22 @@ try {
     console.log(`✓ VS Code Extension installed: ${vscodeDest}`);
 } catch (e) {
     console.warn(`! Failed to install VS Code extension: ${e.message}`);
+}
+
+const vscodeInsidersDest = process.platform === 'win32'
+    ? resolvePath('%USERPROFILE%\\.vscode-insiders\\extensions\\abilang-support')
+    : resolvePath('~/.vscode-insiders/extensions/abilang-support');
+
+try {
+    fs.mkdirSync(path.join(vscodeInsidersDest, 'syntaxes'), { recursive: true });
+    fs.writeFileSync(path.join(vscodeInsidersDest, 'package.json'), JSON.stringify(vscodePackageJson, null, 2));
+    fs.writeFileSync(path.join(vscodeInsidersDest, 'language-configuration.json'), JSON.stringify(vscodeLangConfig, null, 2));
+    fs.writeFileSync(path.join(vscodeInsidersDest, 'ui-language-configuration.json'), JSON.stringify(vscodeUiLangConfig, null, 2));
+    fs.writeFileSync(path.join(vscodeInsidersDest, 'syntaxes/abilang.tmLanguage.json'), JSON.stringify(abilangTmGrammar, null, 2));
+    fs.writeFileSync(path.join(vscodeInsidersDest, 'syntaxes/abilangui.tmLanguage.json'), JSON.stringify(abilangUiTmGrammar, null, 2));
+    console.log(`✓ VS Code Insiders Extension installed: ${vscodeInsidersDest}`);
+} catch (e) {
+    console.warn(`! Failed to install VS Code Insiders extension: ${e.message}`);
 }
 
 const vimDest = process.platform === 'win32'

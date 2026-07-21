@@ -648,6 +648,11 @@ if (launchBtn && portalView && hudView) {
             editor.focus();
         }, 400);
     });
+} else if (launchBtn) {
+    launchBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.location.href = "index.html?start=true";
+    });
 }
 
 // "Playground" navbar link transitions to editor workspace
@@ -720,6 +725,15 @@ if (viewPortalLink && portalView && hudView) {
     });
 }
 window.addEventListener('DOMContentLoaded', () => {
+  // Check if start/launch parameter is present to auto-start playground
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('start') === 'true' || urlParams.get('launch') === 'true') {
+      const launchBtn = document.getElementById("launch-btn");
+      if (launchBtn) {
+          launchBtn.click();
+      }
+  }
+
   const loadingAnim = document.querySelector('.loading-anim');
   if (loadingAnim) {
     loadingAnim.classList.add('loaded');
@@ -730,6 +744,7 @@ window.addEventListener('DOMContentLoaded', () => {
   installCodeBlocks.forEach(pre => {
       const codeElement = pre.querySelector('code');
       if (!codeElement) return;
+      if (pre.querySelector('.copy-btn') || pre.parentNode.classList.contains('code-wrapper')) return;
 
       const copyBtn = document.createElement('button');
       copyBtn.className = 'copy-btn';
@@ -856,54 +871,53 @@ if (canvas) {
     animate();
 }
 
-const lineCopyButtons = document.querySelectorAll('.line-copy-btn');
-lineCopyButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const text = btn.getAttribute('data-text');
-        if (!text) return;
-        
-        function showState() {
-            btn.classList.add('copied');
-            btn.setAttribute('title', 'Copied!');
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.line-copy-btn');
+    if (!btn) return;
+    const text = btn.getAttribute('data-text');
+    if (!text) return;
+    
+    function showState() {
+        btn.classList.add('copied');
+        btn.setAttribute('title', 'Copied!');
+        btn.innerHTML = `
+            <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: #42b883;">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+        `;
+        setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.setAttribute('title', 'Copy line');
             btn.innerHTML = `
-                <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: #42b883;">
-                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;">
+                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
                 </svg>
             `;
-            setTimeout(() => {
-                btn.classList.remove('copied');
-                btn.setAttribute('title', 'Copy line');
-                btn.innerHTML = `
-                    <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;">
-                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                    </svg>
-                `;
-            }, 2000);
-        }
+        }, 2000);
+    }
 
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(showState).catch(() => {
-                fallbackCopy(text);
-            });
-        } else {
+    function fallbackCopy(val) {
+        const textArea = document.createElement("textarea");
+        textArea.value = val;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showState();
+        } catch (err) {
+            console.error(err);
+        }
+        document.body.removeChild(textArea);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(showState).catch(() => {
             fallbackCopy(text);
-        }
-
-        function fallbackCopy(val) {
-            const textArea = document.createElement("textarea");
-            textArea.value = val;
-            textArea.style.position = "fixed";
-            textArea.style.left = "-999999px";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                showState();
-            } catch (err) {
-                console.error(err);
-            }
-            document.body.removeChild(textArea);
-        }
-    });
+        });
+    } else {
+        fallbackCopy(text);
+    }
 });

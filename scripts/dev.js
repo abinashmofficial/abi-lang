@@ -83,7 +83,7 @@ function startWatcher() {
 
 function startWebServer() {
     logInfo("Starting HTTP Web Server...");
-    const serverProcess = spawn('npx', ['-y', 'http-server', 'web', '-p', '8080'], {
+    const serverProcess = spawn('npx', ['-y', 'http-server', 'web', '-p', '8080', '--cors'], {
         stdio: 'inherit',
         shell: true
     });

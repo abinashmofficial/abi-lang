@@ -564,7 +564,7 @@ require.extensions['.abx'] = function (module, filename) {
     const isTemplate = !isReact;
     let transpiled;
     if (isTemplate) {
-        let script = 'const fs = require("fs");\\nconst path = require("path");\\nconst fn = function(require, console, context = {}) {\\nconst __parts = [];\\nwith(context) {\\n';
+        let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nconst __parts = [];\nwith(context) {\n';
         let processedContent = content;
 
         processedContent = processedContent.replace(/^component\b[^\n]*/gm, '');
@@ -672,7 +672,7 @@ require.extensions['.abx'] = function (module, filename) {
             index = codeRegex.lastIndex;
         }
         script += `__parts.push(${JSON.stringify(processedContent.slice(index))});\n`;
-        script += `}\\nreturn __parts.join("");\\n};\\nfn.isAbiLangTemplate = true;\\nmodule.exports = fn;\\n`;
+        script += `}\nreturn __parts.join("");\n};\nfn.isAbiLangTemplate = true;\nmodule.exports = fn;\n`;
         transpiled = esbuild.transformSync(script, {
             loader: 'js',
             target: 'node18',

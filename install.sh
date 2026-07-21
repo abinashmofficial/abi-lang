@@ -150,7 +150,7 @@ else
     done
 fi
 
-cat << 'EOF' > screens/layout/header.jsx
+cat << 'EOF' > screens/layout/header.abx
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -255,8 +255,8 @@ cat << 'EOF' > lang/en/messages.json
 }
 EOF
 
-cat << 'EOF' > screens/index.jsx
-load Header from "screens/layout/header.jsx"
+cat << 'EOF' > screens/index.abx
+render Header from "screens/layout/header.abx"
 
 <script setup>
 const fs = require('fs');
@@ -378,10 +378,10 @@ try {
     </div>
 </section>
 
-load Footer from "screens/layout/footer.jsx"
+render Footer from "screens/layout/footer.abx"
 EOF
 
-cat << 'EOF' > screens/layout/footer.jsx
+cat << 'EOF' > screens/layout/footer.abx
     <footer class="text-center">
         <div class="container">
             <div class="row align-items-center">
@@ -406,14 +406,13 @@ cat << 'EOF' > screens/layout/footer.jsx
 </html>
 EOF
 
-cat << 'EOF' > screens/docs.jsx
-load Header from "screens/layout/header.jsx"
-load Docx from "screens/docx.jsx"
-load Footer from "screens/layout/footer.jsx"
+cat << 'EOF' > screens/docs.abx
+render Header from "screens/layout/header.abx"
+render Docx from "screens/docx.abx"
+render Footer from "screens/layout/footer.abx"
 EOF
 
-cat << 'EOF' > screens/docx.jsx
-component
+cat << 'EOF' > screens/docx.abx
 
 <section class="portal-installation" style="margin-top: 20px; border-top: none;">
     <div class="install-container">
@@ -506,7 +505,7 @@ route("get", "/", "handler@index", "home")</code></pre>
                 </div>
                 <div class="cmd-group">
                     <span class="cmd-label">2. Returning Screens with the <code>screen()</code> Method</span>
-                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.jsx</code> automatically, so you don't have to specify folders or file extensions.</p>
+                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.abx</code> automatically, so you don't have to specify folders or file extensions.</p>
                 </div>
             </div>
 
@@ -521,12 +520,12 @@ route("get", "/", "handler@index", "home")</code></pre>
                     <pre><code>node scripts/install-syntax.js</code></pre>
                 </div>
                 <div class="cmd-group">
-                    <span class="cmd-label">Highlighting for .jsx Components</span>
-                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Syntax coloring highlights components, import constructs, and expression placeholders identically to modern frontend codebases:</p>
-                    <pre><code>component # Highlights component declarations
+                    <span class="cmd-label">Highlighting for .abx Components</span>
+                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Syntax coloring highlights components, render constructs, and expression placeholders identically to modern frontend codebases:</p>
+                    <pre><code># Reusable layout components
 
-load Header from "screens/layout/header.jsx" # Highlights load & from keywords
-load Footer from "screens/layout/footer.jsx"
+render Header from "screens/layout/header.abx" # Highlights load & from keywords
+render Footer from "screens/layout/footer.abx"
 
 &lt;script setup&gt;
 # Highlighting enabled inside script setup logic blocks
@@ -548,7 +547,7 @@ const { Interpreter, BuiltinFunction } = require('./dist/interpreter');
 const { Lexer } = require('./dist/lexer');
 const { Parser } = require('./dist/parser');
 
-require.extensions['.jsx'] = function (module, filename) {
+require.extensions['.abx'] = function (module, filename) {
     const content = fs.readFileSync(filename, 'utf8');
     const esbuild = require('esbuild');
     const isReact = /require\(['"]react['"]\)/.test(content) || 
@@ -603,7 +602,23 @@ require.extensions['.jsx'] = function (module, filename) {
         });
 
         processedContent = processedContent.replace(/<script\s+setup>([\s\S]*?)<\/script>/g, (match, code) => {
-            return `<% ${code.trim()} %>`;
+            let processedCode = code.trim();
+            processedCode = processedCode.replace(/\bimport\s+\{\s*([\w\s,]+)\s*\}\s+from\s+['"]([^'"]+)['"]/g, (m, vars, importPath) => {
+                let includePath = path.resolve(path.dirname(filename), importPath);
+                if (!fs.existsSync(includePath)) {
+                    includePath = path.resolve(process.cwd(), importPath);
+                }
+                const randomId = Math.floor(Math.random() * 1000000);
+                return `const _import_ctx_${randomId} = {}; require(${JSON.stringify(includePath)})(require, console, _import_ctx_${randomId}); const { ${vars} } = _import_ctx_${randomId};`;
+            });
+            processedCode = processedCode.replace(/\bexport\s+(const|let|var)\s+(\w+)\s*=/g, '$1 $2 = context.$2 =');
+            const matches = [...processedCode.matchAll(/\bexport\s+(function|class)\s+(\w+)\b/g)];
+            processedCode = processedCode.replace(/\bexport\s+(function|class)\s+(\w+)\b/g, '$1 $2');
+            matches.forEach(m => {
+                const name = m[2];
+                processedCode += `\ncontext.${name} = ${name};`;
+            });
+            return `<% ${processedCode} %>`;
         });
 
         processedContent = processedContent.replace(/\{\{\s*([\s\S]*?)\s*\}\}/g, (match, expr) => {
@@ -663,7 +678,7 @@ let routes = [];
 let interpreter;
 const mimeTypes = {
     '.html': 'text/html',
-    '.jsx': 'text/html',
+    '.abx': 'text/html',
     '.css': 'text/css',
     '.js': 'text/javascript',
     '.png': 'image/png',
@@ -701,7 +716,7 @@ async function loadRoutes() {
     interpreter.globals.define("screen", new BuiltinFunction(1, async (args) => {
         const pathName = String(args[0]);
         const cleanPath = pathName.startsWith("screens/") ? pathName : "screens/" + pathName;
-        return cleanPath.endsWith(".jsx") ? cleanPath : cleanPath + ".jsx";
+        return cleanPath.endsWith(".abx") ? cleanPath : cleanPath + ".abx";
     }));
     interpreter.globals.define("route", new BuiltinFunction(4, async (args) => {
         routes.push({
@@ -738,7 +753,7 @@ function renderTemplate(filePath) {
 
 function clearAllCache() {
     Object.keys(require.cache).forEach(key => {
-        if (key.endsWith('.jsx') || key.includes('/handlers/') || key.includes('/entities/') || key.includes('/support/')) {
+        if (key.endsWith('.abx') || key.includes('/handlers/') || key.includes('/entities/') || key.includes('/support/')) {
             delete require.cache[key];
         }
     });
@@ -964,7 +979,7 @@ if (!content.includes("globals.define(\"include\"")) {
         this.globals.define("screen", new BuiltinFunction(1, async (args) => {
             const pathName = String(args[0]);
             const cleanPath = pathName.startsWith("screens/") ? pathName : "screens/" + pathName;
-            return cleanPath.endsWith(".jsx") ? cleanPath : cleanPath + ".jsx";
+            return cleanPath.endsWith(".abx") ? cleanPath : cleanPath + ".abx";
         }));
         this.globals.define("route", new BuiltinFunction(4, async (args) => {
             const method = String(args[0]);

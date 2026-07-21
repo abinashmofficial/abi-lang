@@ -5,7 +5,7 @@ endif
 runtime! syntax/html.vim
 unlet b:current_syntax
 
-syn keyword uiKeyword component load from
+syn keyword uiKeyword component load import inject render export from
 syn match uiDirective "@include\s*([^\)]*)"
 syn match uiDirective "@plugin\s*([^\)]*)"
 syn region uiScriptBlock start="<script\s\+setup>" end="</script>" contains=@htmlJavaScript

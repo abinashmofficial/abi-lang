@@ -1,14 +1,16 @@
 %YAML 1.2
 ---
 name: AbiLang UI
-file_extensions: [ui]
+file_extensions: [abx]
 scope: text.html.abilangui
 
 contexts:
   main:
-    - match: '\b(load)\b'
+    - match: '\b(load|import|inject|render)\b'
       scope: keyword.control.import.abiui
     - match: '\b(from)\b'
+      scope: keyword.control.import.abiui
+    - match: '\b(export)\b'
       scope: keyword.control.import.abiui
     - match: '\b(component)\b'
       scope: keyword.control.component.abiui

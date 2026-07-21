@@ -5,7 +5,7 @@ const { Interpreter, BuiltinFunction } = require('./dist/interpreter');
 const { Lexer } = require('./dist/lexer');
 const { Parser } = require('./dist/parser');
 
-require.extensions['.jsx'] = function (module, filename) {
+require.extensions['.abx'] = function (module, filename) {
     const content = fs.readFileSync(filename, 'utf8');
     const esbuild = require('esbuild');
     const isReact = /require\(['"]react['"]\)/.test(content) || 
@@ -17,7 +17,7 @@ require.extensions['.jsx'] = function (module, filename) {
         let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nconst __parts = [];\n';
         let processedContent = content;
         processedContent = processedContent.replace(/^component\b[^\n]*/gm, '');
-        const importRegex = /^load\s+\w+\s+from\s+['"]([^'"]+)['"]\s*$/gm;
+        const importRegex = /^(?:load|import|inject|render)\s+\w+\s+from\s+['"]([^'"]+)['"]\s*$/gm;
         processedContent = processedContent.replace(importRegex, (match, subPath) => {
             let includePath = path.resolve(path.dirname(filename), subPath);
             if (!fs.existsSync(includePath)) {
@@ -55,7 +55,23 @@ require.extensions['.jsx'] = function (module, filename) {
             })() %>`;
         });
         processedContent = processedContent.replace(/<script\s+setup>([\s\S]*?)<\/script>/g, (match, code) => {
-            return `<% ${code.trim()} %>`;
+            let processedCode = code.trim();
+            processedCode = processedCode.replace(/\bimport\s+\{\s*([\w\s,]+)\s*\}\s+from\s+['"]([^'"]+)['"]/g, (m, vars, importPath) => {
+                let includePath = path.resolve(path.dirname(filename), importPath);
+                if (!fs.existsSync(includePath)) {
+                    includePath = path.resolve(process.cwd(), importPath);
+                }
+                const randomId = Math.floor(Math.random() * 1000000);
+                return `const _import_ctx_${randomId} = {}; require(${JSON.stringify(includePath)})(require, console, _import_ctx_${randomId}); const { ${vars} } = _import_ctx_${randomId};`;
+            });
+            processedCode = processedCode.replace(/\bexport\s+(const|let|var)\s+(\w+)\s*=/g, '$1 $2 = context.$2 =');
+            const matches = [...processedCode.matchAll(/\bexport\s+(function|class)\s+(\w+)\b/g)];
+            processedCode = processedCode.replace(/\bexport\s+(function|class)\s+(\w+)\b/g, '$1 $2');
+            matches.forEach(m => {
+                const name = m[2];
+                processedCode += `\ncontext.${name} = ${name};`;
+            });
+            return `<% ${processedCode} %>`;
         });
         processedContent = processedContent.replace(/\{\{\s*([\s\S]*?)\s*\}\}/g, (match, expr) => {
             return `<%= ${expr.trim()} %>`;
@@ -113,7 +129,7 @@ let routes = [];
 let interpreter;
 const mimeTypes = {
     '.html': 'text/html',
-    '.jsx': 'text/html',
+    '.abx': 'text/html',
     '.css': 'text/css',
     '.js': 'text/javascript',
     '.png': 'image/png',
@@ -151,7 +167,7 @@ async function loadRoutes() {
     interpreter.globals.define("screen", new BuiltinFunction(1, async (args) => {
         const pathName = String(args[0]);
         const cleanPath = pathName.startsWith("screens/") ? pathName : "screens/" + pathName;
-        return cleanPath.endsWith(".jsx") ? cleanPath : cleanPath + ".jsx";
+        return cleanPath.endsWith(".abx") ? cleanPath : cleanPath + ".abx";
     }));
     interpreter.globals.define("route", new BuiltinFunction(4, async (args) => {
         routes.push({
@@ -194,7 +210,7 @@ function renderTemplate(filePath) {
 
 function clearAllCache() {
     Object.keys(require.cache).forEach(key => {
-        if (key.endsWith('.jsx') || key.includes('/handlers/') || key.includes('/entities/') || key.includes('/support/')) {
+        if (key.endsWith('.abx') || key.includes('/handlers/') || key.includes('/entities/') || key.includes('/support/')) {
             delete require.cache[key];
         }
     });

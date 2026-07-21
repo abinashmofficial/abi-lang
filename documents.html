@@ -72,7 +72,8 @@
                 <ul class="nav-group-list">
                     <li class="nav-item"><a href="#handlers" class="nav-link">Handlers & Entities</a></li>
                     <li class="nav-item"><a href="#navigation" class="nav-link">Navigation & Screens</a></li>
-                    <li class="nav-item"><a href="#ui-template" class="nav-link">.jsx Template Syntax</a></li>
+                    <li class="nav-item"><a href="#ui-template" class="nav-link">.abx Template Syntax</a></li>
+                    <li class="nav-item"><a href="#step-by-step-guide" class="nav-link">Step-by-Step MVC Setup</a></li>
                 </ul>
             </div>
 
@@ -394,49 +395,48 @@ route("get", "/profile", "handler@show_profile", "user.profile")</code></pre>
                 <pre><code># file: handlers/handler.abi
 class Handler {
     public func index() {
-        # Automatically resolves to screens/index.jsx template
+        # Automatically resolves to screens/index.abx template
         return screen("index")
     }
 }</code></pre>
             </section>
 
 
-            <!-- Section: .jsx Template Syntax -->
+            <!-- Section: .abx Template Syntax -->
             <section id="ui-template" class="docs-section">
-                <h1>.jsx Template Syntax</h1>
-                <p>AbiLang uses <code>.jsx</code> files as its screen/view layer — similar to <code>.jsx</code> or <code>.tsx</code> in React. Every <code>.jsx</code> file is a server-side template that renders to plain HTML. AbiLang introduces its own clean keywords so the syntax feels natural and easy to read.</p>
+                <h1>.abx Template Syntax</h1>
+                <p>AbiLang uses <code>.abx</code> files as its screen/view layer — similar to <code>.jsx</code> or <code>.tsx</code> in React. Every <code>.abx</code> file is a server-side template that renders to plain HTML. AbiLang introduces its own clean keywords so the syntax feels natural and easy to read.</p>
 
                 <div class="callout callout-info">
-                    <strong>Philosophy:</strong> The <code>.jsx</code> template syntax is designed to look like React/JSX — without any of the JavaScript build tooling complexity. Write HTML, add logic, compose screens — that's it.
+                    <strong>Philosophy:</strong> The <code>.abx</code> template syntax is designed to look like React/JSX — without any of the JavaScript build tooling complexity. Write HTML, add logic, compose screens — that's it.
                 </div>
 
-                <h2>1. <code>load</code> — Include a Screen or Component</h2>
-                <p>The <code>load</code> keyword pulls another <code>.jsx</code> file into the current screen, exactly where the statement appears. Think of it like React's <code>import</code> + JSX usage combined into one line.</p>
+                <h2>1. <code>render</code> — Include a Screen or Component</h2>
+                <p>The <code>render</code> keyword pulls another <code>.abx</code> file into the current screen, exactly where the statement appears. This makes rendering UI components feel extremely natural and explicit.</p>
 
-                <pre><code>load Header from "screens/layout/header.jsx"
-load Docx   from "screens/docx.jsx"
-load Footer from "screens/layout/footer.jsx"</code></pre>
+                <pre><code>render Header from "screens/layout/header.abx"
+render Docx   from "screens/docx.abx"
+render Footer from "screens/layout/footer.abx"</code></pre>
 
                 <div class="callout callout-tip">
                     <strong>Tip:</strong> The alias name (e.g. <code>Header</code>, <code>Docx</code>) is just a label for readability — it does not create a variable. The file is inlined at render time.
                 </div>
 
-                <h2>2. <code>component</code> — Mark a Reusable Component</h2>
-                <p>Place <code>component</code> at the top of any <code>.jsx</code> file to mark it as a reusable partial. This is the AbiLang equivalent of <code>export default</code> in React. The keyword is stripped at render time — it is purely a semantic marker for developers and IDE tools.</p>
+                <h2>2. Reusable Layouts & Components</h2>
+                <p>In AbiLang, child layouts and reusable templates are simply plain <code>.abx</code> files. You do not need any special headers or keywords (like <code>component</code> or <code>export</code>) at the top of the file. Just write standard HTML and templating syntax.</p>
 
-                <pre><code># screens/docx.jsx
-component
-
+                <p>For example, a sub-screen component:</p>
+                <pre><code># file: screens/docx.abx
 &lt;section class="docs-section"&gt;
     &lt;h2&gt;Documentation V1&lt;/h2&gt;
     &lt;p&gt;AbiLang reference material...&lt;/p&gt;
 &lt;/section&gt;</code></pre>
 
-                <p>Then use it inside any other screen:</p>
-                <pre><code># screens/docs.jsx
-load Header from "screens/layout/header.jsx"
-load Docx   from "screens/docx.jsx"
-load Footer from "screens/layout/footer.jsx"</code></pre>
+                <p>Then render it inside another screen:</p>
+                <pre><code># file: screens/docs.abx
+render Header from "screens/layout/header.abx"
+render Docx   from "screens/docx.abx"
+render Footer from "screens/layout/footer.abx"</code></pre>
 
                 <h2>3. <code>&lt;script setup&gt;</code> — Logic Block</h2>
                 <p>Wrap server-side JavaScript logic inside a <code>&lt;script setup&gt;&lt;/script&gt;</code> block. This runs before the HTML is rendered. Use it to load language files, read environment variables, or prepare data for the template.</p>
@@ -464,7 +464,7 @@ try {
 
                 <pre><code>&lt;h1&gt;{{ lang.title }}&lt;/h1&gt;
 &lt;p&gt;{{ lang.subtitle }}&lt;/p&gt;
-
+ 
 &lt;div&gt;
     &lt;strong&gt;Platform:&lt;/strong&gt;  {{ os.platform() }}
     &lt;strong&gt;Memory:&lt;/strong&gt;   {{ Math.floor(os.freemem() / 1024 / 1024) }}MB
@@ -472,9 +472,9 @@ try {
 &lt;/div&gt;</code></pre>
 
                 <h2>5. Complete Screen Example</h2>
-                <p>Here is a full <code>screens/index.jsx</code> showing all four features working together:</p>
+                <p>Here is a full <code>screens/index.abx</code> showing all four features working together:</p>
 
-                <pre><code>load Header from "screens/layout/header.jsx"
+                <pre><code>render Header from "screens/layout/header.abx"
 
 &lt;script setup&gt;
 const fs   = require('fs');
@@ -495,9 +495,9 @@ try {
         Platform: {{ os.platform() }} |
         Memory:   {{ Math.floor(os.freemem() / 1024 / 1024) }}MB
     &lt;/div&gt;
-&lt;/section&gt;
+&lt;/section>
 
-load Footer from "screens/layout/footer.jsx"</code></pre>
+render Footer from "screens/layout/footer.abx"</code></pre>
 
                 <h2>6. Keyword Reference</h2>
                 <table class="comparison-table">
@@ -511,16 +511,10 @@ load Footer from "screens/layout/footer.jsx"</code></pre>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="strong"><code>load X from "path"</code></td>
-                            <td>Include another .jsx file inline</td>
+                            <td class="strong"><code>render X from "path"</code></td>
+                            <td>Include another .abx file inline</td>
                             <td class="check-yes"><code>import X from "./X"</code> + <code>&lt;X /&gt;</code></td>
                             <td><code>@include("path")</code></td>
-                        </tr>
-                        <tr>
-                            <td class="strong"><code>component</code></td>
-                            <td>Marks file as a reusable component</td>
-                            <td class="check-yes"><code>export default</code></td>
-                            <td>— (no equivalent)</td>
                         </tr>
                         <tr>
                             <td class="strong"><code>&lt;script setup&gt;...&lt;/script&gt;</code></td>
@@ -537,9 +531,120 @@ load Footer from "screens/layout/footer.jsx"</code></pre>
                     </tbody>
                 </table>
 
+                <h2>7. Sharing Data & Exports (Context & Props)</h2>
+                <p>AbiLang templates share a dynamic <code>context</code> object between parent screens and child layout templates. This allows you to pass data (props) down to layouts, or export data up from components.</p>
+                
+                <h3>Passing Data Down (Props)</h3>
+                <p>Assign any variable to the <code>context</code> object inside the parent screen's logic block:</p>
+                <pre><code># file: screens/index.abx
+&lt;script setup&gt;
+context.pageTitle = "Home Dashboard";
+context.user = { name: "Abinash", role: "Admin" };
+&lt;/script&gt;
+
+render Header from "screens/layout/header.abx"</code></pre>
+
+                <p>Then read and output the variables inside the child component/layout template:</p>
+                <pre><code># file: screens/layout/header.abx
+&lt;header&gt;
+    &lt;h1&gt;{{ context.pageTitle }}&lt;/h1&gt;
+    &lt;span&gt;Logged in as: {{ context.user.name }}&lt;/span&gt;
+&lt;/header&gt;</code></pre>
+
+                <h3>Exporting Data Up from Components</h3>
+                <p>If a reusable component prepares data or configuration, it can write directly to the shared <code>context</code> object to export it to the parent screen:</p>
+                <pre><code># file: screens/layout/sidebar.abx
+&lt;script setup&gt;
+# Export variable to parent template
+context.sidebarLinks = ["Home", "Docs", "Settings"];
+&lt;/script&gt;</code></pre>
+
+                <p>The parent template can access the exported variables anywhere after rendering the component:</p>
+                <pre><code># file: screens/index.abx
+render Sidebar from "screens/layout/sidebar.abx"
+
+&lt;footer&gt;
+    &lt;p&gt;Available Links: {{ context.sidebarLinks.join(', ') }}&lt;/p&gt;
+&lt;/footer&gt;</code></pre>
+
                 <div class="callout callout-info">
                     <strong>Backward Compatibility:</strong> The old <code>@include()</code> and <code>&lt;% %&gt;</code> / <code>&lt;%= %&gt;</code> syntax still works. You can mix old and new syntax in the same project during migration.
                 </div>
+            </section>
+
+            <!-- Section: Step-by-Step MVC Setup -->
+            <section id="step-by-step-guide" class="docs-section">
+                <h1>Step-by-Step MVC Setup</h1>
+                <p>Configure a complete full-stack web application with handlers, entities, template views (using the unique <code>.abx</code> format), Node modules, and API mutators.</p>
+                
+                <h2>Step 1: Scaffolding files</h2>
+                <p>Create these directories in your workspace: <code>navigation/</code>, <code>handlers/</code>, <code>entities/</code>, <code>screens/</code>, <code>support/</code>, <code>constants/</code>.</p>
+                
+                <h2>Step 2: Database Config</h2>
+                <pre><code># file: constants/constants.abi
+DB_HOST = "127.0.0.1"
+DB_PORT = 3306
+DB_NAME = "my_app"</code></pre>
+                
+                <h2>Step 3: Database Entity Model</h2>
+                <pre><code># file: entities/entity.abi
+func Entity() {
+    self = {}
+    self.data = func() {
+        return "AbiLang Database Service Core Loaded"
+    }
+    return self
+}</code></pre>
+                
+                <h2>Step 4: Request Handler Controller</h2>
+                <pre><code># file: handlers/handler.abi
+include("entities/entity.abi")
+
+class Handler {
+    public func index() {
+        e = Entity()
+        print "Accessing Controller: " + e.data()
+        return screen("index")
+    }
+
+    public func docs() {
+        return screen("docs")
+    }
+}</code></pre>
+                
+                <h2>Step 5: Route Registrations</h2>
+                <pre><code># file: navigation/routes.abi
+include("constants/constants.abi")
+include("handlers/handler.abi")
+
+route("get", "/", "handler@index", "home")
+route("get", "/docs", "handler@docs", "docs")</code></pre>
+                
+                <h2>Step 6: Frontend View Screens (.abx)</h2>
+                <p>Screens use the custom <code>.abx</code> extension. Inside <code>&lt;script setup&gt;</code>, you can load standard Node modules using <code>require()</code> dynamically:</p>
+                <pre><code># file: screens/index.abx
+import Header from "screens/layout/header.abx"
+
+&lt;script setup&gt;
+# Load standard node modules natively inside logic block
+const os = require('os');
+const fs = require('fs');
+
+platform = os.platform()
+arch = os.arch()
+total_mem = Math.floor(os.totalmem() / 1024 / 1024)
+&lt;/script&gt;
+
+&lt;div class="container mt-5"&gt;
+    &lt;h1&gt;System Statistics&lt;/h1&gt;
+    &lt;ul&gt;
+        &lt;li&gt;&lt;strong&gt;Platform:&lt;/strong&gt; {{ platform }}&lt;/li&gt;
+        &lt;li&gt;&lt;strong&gt;Architecture:&lt;/strong&gt; {{ arch }}&lt;/li&gt;
+        &lt;li&gt;&lt;strong&gt;Total Memory:&lt;/strong&gt; {{ total_mem }} MB&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;
+
+import Footer from "screens/layout/footer.abx"</code></pre>
             </section>
 
             <!-- Section: Comparison Table -->

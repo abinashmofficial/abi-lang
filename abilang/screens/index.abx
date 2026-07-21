@@ -1,4 +1,4 @@
-@include("screens/layout/header.jsx")
+render Header from "screens/layout/header.abx"
 <%
 const fs = require('fs');
 const path = require('path');
@@ -131,4 +131,4 @@ try {
         </div>
     </div>
 </section>
-@include("screens/layout/footer.jsx")
+render Footer from "screens/layout/footer.abx"

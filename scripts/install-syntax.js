@@ -139,7 +139,7 @@ const abilangUiTmGrammar = {
   "patterns": [
     {
       "name": "meta.keyword.load.abiui",
-      "match": "\\b(load)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(from)\\s+(\"[^\"]*\"|'[^']*')",
+      "match": "\\b(load|import|inject|render)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(from)\\s+(\"[^\"]*\"|'[^']*')",
       "captures": {
         "1": { "name": "keyword.control.import.abiui" },
         "2": { "name": "variable.other.readwrite.abiui" },
@@ -302,7 +302,7 @@ endif
 runtime! syntax/html.vim
 unlet b:current_syntax
 
-syn keyword uiKeyword component load from
+syn keyword uiKeyword component load import inject render export from
 syn match uiDirective "@include\\s*([^\\)]*)"
 syn match uiDirective "@plugin\\s*([^\\)]*)"
 syn region uiScriptBlock start="<script\\s\\+setup>" end="</script>" contains=@htmlJavaScript
@@ -318,7 +318,7 @@ hi def link uiCodeBlock Special
 let b:current_syntax = "ui"
 `;
 
-const vimUiDetect = `au BufRead,BufNewFile *.ui set filetype=ui
+const vimUiDetect = `au BufRead,BufNewFile *.ui,*.abx set filetype=ui
 `;
 
 const sublimeAbiSyntax = `%YAML 1.2
@@ -380,14 +380,16 @@ contexts:
 const sublimeUiSyntax = `%YAML 1.2
 ---
 name: AbiLang UI
-file_extensions: [ui]
+file_extensions: [abx]
 scope: text.html.abilangui
 
 contexts:
   main:
-    - match: '\\b(load)\\b'
+    - match: '\\b(load|import|inject|render)\\b'
       scope: keyword.control.import.abiui
     - match: '\\b(from)\\b'
+      scope: keyword.control.import.abiui
+    - match: '\\b(export)\\b'
       scope: keyword.control.import.abiui
     - match: '\\b(component)\\b'
       scope: keyword.control.component.abiui

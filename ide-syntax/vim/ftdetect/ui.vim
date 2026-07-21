@@ -1,1 +1,1 @@
-au BufRead,BufNewFile *.ui set filetype=ui
+au BufRead,BufNewFile *.ui,*.abx set filetype=ui

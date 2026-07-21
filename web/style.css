@@ -670,6 +670,7 @@ body.light-theme #editor::selection {
 .token-builtin { color: var(--token-builtin); }
 .token-function { color: var(--token-function); }
 .token-number { color: var(--token-number); }
+.token-class { color: var(--token-class); font-weight: 600; }
 
 /* Viewer Body Box Panel Content */
 .viewer-body {

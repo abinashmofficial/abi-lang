@@ -147,15 +147,16 @@ function highlightAbiLang(code) {
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
 
-    const tokenRegex = /(#(?:.*)$|\/\/(?:.*)$)|(".*?"|'.*?')|(\b(?:if|else|while|return|func)\b)|(\b(?:and|or|not)\b)|(\b(?:true|false|null)\b)|(\b(?:print|input|fetch|json_parse|create_text|create_button|create_column|create_row|render_ui|draw_screen)\b)|(\b[a-zA-Z_][a-zA-Z0-9_]*\b(?=\s*\())|(\b\d+(?:\.\d+)?\b)/gm;
+    const tokenRegex = /(#(?:.*)$|\/\/(?:.*)$)|(".*?"|'.*?')|(\b(?:if|else|while|return|func|class|extends|public|private|protected|try|catch|finally|import|from|inject|render|export)\b)|(\b(?:and|or|not)\b)|(\b(?:true|false|null)\b)|(\b(?:print|input|fetch|json_parse|create_text|create_button|create_column|create_row|render_ui|draw_screen|db_connect|db_create|db_update|db_delete|db_fetch|dd)\b)|(\b[A-Z][a-zA-Z0-9_]*\b)|(\b[a-zA-Z_][a-zA-Z0-9_]*\b(?=\s*\())|(\b\d+(?:\.\d+)?\b)/gm;
 
-    html = html.replace(tokenRegex, (match, comment, string, keyword, logical, constant, builtin, funcName, number) => {
+    html = html.replace(tokenRegex, (match, comment, string, keyword, logical, constant, builtin, className, funcName, number) => {
         if (comment) return `<span class="token-comment">${match}</span>`;
         if (string) return `<span class="token-string">${match}</span>`;
         if (keyword) return `<span class="token-keyword">${match}</span>`;
         if (logical) return `<span class="token-logical">${match}</span>`;
         if (constant) return `<span class="token-constant">${match}</span>`;
         if (builtin) return `<span class="token-builtin">${match}</span>`;
+        if (className) return `<span class="token-class">${match}</span>`;
         if (funcName) return `<span class="token-function">${match}</span>`;
         if (number) return `<span class="token-number">${match}</span>`;
         return match;

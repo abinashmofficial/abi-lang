@@ -45,3 +45,9 @@ body.dark-theme {
     --token-text: #F8F8F2;
     --token-class: #66D9EF;
 }
+
+.text-white { color: var(--text-main) !important; }
+.text-light { color: var(--text-main) !important; }
+.text-muted { color: var(--text-muted) !important; }
+.text-white-50 { color: var(--text-muted) !important; }
+strong { color: var(--text-main); }

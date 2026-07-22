@@ -792,11 +792,14 @@ window.addEventListener('DOMContentLoaded', () => {
       }
 
       copyBtn.addEventListener('click', () => {
-          const textLines = codeElement.textContent.split("\n");
-          const cleanText = textLines
-              .filter(line => !line.trim().startsWith("#"))
-              .join("\n")
-              .trim();
+          let text = codeElement.textContent;
+          text = text.replace(/\/\*[\s\S]*?\*\//g, '');
+          text = text.replace(/\/\/.*$/gm, '');
+          text = text.replace(/#.*$/gm, '');
+          const cleanText = text.split('\n')
+              .map(line => line.trimEnd())
+              .filter(line => line.trim() !== '')
+              .join('\n');
           if (navigator.clipboard && navigator.clipboard.writeText) {
               navigator.clipboard.writeText(cleanText).then(() => {
                   showCopiedState();

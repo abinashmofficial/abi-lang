@@ -141,8 +141,8 @@ while count <= 3 {
 
                     <div class="os-content" id="os-handlers">
                         <div class="cmd-group">
-                            <span class="cmd-label">1. Default Handler (handlers/handler.abi)</span>
-                            <pre><code>include("entities/entity.abi")
+                            <span class="cmd-label">1. Default Handler (abicore/handlers/handler.abi)</span>
+                            <pre><code>include("abicore/entities/entity.abi")
 
 class Handler {
     public func index() {
@@ -159,7 +159,7 @@ class Handler {
                         <div class="cmd-group">
                             <span class="cmd-label">2. Creating and Extending Handlers</span>
                             <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Handlers use object-oriented class syntax and support public, private, and protected visibility modifiers for methods. Member data can be assigned to <code>this</code>. To define dynamic route handlers, map paths to class action methods:</p>
-                            <pre><code>include("entities/entity.abi")
+                            <pre><code>include("abicore/entities/entity.abi")
 
 class ProfileHandler {
     public func show_profile() {
@@ -176,14 +176,30 @@ class ProfileHandler {
 
                     <div class="os-content" id="os-navigation">
                         <div class="cmd-group">
-                            <span class="cmd-label">1. Route Registrations (navigation/routes.abi)</span>
-                            <pre><code>include("handlers/handler.abi")
+                            <span class="cmd-label">1. Route Registrations (abicore/navigation/routes.abi)</span>
+                            <pre><code>include("abicore/handlers/handler.abi")
 
 route("get", "/", "handler@index", "home")</code></pre>
                         </div>
                         <div class="cmd-group">
                             <span class="cmd-label">2. Returning Screens with the <code>screen()</code> Method</span>
-                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.jsx</code> automatically, so you don't have to specify folders or file extensions.</p>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>abicore/screens/filename.abx</code> automatically, so you don't have to specify folders or file extensions.</p>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">3. Recommended Project Folder Structure</span>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">A standard AbiLang MVC layout groups all core application scripts and view templates under a unified <code>abicore/</code> directory:</p>
+                            <pre><code>my-project/
+├── abicore/
+│   ├── constants/       # Global config and keys
+│   ├── entities/        # Database models
+│   ├── handlers/        # Request controllers
+│   ├── lang/            # Translation keys
+│   ├── navigation/      # Route definition mappings
+│   ├── screens/         # Page templates & layouts (.abx)
+│   └── support/         # Support helpers
+├── public/              # Static styles, scripts & images
+├── .env                 # Environment variables
+└── server.js            # Web server engine</code></pre>
                         </div>
                     </div>
 
@@ -200,8 +216,8 @@ route("get", "/", "handler@index", "home")</code></pre>
                         <div class="cmd-group">
                             <span class="cmd-label">Highlighting for .abx Components</span>
                             <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Syntax coloring highlights components, render constructs, and expression placeholders identically to modern frontend codebases:</p>
-                            <pre><code>render Header from "screens/layout/header.abx" # Highlights render & from keywords
-render Footer from "screens/layout/footer.abx"
+                            <pre><code>render Header from "abicore/screens/layout/header.abx" # Highlights render & from keywords
+render Footer from "abicore/screens/layout/footer.abx"
 
 &lt;script prepare&gt;
 # Highlighting enabled inside script prepare logic blocks

@@ -145,7 +145,7 @@
                 <h2>macOS & Linux Setup</h2>
                 <p>To run the single-click remote automated installation script, copy the command below:</p>
                 <pre><code class="language-bash"># Fetch and execute bash auto-installer script
-<span class="token-builtin">curl</span> <span class="token-string">-fsSL</span> <span class="token-constant">https://raw.githubusercontent.com/abinashmofficial/abi-lang/main/install.sh</span> <span class="token-logical">|</span> <span class="token-keyword">bash</span></code></pre>
+<span class="token-builtin">curl</span> <span class="token-string">-fsSL</span> <span class="token-constant">https://raw.githubusercontent.com/abinashmofficial/abi-abicore/lang/main/install.sh</span> <span class="token-logical">|</span> <span class="token-keyword">bash</span></code></pre>
 
                 <h2>Manual Compilation & Local Run</h2>
                 <p>If you prefer a manual setup, clone the repository, install its packages, and boot up the visual playground:</p>
@@ -257,7 +257,7 @@ print message</code></pre>
                 <h2>Defining OOP Entities</h2>
                 <p>In AbiLang, entities represent database models and domain objects. You can structure them as constructor classes using factory functions:</p>
                 
-                <pre><code># file: entities/user_entity.abi
+                <pre><code># file: abicore/entities/user_entity.abi
 
 # Factory constructor for UserEntity
 func UserEntity(id, name, email) {
@@ -283,7 +283,7 @@ func UserEntity(id, name, email) {
 }</code></pre>
 
                 <p>To use this entity in your application:</p>
-                <pre><code>include("entities/user_entity.abi")
+                <pre><code>include("abicore/entities/user_entity.abi")
 
 # Create user instances
 user1 = UserEntity(1, "Abinash", "abinash@example.com")
@@ -296,7 +296,7 @@ print user1.get_info()  # Outputs: User: Abinash (abinash.official@example.com)<
                 <h2>Handler Classes & OOP Inheritance</h2>
                 <p>Handlers manage application logic, coordinating between entities and screens. You can implement handler classes that inherit behavior from other classes using the <code>extends</code> keyword:</p>
                 
-                <pre><code># file: handlers/base_handler.abi
+                <pre><code># file: abicore/handlers/base_handler.abi
 class BaseHandler {
     public func init(name) {
         this.name = name
@@ -309,9 +309,9 @@ class BaseHandler {
 
                 <p>Then, extend the base class to inherit methods and properties:</p>
                 
-                <pre><code># file: handlers/handler.abi
-include("handlers/base_handler.abi")
-include("entities/entity.abi")
+                <pre><code># file: abicore/handlers/handler.abi
+include("abicore/handlers/base_handler.abi")
+include("abicore/entities/entity.abi")
 
 class Handler extends BaseHandler {
     public func index() {
@@ -328,8 +328,8 @@ class Handler extends BaseHandler {
 
                 <p>Additionally, you can define classes with public and private methods, using <code>this</code> to reference instance properties and methods:</p>
                 
-                <pre><code># file: handlers/user_handler.abi
-include("entities/user_entity.abi")
+                <pre><code># file: abicore/handlers/user_handler.abi
+include("abicore/entities/user_entity.abi")
 
 class UserHandler {
     public func init(user_id) {
@@ -348,8 +348,8 @@ class UserHandler {
 }</code></pre>
 
                 <p>Finally, register the handler action in your routing system:</p>
-                <pre><code># file: navigation/routes.abi
-include("handlers/user_handler.abi")
+                <pre><code># file: abicore/navigation/routes.abi
+include("abicore/handlers/user_handler.abi")
 
 # Routing maps actions to class methods:
 route("get", "/user/show", "user_handler@show", "user.show")</code></pre>
@@ -386,17 +386,17 @@ dd(record)</code></pre>
                 
                 <h3>Route Registration</h3>
                 <p>Register routes using the native <code>route</code> statement, specifying HTTP verb, endpoint, target handler action, and route alias:</p>
-                <pre><code># file: navigation/routes.abi
-include("handlers/handler.abi")
+                <pre><code># file: abicore/navigation/routes.abi
+include("abicore/handlers/handler.abi")
 
 route("get", "/profile", "handler@show_profile", "user.profile")</code></pre>
 
                 <h3>Returning Screens</h3>
                 <p>The built-in <code>screen("filename")</code> helper automatically loads and processes the corresponding user interface definition from the screens layout space:</p>
-                <pre><code># file: handlers/handler.abi
+                <pre><code># file: abicore/handlers/handler.abi
 class Handler {
     public func index() {
-        # Automatically resolves to screens/index.abx template
+        # Automatically resolves to abicore/screens/index.abx template
         return screen("index")
     }
 }</code></pre>
@@ -431,14 +431,14 @@ render Footer from "layout/footer"</code></pre>
                 </div>
 
                 <p>For example, a sub-screen component:</p>
-                <pre><code># file: screens/docx.abx
+                <pre><code># file: abicore/screens/docx.abx
 &lt;section class="docs-section"&gt;
     &lt;h2&gt;Documentation V1&lt;/h2&gt;
     &lt;p&gt;AbiLang reference material...&lt;/p&gt;
 &lt;/section&gt;</code></pre>
 
                 <p>Then render it inside another screen:</p>
-                <pre><code># file: screens/docs.abx
+                <pre><code># file: abicore/screens/docs.abx
 render Header from "layout/header"
 render Docx   from "docx"
 render Footer from "layout/footer"
@@ -457,7 +457,7 @@ const os   = require('os');
 
 let lang = {};
 try {
-    const file = path.resolve('lang/en/messages.json');
+    const file = path.resolve('abicore/lang/en/messages.json');
     lang = JSON.parse(fs.readFileSync(file, 'utf8'));
 } catch (e) {
     lang = { title: "AbiLang", subtitle: "Welcome" };
@@ -481,7 +481,7 @@ try {
 &lt;/div&gt;</code></pre>
 
                 <h2>5. Complete Screen Example</h2>
-                <p>Here is a full <code>screens/index.abx</code> showing all four features working together:</p>
+                <p>Here is a full <code>abicore/screens/index.abx</code> showing all four features working together:</p>
 
                 <pre><code>render Header from "layout/header"
 render Footer from "layout/footer"
@@ -492,7 +492,7 @@ const path = require('path');
 const os   = require('os');
 let lang = {};
 try {
-    lang = JSON.parse(fs.readFileSync(path.resolve('lang/en/messages.json'), 'utf8'));
+    lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
 } catch (e) {
     lang = { title: "AbiLang", subtitle: "Welcome" };
 }
@@ -548,7 +548,7 @@ try {
                 
                 <h3>Passing Data Down (Props)</h3>
                 <p>Assign any variable to the <code>context</code> object inside the parent screen's logic block:</p>
-                <pre><code># file: screens/index.abx
+                <pre><code># file: abicore/screens/index.abx
 &lt;script prepare&gt;
 context.pageTitle = "Home Dashboard";
 context.user = { name: "Abinash", role: "Admin" };
@@ -557,7 +557,7 @@ context.user = { name: "Abinash", role: "Admin" };
 render Header from "layout/header"</code></pre>
 
                 <p>Then read and output the variables inside the child component/layout template:</p>
-                <pre><code># file: screens/layout/header.abx
+                <pre><code># file: abicore/screens/layout/header.abx
 &lt;header&gt;
     &lt;h1&gt;{{ context.pageTitle }}&lt;/h1&gt;
     &lt;span&gt;Logged in as: {{ context.user.name }}&lt;/span&gt;
@@ -565,14 +565,14 @@ render Header from "layout/header"</code></pre>
 
                 <h3>Exporting Data Up from Components</h3>
                 <p>If a reusable component prepares data or configuration, it can write directly to the shared <code>context</code> object to export it to the parent screen:</p>
-                <pre><code># file: screens/layout/sidebar.abx
+                <pre><code># file: abicore/screens/layout/sidebar.abx
 &lt;script prepare&gt;
 # Export variable to parent template
 context.sidebarLinks = ["Home", "Docs", "Settings"];
 &lt;/script&gt;</code></pre>
 
                 <p>The parent template can access the exported variables anywhere after rendering the component:</p>
-                <pre><code># file: screens/index.abx
+                <pre><code># file: abicore/screens/index.abx
 render Sidebar from "layout/sidebar"
 
 &lt;footer&gt;
@@ -582,7 +582,7 @@ render Sidebar from "layout/sidebar"
                 <h2>8. Reusing the Profile Component</h2>
                 <p>Configure a component file, import/export its scope variables, and render it in multiple places with custom parameters.</p>
                 
-                <h3>1. Component View: <code>screens/components/profile_card.abx</code></h3>
+                <h3>1. Component View: <code>abicore/screens/components/profile_card.abx</code></h3>
                 <pre><code>&lt;script prepare&gt;
 const os = require('os');
 const name = context.profileName || "Guest User";
@@ -606,7 +606,7 @@ const memory = Math.floor(os.freemem() / 1024 / 1024);
     &lt;/div&gt;
 &lt;/div&gt;</code></pre>
 
-                <h3>2. Reusing in Main Screen: <code>screens/dashboard.abx</code></h3>
+                <h3>2. Reusing in Main Screen: <code>abicore/screens/dashboard.abx</code></h3>
                 <pre><code>render Header from "layout/header"
 render ProfileCard from "components/profile_card"
 render Footer from "layout/footer"
@@ -630,9 +630,9 @@ render Footer from "layout/footer"
                 <p>Configure a complete full-stack web application with handlers, entities, template views (using the unique <code>.abx</code> format), Node modules, and API mutators.</p>
                 
                 <h2>9. Master Layout Wrapper (Automatic Wrapping)</h2>
-                <p>Instead of rendering header and footer layouts manually on every page, you can define a single global layout template at <code>screens/layout/layout.abx</code>. The framework automatically detects this file and wraps your page screens in it.</p>
+                <p>Instead of rendering header and footer layouts manually on every page, you can define a single global layout template at <code>abicore/screens/layout/layout.abx</code>. The framework automatically detects this file and wraps your page screens in it.</p>
                 
-                <h3>1. Master Layout: <code>screens/layout/layout.abx</code></h3>
+                <h3>1. Master Layout: <code>abicore/screens/layout/layout.abx</code></h3>
                 <p>Define the header, dynamic body view, and footer. Use the dynamic <code>context.viewPage</code> variable to render the targeted page view:</p>
                 <pre><code>render Header from "layout/header"
 render Body from context.viewPage
@@ -642,7 +642,7 @@ render Footer from "layout/footer"
 &lt;Body /&gt;
 &lt;Footer /&gt;</code></pre>
 
-                <h3>2. The Page View: <code>screens/dashboard.abx</code></h3>
+                <h3>2. The Page View: <code>abicore/screens/dashboard.abx</code></h3>
                 <p>Since the header and footer are wrapped automatically, your screen file only needs to contain the middle content and setup block:</p>
                 <pre><code>&lt;script prepare&gt;
 context.pageTitle = "My Dashboard";
@@ -656,7 +656,7 @@ context.pageTitle = "My Dashboard";
                 <h2>10. React-like Component Tag Rendering</h2>
                 <p>To write cleaner, component-driven layouts, declare renders at the top of your page using the standard <code>render</code> statement, and then render them inline inside your markup using custom component tags (like <code>&lt;ProfileCard /&gt;</code>).</p>
                 
-                <h3>Sample View Page: <code>screens/dashboard.abx</code></h3>
+                <h3>Sample View Page: <code>abicore/screens/dashboard.abx</code></h3>
                 <pre><code>render ProfileCard from "components/profile_card"
 
 &lt;script prepare&gt;
@@ -671,7 +671,7 @@ context.profileRole = "Administrator";
                 <h2>11. Named Component Wrapping (Export Blocks)</h2>
                 <p>You can optionally wrap your HTML templates inside an <code>export ComponentName { ... }</code> block to define named layout structures explicitly:</p>
                 
-                <h3>Sample Component: <code>screens/components/profile_card.abx</code></h3>
+                <h3>Sample Component: <code>abicore/screens/components/profile_card.abx</code></h3>
                 <pre><code>&lt;script prepare&gt;
 const os = require('os');
 export name = context.profileName || "Guest User";
@@ -698,16 +698,57 @@ export ProfileCard {
 }</code></pre>
                 
                 <h2>Step 1: Scaffolding files</h2>
-                <p>Create these directories in your workspace: <code>navigation/</code>, <code>handlers/</code>, <code>entities/</code>, <code>screens/</code>, <code>support/</code>, <code>constants/</code>.</p>
+                <p>Create these directories in your workspace: <code>abicore/navigation/</code>, <code>abicore/handlers/</code>, <code>abicore/entities/</code>, <code>abicore/screens/</code>, <code>abicore/support/</code>, <code>abicore/constants/</code>.</p>
+                <p>Your workspace directory tree will look like this:</p>
+                <pre><code>my-project/
+├── abicore/
+│   ├── constants/
+│   │   └── constants.abi
+│   ├── entities/
+│   │   └── entity.abi
+│   ├── handlers/
+│   │   └── handler.abi
+│   ├── lang/
+│   │   └── en/
+│   │       └── messages.json
+│   ├── navigation/
+│   │   └── routes.abi
+│   ├── screens/
+│   │   ├── components/
+│   │   ├── layout/
+│   │   │   ├── footer.abx
+│   │   │   ├── header.abx
+│   │   │   └── layout.abx
+│   │   ├── docs.abx
+│   │   └── index.abx
+│   └── support/
+│       └── helpers.abi
+├── public/
+│   ├── css/
+│   │   ├── style.css
+│   │   └── theme.css
+│   └── js/
+│       ├── abilang.min.js
+│       └── app.js
+├── .env
+├── package.json
+└── server.js</code></pre>
                 
                 <h2>Step 2: Database Config</h2>
-                <pre><code># file: constants/constants.abi
-DB_HOST = "127.0.0.1"
-DB_PORT = 3306
-DB_NAME = "my_app"</code></pre>
+                <p>Use the built-in <code>env()</code> function to load database config settings directly from the <code>.env</code> file:</p>
+                <pre><code># file: abicore/constants/constants.abi
+APP_TITLE = "AbiLang Bootstrap Portal"
+VERSION = "1.2.0"
+AUTHOR = "Abinash"
+
+DB_HOST = env("DB_HOST")
+DB_PORT = env("DB_PORT")
+DB_DATABASE = env("DB_DATABASE")
+DB_USERNAME = env("DB_USERNAME")
+DB_PASSWORD = env("DB_PASSWORD")</code></pre>
                 
                 <h2>Step 3: Database Entity Model</h2>
-                <pre><code># file: entities/entity.abi
+                <pre><code># file: abicore/entities/entity.abi
 func Entity() {
     self = {}
     self.data = func() {
@@ -717,13 +758,15 @@ func Entity() {
 }</code></pre>
                 
                 <h2>Step 4: Request Handler Controller</h2>
-                <pre><code># file: handlers/handler.abi
+                <p>Defines request handlers as controller classes and utilizes database constants:</p>
+                <pre><code># file: abicore/handlers/handler.abi
 include("entities/entity.abi")
 
 class Handler {
     public func index() {
         e = Entity()
-        print "Accessing Controller: " + e.data()
+        print "Calling entity: " + e.data()
+        print "Database Config -> Host: " + DB_HOST + ", DB: " + DB_DATABASE
         return screen("index")
     }
 
@@ -733,41 +776,92 @@ class Handler {
 }</code></pre>
                 
                 <h2>Step 5: Route Registrations</h2>
-                <pre><code># file: navigation/routes.abi
+                <pre><code># file: abicore/navigation/routes.abi
 include("constants/constants.abi")
+include("support/helpers.abi")
 include("handlers/handler.abi")
 
 route("get", "/", "handler@index", "home")
 route("get", "/docs", "handler@docs", "docs")</code></pre>
                 
-                <h2>Step 6: Frontend View Screens (.abx)</h2>
-                <p>Screens use the custom <code>.abx</code> extension. Inside <code>&lt;script prepare&gt;</code>, you can load standard Node modules using <code>require()</code> dynamically:</p>
-                <pre><code># file: screens/index.abx
-render Header from "screens/layout/header.abx"
-render Footer from "screens/layout/footer.abx"
+                <h2>Step 6: Frontend View Screens & Components (.abx)</h2>
+                <p>Screens use the custom <code>.abx</code> extension. To encourage modularity, the landing screen (<code>index.abx</code>) contains only the high-level layout declarations (Header and Footer) and embeds the main content via a dedicated body component. All other parts are loaded dynamically from nested components.</p>
+                
+                <h3>1. Main Entry screen: <code>abicore/screens/index.abx</code></h3>
+                <p>Declares layout components, specifies page metadata, and renders the high-level skeleton:</p>
+                <pre><code>render Header from "layout/header"
+render LandingBody from "components/landing_body"
+render Footer from "layout/footer"
 
 &lt;script prepare&gt;
-# Load standard node modules natively inside logic block
-const os = require('os');
 const fs = require('fs');
-
-platform = os.platform()
-arch = os.arch()
-total_mem = Math.floor(os.totalmem() / 1024 / 1024)
+const path = require('path');
+const os = require('os');
+let lang = {};
+try {
+    const langCode = process.env.APP_LANG || 'en';
+    const langFile = path.resolve('abicore/lang/' + langCode + '/messages.json');
+    if (fs.existsSync(langFile)) {
+        lang = JSON.parse(fs.readFileSync(langFile, 'utf8'));
+    } else {
+        lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
+    }
+} catch (e) {
+    lang = { title: "AbiLang", subtitle: "Welcome" };
+}
+context.lang = lang;
+context.profileName = "Abinash";
+context.profileRole = "Lead Platform Architect";
 &lt;/script&gt;
 
 &lt;Header /&gt;
-
-&lt;div class="container mt-5"&gt;
-    &lt;h1&gt;System Statistics&lt;/h1&gt;
-    &lt;ul&gt;
-        &lt;li&gt;&lt;strong&gt;Platform:&lt;/strong&gt; {{ platform }}&lt;/li&gt;
-        &lt;li&gt;&lt;strong&gt;Architecture:&lt;/strong&gt; {{ arch }}&lt;/li&gt;
-        &lt;li&gt;&lt;strong&gt;Total Memory:&lt;/strong&gt; {{ total_mem }} MB&lt;/li&gt;
-    &lt;/ul&gt;
-&lt;/div&gt;
-
+&lt;LandingBody /&gt;
 &lt;Footer /&gt;</code></pre>
+
+                <h3>2. Body Component: <code>abicore/screens/components/landing_body.abx</code></h3>
+                <p>Loads the platform system statistics and embeds the user card component:</p>
+                <pre><code>render ProfileCard from "components/profile_card"
+
+&lt;script prepare&gt;
+const os = require('os');
+&lt;/script&gt;
+
+&lt;section class="hero-section d-flex align-items-center"&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="row align-items-center justify-content-center"&gt;
+            &lt;div class="col-lg-9 text-center"&gt;
+                &lt;h1 class="display-3 fw-bold mb-4 text-white"&gt;
+                    {{ lang.title }}
+                &lt;/h1&gt;
+                &lt;p class="lead text-muted mb-5 fs-5"&gt;
+                    {{ lang.subtitle }}
+                &lt;/p&gt;
+                &lt;div class="mb-4"&gt;
+                    &lt;ProfileCard /&gt;
+                &lt;/div&gt;
+                &lt;div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;"&gt;
+                    &lt;h5 class="text-white mb-3"&gt;System Information&lt;/h5&gt;
+                    &lt;div class="row text-muted fs-6"&gt;
+                        &lt;div class="col-6 mb-2"&gt;&lt;strong&gt;Platform:&lt;/strong&gt; {{ os.platform() }}&lt;/div&gt;
+                        &lt;div class="col-6 mb-2"&gt;&lt;strong&gt;Architecture:&lt;/strong&gt; {{ os.arch() }}&lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/section&gt;</code></pre>
+
+                <h3>3. Leaf Component: <code>abicore/screens/components/profile_card.abx</code></h3>
+                <p>A simple presentation component to display user details from parent context:</p>
+                <pre><code>&lt;script prepare&gt;
+const name = context.profileName || "Guest User";
+const role = context.profileRole || "Viewer";
+&lt;/script&gt;
+
+&lt;div class="card card-custom p-4 text-start mx-auto mb-4" style="max-width: 600px; border-left: 4px solid var(--abi-green);"&gt;
+    &lt;h5 class="text-white mb-2"&gt;{{ name }}&lt;/h5&gt;
+    &lt;p class="text-muted mb-0"&gt;Role: &lt;span class="text-white-50"&gt;{{ role }}&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;</code></pre>
             </section>
 
             <!-- Section: Comparison Table -->

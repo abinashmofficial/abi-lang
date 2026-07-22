@@ -248,7 +248,10 @@ class Interpreter {
             const filePath = String(args[0]);
             const fs = require("fs");
             const path = require("path");
-            const absolutePath = path.resolve(filePath);
+            let absolutePath = path.resolve(filePath);
+            if (!fs.existsSync(absolutePath)) {
+                absolutePath = path.resolve("abicore/" + filePath);
+            }
             if (!fs.existsSync(absolutePath)) {
                 throw new Error(`Include file not found: \'${filePath}\'`);
             }
@@ -264,8 +267,12 @@ class Interpreter {
         }));
         this.globals.define("screen", new BuiltinFunction(1, async (args) => {
             const pathName = String(args[0]);
-            const cleanPath = pathName.startsWith("screens/") ? pathName : "screens/" + pathName;
+            const cleanPath = pathName.startsWith("abicore/screens/") ? pathName : "abicore/screens/" + pathName;
             return cleanPath.endsWith(".abx") ? cleanPath : cleanPath + ".abx";
+        }));
+        this.globals.define("env", new BuiltinFunction(1, async (args) => {
+            const key = String(args[0]);
+            return (typeof process !== "undefined" && process.env) ? (process.env[key] || "") : "";
         }));
         this.globals.define("route", new BuiltinFunction(4, async (args) => {
             const method = String(args[0]);

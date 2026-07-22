@@ -80,13 +80,13 @@ mkdir -p dist
 mkdir -p public/css
 mkdir -p public/js
 mkdir -p public/images
-mkdir -p screens/layout
-mkdir -p handlers
-mkdir -p entities
-mkdir -p navigation
-mkdir -p support
-mkdir -p constants
-mkdir -p lang/en
+mkdir -p abicore/screens/layout abicore/screens/components
+mkdir -p abicore/handlers
+mkdir -p abicore/entities
+mkdir -p abicore/navigation
+mkdir -p abicore/support
+mkdir -p abicore/constants
+mkdir -p abicore/lang/en
 
 APP_NAME=$(echo "$PROJECT_NAME" | tr '[:lower:]' '[:upper:]')
 API_KEY="xyz123secret"
@@ -150,7 +150,7 @@ else
     done
 fi
 
-cat << 'EOF' > screens/layout/header.abx
+cat << 'EOF' > abicore/screens/layout/header.abx
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -240,7 +240,7 @@ cat << 'EOF' > screens/layout/header.abx
     </nav>
 EOF
 
-cat << 'EOF' > lang/en/messages.json
+cat << 'EOF' > abicore/lang/en/messages.json
 {
   "title": "The Progressive Scripting Language",
   "subtitle": "An approachable, highly performant and versatile scripting language designed for Abinash, running natively on all platform engines.",
@@ -255,8 +255,63 @@ cat << 'EOF' > lang/en/messages.json
 }
 EOF
 
-cat << 'EOF' > screens/index.abx
+cat << 'EOF' > abicore/screens/components/profile_card.abx
+<script prepare>
+const name = context.profileName || "Guest User";
+const role = context.profileRole || "Viewer";
+</script>
+
+<div class="card card-custom p-4 text-start mx-auto mb-4" style="max-width: 600px; border-left: 4px solid var(--abi-green);">
+    <h5 class="text-white mb-2">{{ name }}</h5>
+    <p class="text-muted mb-0">Role: <span class="text-white-50">{{ role }}</span></p>
+</div>
+EOF
+
+cat << 'EOF' > abicore/screens/components/landing_body.abx
+render ProfileCard from "components/profile_card"
+
+<script prepare>
+const os = require('os');
+</script>
+
+<section class="hero-section d-flex align-items-center">
+    <div class="container">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-lg-9 text-center">
+                <div class="badge bg-secondary bg-opacity-25 text-light mb-3 px-3 py-2 border border-secondary border-opacity-50">
+                    AbiLang v1.2.0 (Bootstrap Cloud Release)
+                </div>
+                <h1 class="display-3 fw-bold mb-4 text-white">
+                    {{ lang.title }}
+                </h1>
+                <p class="lead text-muted mb-5 fs-5">
+                    {{ lang.subtitle }}
+                </p>
+                <div class="d-flex justify-content-center gap-3 mb-5">
+                    <button class="btn btn-gradient btn-lg px-4" id="launch-btn">{{ lang.get_started }}</button>
+                    <a class="btn btn-outline-secondary btn-lg px-4" href="https://github.com/abinashmofficial/abi-lang" target="_blank">{{ lang.view_docs }}</a>
+                </div>
+                <div class="mb-4">
+                    <ProfileCard />
+                </div>
+                <div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;">
+                    <h5 class="text-white mb-3">{{ lang.system_info }}</h5>
+                    <div class="row text-muted fs-6">
+                        <div class="col-6 mb-2"><strong>{{ lang.platform }}:</strong> {{ os.platform() }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.architecture }}:</strong> {{ os.arch() }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.uptime }}:</strong> {{ Math.floor(os.uptime()) }} {{ lang.seconds }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.memory }}:</strong> {{ Math.floor(os.freemem() / 1024 / 1024) }}MB / {{ Math.floor(os.totalmem() / 1024 / 1024) }}MB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+EOF
+
+cat << 'EOF' > abicore/screens/index.abx
 render Header from "layout/header"
+render LandingBody from "components/landing_body"
 render Footer from "layout/footer"
 
 <script prepare>
@@ -266,15 +321,18 @@ const os = require('os');
 let lang = {};
 try {
     const langCode = process.env.APP_LANG || 'en';
-    const langFile = path.resolve('lang/' + langCode + '/messages.json');
+    const langFile = path.resolve('abicore/lang/' + langCode + '/messages.json');
     if (fs.existsSync(langFile)) {
         lang = JSON.parse(fs.readFileSync(langFile, 'utf8'));
     } else {
-        lang = JSON.parse(fs.readFileSync(path.resolve('lang/en/messages.json'), 'utf8'));
+        lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
     }
 } catch (e) {
     lang = { title: "AbiLang", subtitle: "Welcome" };
 }
+context.lang = lang;
+context.profileName = "Abinash";
+context.profileRole = "Lead Platform Architect";
 </script>
 
 <style>
@@ -349,42 +407,11 @@ try {
 </style>
 
 <Header />
-
-<section class="hero-section d-flex align-items-center">
-    <div class="container">
-        <div class="row align-items-center justify-content-center">
-            <div class="col-lg-9 text-center">
-                <div class="badge bg-secondary bg-opacity-25 text-light mb-3 px-3 py-2 border border-secondary border-opacity-50">
-                    AbiLang v1.2.0 (Bootstrap Cloud Release)
-                </div>
-                <h1 class="display-3 fw-bold mb-4 text-white">
-                    {{ lang.title }}
-                </h1>
-                <p class="lead text-muted mb-5 fs-5">
-                    {{ lang.subtitle }}
-                </p>
-                <div class="d-flex justify-content-center gap-3 mb-5">
-                    <button class="btn btn-gradient btn-lg px-4" id="launch-btn">{{ lang.get_started }}</button>
-                    <a class="btn btn-outline-secondary btn-lg px-4" href="https://github.com/abinashmofficial/abi-lang" target="_blank">{{ lang.view_docs }}</a>
-                </div>
-                <div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;">
-                    <h5 class="text-white mb-3">{{ lang.system_info }}</h5>
-                    <div class="row text-muted fs-6">
-                        <div class="col-6 mb-2"><strong>{{ lang.platform }}:</strong> {{ os.platform() }}</div>
-                        <div class="col-6 mb-2"><strong>{{ lang.architecture }}:</strong> {{ os.arch() }}</div>
-                        <div class="col-6 mb-2"><strong>{{ lang.uptime }}:</strong> {{ Math.floor(os.uptime()) }} {{ lang.seconds }}</div>
-                        <div class="col-6 mb-2"><strong>{{ lang.memory }}:</strong> {{ Math.floor(os.freemem() / 1024 / 1024) }}MB / {{ Math.floor(os.totalmem() / 1024 / 1024) }}MB</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
+<LandingBody />
 <Footer />
 EOF
 
-cat << 'EOF' > screens/layout/footer.abx
+cat << 'EOF' > abicore/screens/layout/footer.abx
     <footer class="text-center">
         <div class="container">
             <div class="row align-items-center">
@@ -409,7 +436,7 @@ cat << 'EOF' > screens/layout/footer.abx
 </html>
 EOF
 
-cat << 'EOF' > screens/layout/layout.abx
+cat << 'EOF' > abicore/screens/layout/layout.abx
 render Header from "layout/header"
 render Body from context.viewPage
 render Footer from "layout/footer"
@@ -419,7 +446,7 @@ render Footer from "layout/footer"
 <Footer />
 EOF
 
-cat << 'EOF' > screens/docs.abx
+cat << 'EOF' > abicore/screens/docs.abx
 render Header from "layout/header"
 render Docx from "docx"
 render Footer from "layout/footer"
@@ -429,7 +456,7 @@ render Footer from "layout/footer"
 <Footer />
 EOF
 
-cat << 'EOF' > screens/docx.abx
+cat << 'EOF' > abicore/screens/docx.abx
 
 <section class="portal-installation" style="margin-top: 20px; border-top: none;">
     <div class="install-container">
@@ -579,7 +606,7 @@ require.extensions['.abx'] = function (module, filename) {
         if (fs.existsSync(directPath)) return directPath;
         if (fs.existsSync(directPath + '.abx')) return directPath + '.abx';
         
-        let relativeToScreens = importPath.startsWith('screens/') ? importPath : 'screens/' + importPath;
+        let relativeToScreens = importPath.startsWith('abicore/screens/') ? importPath : 'abicore/screens/' + importPath;
         let screensPath = path.resolve(process.cwd(), relativeToScreens);
         if (fs.existsSync(screensPath)) return screensPath;
         if (fs.existsSync(screensPath + '.abx')) return screensPath + '.abx';
@@ -776,9 +803,15 @@ const io = new ServerIO();
 async function loadRoutes() {
     routes = [];
     interpreter = new Interpreter(io);
+    interpreter.globals.define("env", new BuiltinFunction(1, async (args) => {
+        return process.env[String(args[0])] || "";
+    }));
     interpreter.globals.define("include", new BuiltinFunction(1, async (args) => {
         const filePath = String(args[0]);
-        const absolutePath = path.resolve(filePath);
+        let absolutePath = path.resolve(filePath);
+        if (!fs.existsSync(absolutePath)) {
+            absolutePath = path.resolve('abicore/' + filePath);
+        }
         if (!fs.existsSync(absolutePath)) {
             throw new Error(`Include file not found: '${filePath}'`);
         }
@@ -792,7 +825,7 @@ async function loadRoutes() {
     }));
     interpreter.globals.define("screen", new BuiltinFunction(1, async (args) => {
         const pathName = String(args[0]);
-        const cleanPath = pathName.startsWith("screens/") ? pathName : "screens/" + pathName;
+        const cleanPath = pathName.startsWith("abicore/screens/") ? pathName : "abicore/screens/" + pathName;
         return cleanPath.endsWith(".abx") ? cleanPath : cleanPath + ".abx";
     }));
     interpreter.globals.define("route", new BuiltinFunction(4, async (args) => {
@@ -804,7 +837,7 @@ async function loadRoutes() {
         });
         return null;
     }));
-    const routeFile = path.resolve('navigation/routes.abi');
+    const routeFile = path.resolve('abicore/navigation/routes.abi');
     if (fs.existsSync(routeFile)) {
         const source = fs.readFileSync(routeFile, 'utf8');
         const lexer = new Lexer(source);
@@ -857,12 +890,12 @@ function clearAllCache() {
 function startWatcher() {
     const dirs = ['navigation', 'handlers', 'entities', 'support', 'screens'];
     dirs.forEach(dir => {
-        const dirPath = path.resolve(dir);
+        const dirPath = path.resolve('abicore', dir);
         if (fs.existsSync(dirPath)) {
             fs.watch(dirPath, { recursive: true }, (eventType, filename) => {
                 clearAllCache();
                 loadRoutes().catch(console.error);
-                console.log(`[Reload] Reloaded changes in ${dir}/${filename}`);
+                console.log(`[Reload] Reloaded changes in abicore/${dir}/${filename}`);
             });
         }
     });
@@ -967,8 +1000,8 @@ async function startServer() {
             if (handlerFunc && typeof handlerFunc.call === 'function') {
                 let screenFile = await handlerFunc.call(interpreter, []);
                 if (screenFile && typeof screenFile === 'string') {
-                    if (!screenFile.startsWith('screens/')) {
-                        screenFile = 'screens/' + screenFile;
+                    if (!screenFile.startsWith('abicore/')) {
+                        screenFile = 'abicore/' + (screenFile.startsWith('screens/') ? screenFile : 'screens/' + screenFile);
                     }
                     const filePath = path.join(__dirname, screenFile);
                     if (fs.existsSync(filePath)) {
@@ -1009,13 +1042,14 @@ startServer().catch(err => {
 EOF
 
 # 7. Create routing and helper/constant components
-cat << 'EOF' > handlers/handler.abi
+cat << 'EOF' > abicore/handlers/handler.abi
 include("entities/entity.abi")
 
 class Handler {
     public func index() {
         e = Entity()
         print "Calling entity: " + e.data()
+        print "Database Config -> Host: " + DB_HOST + ", DB: " + DB_DATABASE
         return screen("index")
     }
 
@@ -1025,7 +1059,7 @@ class Handler {
 }
 EOF
 
-cat << 'EOF' > entities/entity.abi
+cat << 'EOF' > abicore/entities/entity.abi
 class Entity {
     public func data() {
         return "Entity data"
@@ -1033,7 +1067,7 @@ class Entity {
 }
 EOF
 
-cat << 'EOF' > support/helpers.abi
+cat << 'EOF' > abicore/support/helpers.abi
 class Support {
     public func get_platform_info() {
         return "Running AbiLang " + VERSION + " by " + AUTHOR
@@ -1041,13 +1075,19 @@ class Support {
 }
 EOF
 
-cat << 'EOF' > constants/constants.abi
+cat << 'EOF' > abicore/constants/constants.abi
 APP_TITLE = "AbiLang Bootstrap Portal"
 VERSION = "1.2.0"
 AUTHOR = "Abinash"
+
+DB_HOST = env("DB_HOST")
+DB_PORT = env("DB_PORT")
+DB_DATABASE = env("DB_DATABASE")
+DB_USERNAME = env("DB_USERNAME")
+DB_PASSWORD = env("DB_PASSWORD")
 EOF
 
-cat << 'EOF' > navigation/routes.abi
+cat << 'EOF' > abicore/navigation/routes.abi
 include("constants/constants.abi")
 
 include("support/helpers.abi")
@@ -1089,7 +1129,10 @@ if (!content.includes("globals.define(\"include\"")) {
             const filePath = String(args[0]);
             const fs = require("fs");
             const path = require("path");
-            const absolutePath = path.resolve(filePath);
+            let absolutePath = path.resolve(filePath);
+            if (!fs.existsSync(absolutePath)) {
+                absolutePath = path.resolve("abicore/" + filePath);
+            }
             if (!fs.existsSync(absolutePath)) {
                 throw new Error(\`Include file not found: \\\x27\${filePath}\\\x27\`);
             }
@@ -1105,8 +1148,12 @@ if (!content.includes("globals.define(\"include\"")) {
         }));
         this.globals.define("screen", new BuiltinFunction(1, async (args) => {
             const pathName = String(args[0]);
-            const cleanPath = pathName.startsWith("screens/") ? pathName : "screens/" + pathName;
+            const cleanPath = pathName.startsWith("abicore/screens/") ? pathName : "abicore/screens/" + pathName;
             return cleanPath.endsWith(".abx") ? cleanPath : cleanPath + ".abx";
+        }));
+        this.globals.define("env", new BuiltinFunction(1, async (args) => {
+            const key = String(args[0]);
+            return (typeof process !== "undefined" && process.env) ? (process.env[key] || "") : "";
         }));
         this.globals.define("route", new BuiltinFunction(4, async (args) => {
             const method = String(args[0]);

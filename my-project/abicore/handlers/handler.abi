@@ -4,6 +4,7 @@ class Handler {
     public func index() {
         e = Entity()
         print "Calling entity: " + e.data()
+        print "Database Config -> Host: " + DB_HOST + ", DB: " + DB_DATABASE
         return screen("index")
     }
 

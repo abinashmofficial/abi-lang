@@ -18,7 +18,7 @@ require.extensions['.abx'] = function (module, filename) {
         if (fs.existsSync(directPath)) return directPath;
         if (fs.existsSync(directPath + '.abx')) return directPath + '.abx';
         
-        let relativeToScreens = importPath.startsWith('screens/') ? importPath : 'screens/' + importPath;
+        let relativeToScreens = importPath.startsWith('abicore/screens/') ? importPath : 'abicore/screens/' + importPath;
         let screensPath = path.resolve(process.cwd(), relativeToScreens);
         if (fs.existsSync(screensPath)) return screensPath;
         if (fs.existsSync(screensPath + '.abx')) return screensPath + '.abx';
@@ -215,9 +215,15 @@ const io = new ServerIO();
 async function loadRoutes() {
     routes = [];
     interpreter = new Interpreter(io);
+    interpreter.globals.define("env", new BuiltinFunction(1, async (args) => {
+        return process.env[String(args[0])] || "";
+    }));
     interpreter.globals.define("include", new BuiltinFunction(1, async (args) => {
         const filePath = String(args[0]);
-        const absolutePath = path.resolve(filePath);
+        let absolutePath = path.resolve(filePath);
+        if (!fs.existsSync(absolutePath)) {
+            absolutePath = path.resolve('abicore/' + filePath);
+        }
         if (!fs.existsSync(absolutePath)) {
             throw new Error(`Include file not found: '${filePath}'`);
         }
@@ -231,7 +237,7 @@ async function loadRoutes() {
     }));
     interpreter.globals.define("screen", new BuiltinFunction(1, async (args) => {
         const pathName = String(args[0]);
-        const cleanPath = pathName.startsWith("screens/") ? pathName : "screens/" + pathName;
+        const cleanPath = pathName.startsWith("abicore/screens/") ? pathName : "abicore/screens/" + pathName;
         return cleanPath.endsWith(".abx") ? cleanPath : cleanPath + ".abx";
     }));
     interpreter.globals.define("route", new BuiltinFunction(4, async (args) => {
@@ -243,7 +249,7 @@ async function loadRoutes() {
         });
         return null;
     }));
-    const routeFile = path.resolve('navigation/routes.abi');
+    const routeFile = path.resolve('abicore/navigation/routes.abi');
     if (fs.existsSync(routeFile)) {
         const source = fs.readFileSync(routeFile, 'utf8');
         const lexer = new Lexer(source);
@@ -296,12 +302,12 @@ function clearAllCache() {
 function startWatcher() {
     const dirs = ['navigation', 'handlers', 'entities', 'support', 'screens'];
     dirs.forEach(dir => {
-        const dirPath = path.resolve(dir);
+        const dirPath = path.resolve('abicore', dir);
         if (fs.existsSync(dirPath)) {
             fs.watch(dirPath, { recursive: true }, (eventType, filename) => {
                 clearAllCache();
                 loadRoutes().catch(console.error);
-                console.log(`[Reload] Reloaded changes in ${dir}/${filename}`);
+                console.log(`[Reload] Reloaded changes in abicore/${dir}/${filename}`);
             });
         }
     });
@@ -406,8 +412,8 @@ async function startServer() {
             if (handlerFunc && typeof handlerFunc.call === 'function') {
                 let screenFile = await handlerFunc.call(interpreter, []);
                 if (screenFile && typeof screenFile === 'string') {
-                    if (!screenFile.startsWith('screens/')) {
-                        screenFile = 'screens/' + screenFile;
+                    if (!screenFile.startsWith('abicore/')) {
+                        screenFile = 'abicore/' + (screenFile.startsWith('screens/') ? screenFile : 'screens/' + screenFile);
                     }
                     const filePath = path.join(__dirname, screenFile);
                     if (fs.existsSync(filePath)) {

@@ -716,8 +716,7 @@ require.extensions['.abx'] = function (module, filename) {
                 return `const _import_ctx_${randomId} = {}; require(${JSON.stringify(includePath)})(require, console, _import_ctx_${randomId}); const { ${vars} } = _import_ctx_${randomId};`;
             });
             processedCode = processedCode.replace(/\bexport\s+(?:(const|let|var)\s+)?(\w+)\s*=/g, (m, keyword, name) => {
-                const kw = keyword || 'let';
-                return `${kw} ${name} = context.${name} =`;
+                return `context.${name} =`;
             });
             const matches = [...processedCode.matchAll(/\bexport\s+(function|class)\s+(\w+)\b/g)];
             processedCode = processedCode.replace(/\bexport\s+(function|class)\s+(\w+)\b/g, '$1 $2');

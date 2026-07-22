@@ -428,7 +428,7 @@ cat << 'EOF' > abicore/screens/layout/footer.abx
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-4 text-md-start mb-3 mb-md-0">
-                    <a href="#" id="view-portal-link" style="color: #c084fc; text-decoration: none; font-weight: 500;">
+                    <a href="/" id="view-portal-link" style="color: #c084fc; text-decoration: none; font-weight: 500;">
                         View Landing Portal
                     </a>
                 </div>
@@ -461,131 +461,805 @@ EOF
 
 cat << 'EOF' > abicore/screens/docx.abx
 
-<section class="portal-installation" style="margin-top: 20px; border-top: none;">
-    <div class="install-container">
-        <h2 class="install-section-title">Documentation V1</h2>
-        <p class="install-section-subtitle">Discover what makes AbiLang unique and learn how to use its methods, handlers, and routing step-by-step.</p>
-
-        <div class="os-tabs">
-            <button class="os-tab-btn active" data-os="intro">Overview & Uniqueness</button>
-            <button class="os-tab-btn" data-os="syntax">Syntax & Basic Rules</button>
-            <button class="os-tab-btn" data-os="handlers">Handlers & Entities</button>
-            <button class="os-tab-btn" data-os="navigation">Navigation & Screens</button>
-            <button class="os-tab-btn" data-os="idesyntax">IDE Syntax Coloring</button>
+<div class="docs-layout">
+    <aside id="docs-sidebar" class="docs-sidebar">
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" class="search-input" placeholder="Search documentation..." autocomplete="off">
         </div>
 
-        <div class="install-code-blocks">
-            <div class="os-content active" id="os-intro">
-                <div class="cmd-group">
-                    <span class="cmd-label">About AbiLang</span>
-                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">AbiLang is a progressive scripting language designed for clean structure, optimal execution speed, and simplicity. It allows writing expressive scripts with optional parentheses, clean brackets, and zero boilerplate code.</p>
-                </div>
-                <div class="cmd-group">
-                    <span class="cmd-label">Why is it unique?</span>
-                    <ul style="color: var(--text-muted); font-size: 14px; line-height: 1.8; padding-left: 20px; margin-top: 10px;">
-                        <li><strong>Hybrid Architecture:</strong> Compiles and runs directly in Node.js on the backend, or bundles to clean standard JavaScript for runtime performance in web browsers.</li>
-                        <li><strong>Procedural Scoping:</strong> Imports other scripts recursively using the global <code>include("path")</code> system, keeping functions, models, and constants within a shared environment.</li>
-                        <li><strong>Cloud Fetch:</strong> Built-in async HTTP call methods (<code>fetch</code>) and JSON parsing utilities (<code>json_parse</code>) for smooth REST-database connectivity.</li>
-                    </ul>
-                </div>
-                <div class="cmd-group">
-                    <span class="cmd-label">Minimum System Requirements</span>
-                    <ul style="color: var(--text-muted); font-size: 13px; line-height: 1.8; padding-left: 20px; margin-top: 10px;">
-                        <li><strong>macOS:</strong> macOS 10.15+ (Catalina), Node.js v18.0.0+, npm v9.0.0+</li>
-                        <li><strong>Linux:</strong> Ubuntu 20.04 LTS+ / Debian 11+ / Fedora 36+, Node.js v18.0.0+, Git installed</li>
-                        <li><strong>Windows:</strong> Windows 10/11 (64-bit), PowerShell 5.1+ / PowerShell Core 7+, Node.js v18.0.0+, npm v9.0.0+</li>
-                        <li><strong>Mobile:</strong> Android SDK API Level 30+ (Android 11+), Xcode 14+ (macOS only, for iOS), CocoaPods installed</li>
-                    </ul>
-                </div>
+        <div class="nav-group">
+            <div class="nav-group-title">Getting Started</div>
+            <ul class="nav-group-list">
+                <li class="nav-item"><a href="#introduction" class="nav-link active">Introduction</a></li>
+                <li class="nav-item"><a href="#structure" class="nav-link">Language Structure & Use</a></li>
+                <li class="nav-item"><a href="#installation" class="nav-link">Installation & CLI</a></li>
+                <li class="nav-item"><a href="#ide-integration" class="nav-link">IDE Syntax & Extensions</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">Language Syntax</div>
+            <ul class="nav-group-list">
+                <li class="nav-item"><a href="#variables" class="nav-link">Variables</a></li>
+                <li class="nav-item"><a href="#conditionals" class="nav-link">Conditionals</a></li>
+                <li class="nav-item"><a href="#loops" class="nav-link">Loops</a></li>
+                <li class="nav-item"><a href="#functions" class="nav-link">Functions</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">Architecture</div>
+            <ul class="nav-group-list">
+                <li class="nav-item"><a href="#handlers" class="nav-link">Handlers & Entities</a></li>
+                <li class="nav-item"><a href="#navigation" class="nav-link">Navigation & Screens</a></li>
+                <li class="nav-item"><a href="#ui-template" class="nav-link">Component & View Syntax</a></li>
+                <li class="nav-item"><a href="#step-by-step-guide" class="nav-link">Step-by-Step MVC Setup</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">Comparison</div>
+            <ul class="nav-group-list">
+                <li class="nav-item"><a href="#comparison-table-sec" class="nav-link">Comparison Table</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="docs-main">
+        <section id="introduction" class="docs-section">
+            <h1>Introduction</h1>
+            <p><strong>AbiLang</strong> is a progressive, lightweight, and versatile scripting language named after you (<strong>Abinash</strong>). Built from scratch using TypeScript, it runs natively on both backend environments via CLI terminal engines and in web browsers through an interactive sandboxed playground.</p>
+            
+            <div class="callout callout-info">
+                <strong>Core Philosophy:</strong> AbiLang is designed to minimize boilerplates, eliminate unnecessary tokens like declarations (<code>const</code>, <code>let</code>) and mandatory semicolons, and introduce robust structural clarity with clean braces and optional parameter parentheses.
             </div>
 
-            <div class="os-content" id="os-syntax">
-                <div class="cmd-group">
-                    <span class="cmd-label">1. Variables & Expressions</span>
-                    <pre><code>greeting = <span class="token-string">"Hello world"</span>
-result = <span class="token-number">100</span> + <span class="token-number">50</span> * (<span class="token-number">4</span> / <span class="token-number">2</span>)
-<span class="token-keyword">print</span> greeting</code></pre>
-                </div>
-                <div class="cmd-group">
-                    <span class="cmd-label">2. Standard Controls & Loops</span>
-                    <pre><code>age = <span class="token-number">18</span>
-<span class="token-keyword">if</span> age &gt;= <span class="token-number">18</span> {
-    <span class="token-keyword">print</span> <span class="token-string">"Access authorized"</span>
+            <h2>Key Features</h2>
+            <ul>
+                <li><strong>No Declarations:</strong> Assign variables directly. The interpreter handles allocations dynamically.</li>
+                <li><strong>Flexible Flow Control:</strong> Clean loop iterations and conditional checks with optional parentheses.</li>
+                <li><strong>Integrated Framework Mechanics:</strong> Native handler configurations, entity definitions, route bindings, and screen render engine helpers.</li>
+                <li><strong>Cloud Ready:</strong> Native cloud integrations featuring asynchronous <code>fetch</code> routines and <code>json_parse</code> parsing out of the box.</li>
+            </ul>
+        </section>
+
+        <section id="structure" class="docs-section">
+            <h1>Language Structure & Use</h1>
+            <p>AbiLang is designed around a three-tier architecture that tokenizes, parses, and executes code trees natively in safe environment contexts. Understanding its structure helps in leveraging its features for rapid scripting, backend logic orchestration, and lightweight browser playground views.</p>
+            
+            <h2>1. Framework Engine Architecture</h2>
+            <p>The compiler and runner pipelines are divided into three core stages:</p>
+            <ul>
+                <li><strong>Lexical Analyzer (Lexer)</strong>: Converts raw script characters into structured language tokens (keywords, literals, operations).</li>
+                <li><strong>Syntax Analyzer (Parser)</strong>: Arranges tokens into an Abstract Syntax Tree (AST) using recursive descent parsing. It enforces constraints on expressions and statements.</li>
+                <li><strong>Evaluation Tree (Interpreter)</strong>: Evaluates AST nodes recursively, utilizing isolated lexical environments to execute instructions in real time.</li>
+            </ul>
+
+            <h2>2. What Makes AbiLang Different?</h2>
+            <p>Unlike standard languages (like JavaScript or PHP), AbiLang introduces a streamlined development experience:</p>
+            <ul>
+                <li><strong>No Boilerplate Declarations</strong>: Variables are dynamically initialized on first assignment. No extra lexical keywords needed.</li>
+                <li><strong>Native App Architecture</strong>: Built-in classes for logical Handlers and Entities, dynamic routes registration, and automatic Screens resolution.</li>
+                <li><strong>Robust Variable Inspector</strong>: Dynamic inspection using the Laravel-like <code>dd()</code> helper without crashing the active environment.</li>
+                <li><strong>Cross-Platform Portability</strong>: Designed to run identically inside terminal shells (using Node) and inside sandboxed web frames (using HTML5/JS).</li>
+            </ul>
+
+            <h2>3. Use Cases & Applications</h2>
+            <p>AbiLang is ideal for building dynamic, multi-platform applications, including:</p>
+            <ul>
+                <li><strong>Backend Tasks & Helpers</strong>: Automate database migrations, connect to third-party endpoints, or run scheduled background scripts.</li>
+                <li><strong>Web Portals & Endpoints</strong>: Register navigation path schemas to resolve handlers and screen layouts with active templating.</li>
+                <li><strong>Lightweight UI Components</strong>: Embed screens dynamically inside web layouts using clean layout includes and esbuild transformation hooks.</li>
+            </ul>
+        </section>
+
+        <section id="installation" class="docs-section">
+            <h1>Installation & CLI</h1>
+            <p>Run the AbiLang compiler CLI and local web playground directly on your machine. Choose the appropriate installer command for your environment below.</p>
+            
+            <h2>macOS & Linux Setup</h2>
+            <p>To run the single-click remote automated installation script, copy the command below:</p>
+            <pre><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/abinashmofficial/abi-lang/main/install.sh | bash</code></pre>
+
+            <h2>Manual Compilation & Local Run</h2>
+            <p>If you prefer a manual setup, clone the repository, install its packages, and boot up the visual playground:</p>
+            <pre><code class="language-bash"># 1. Clone repository
+git clone https://github.com/abinashmofficial/abi-lang.git
+cd abi-lang
+
+# 2. Install TypeScript development tooling
+npm install
+
+# 3. Build compiler engine binaries
+npm run build
+
+# 4. Spin up local interactive web playground
+npm run web</code></pre>
+        </section>
+
+        <section id="ide-integration" class="docs-section">
+            <h1>IDE Syntax & Extensions</h1>
+            <p>AbiLang provides official syntax highlighting and file extension configurations for popular IDEs (VS Code, VS Code Insiders, Vim, and Sublime Text). This ensures developers get a seamless editing experience with zero error flags.</p>
+            
+            <h2>Supported File Extensions</h2>
+            <p>You can write and execute AbiLang script files and templates using any of these standard extensions:</p>
+            <ul>
+                <li><code>.abi</code> - Standard default extension</li>
+                <li><code>.ab</code> - Short unique extension</li>
+                <li><code>.abilang</code> - Explicit verbose extension</li>
+                <li><code>.abx</code> - Component template and layouts extension</li>
+            </ul>
+
+            <h2>Laravel/PHP Style Highlights</h2>
+            <p>Classes, methods, and visibility scopes (<code>public</code>, <code>private</code>, <code>protected</code>) are configured to match standard Laravel PHP color profiles, highlighting classes and function namespaces dynamically. This works natively for <code>.abi</code> files and <code>.abx</code> templates without requiring opening <code>&lt;?php</code> tags.</p>
+            
+            <h2>Auto-Installer Script</h2>
+            <p>To register the file type associations and coloring configurations globally for all editors on your machine (including VS Code and VS Code Insiders), run:</p>
+            <pre><code class="language-bash">node scripts/install-syntax.js</code></pre>
+        </section>
+
+        <section id="variables" class="docs-section">
+            <h1>Variables</h1>
+            <p>Variables in AbiLang store data dynamically. You do not need keywords like <code>var</code>, <code>let</code>, or <code>const</code>, and semicolons are completely optional.</p>
+            
+            <pre><code>name = "Abinash"
+age = 21
+pi = 3.14159
+print "Name: " + name</code></pre>
+
+            <div class="callout callout-tip">
+                <strong>Tip:</strong> Dynamic typing ensures variables can change their underlying representation on successive operations automatically.
+            </div>
+        </section>
+
+        <section id="conditionals" class="docs-section">
+            <h1>Conditionals</h1>
+            <p>Conditionals allow branching execution. AbiLang utilizes modern block scoping via braces <code>{}</code> while making parentheses around expressions optional.</p>
+
+            <pre><code>score = 85
+if score >= 90 {
+    print "Grade A"
+} else if score >= 80 {
+    print "Grade B"
+} else {
+    print "Grade F"
+}</code></pre>
+        </section>
+
+        <section id="loops" class="docs-section">
+            <h1>Loops</h1>
+            <p>Iterate over code ranges efficiently. AbiLang supports standard <code>while</code> loops and native array iterations without parenthesis boilerplates.</p>
+
+            <pre><code>count = 1
+while count <= 3 {
+    print "Count: " + count
+    count = count + 1
+}</code></pre>
+        </section>
+
+        <section id="functions" class="docs-section">
+            <h1>Functions</h1>
+            <p>Functions isolate modular calculations. AbiLang uses the <code>func</code> keyword to declare reusable code blocks that accept arguments and return evaluations.</p>
+
+            <pre><code>func greet(name) {
+    return "Hello, " + name + "!"
 }
+message = greet("Abinash")
+print message</code></pre>
+        </section>
 
-count = <span class="token-number">1</span>
-<span class="token-keyword">while</span> count &lt;= <span class="token-number">3</span> {
-    <span class="token-keyword">print</span> count
-    count = count + <span class="token-number">1</span>
-}</code></pre>
-                </div>
+        <section id="handlers" class="docs-section">
+            <h1>Handlers & Entities</h1>
+            <p>AbiLang utilizes Object-Oriented Programming (OOP) paradigms by leveraging the dynamic nature of dictionary literals and lexical closures. Since AbiLang focuses on a clean syntax without boilerplate class decorators, objects are instantiated using Factory Constructor Patterns.</p>
+            
+            <div class="callout callout-tip">
+                <strong>OOP Architecture in AbiLang:</strong>
+                <ul>
+                    <li><strong>Objects:</strong> Created as dynamic dictionaries (<code>{}</code>) containing both attributes and member functions.</li>
+                    <li><strong>Encapsulation:</strong> Private fields can be initialized in constructor scopes; inner functions capture these states in their closures.</li>
+                    <li><strong>Inheritance:</strong> Accomplished by initializing parent object dictionaries and merging/extending them with new attributes or overridden functions.</li>
+                </ul>
             </div>
 
-            <div class="os-content" id="os-handlers">
-                <div class="cmd-group">
-                    <span class="cmd-label">1. Default Handler (handlers/handler.abi)</span>
-                    <pre><code><span class="token-builtin">include</span>(<span class="token-string">"entities/entity.abi"</span>)
+            <h2>Defining OOP Entities</h2>
+            <p>In AbiLang, entities represent database models and domain objects. You can structure them as constructor classes using factory functions:</p>
+            
+            <pre><code># Factory constructor for UserEntity
+func UserEntity(id, name, email) {
+    self = {}
+    self.id = id
+    self.name = name
+    self.email = email
 
-<span class="token-keyword">func</span> <span class="token-function">index</span>() {
-    <span class="token-keyword">return</span> <span class="token-builtin">screen</span>(<span class="token-string">"index"</span>)
+    func get_info() {
+        return "User: " + self.name + " (" + self.email + ")"
+    }
+    self.get_info = get_info
+
+    func update_email(new_email) {
+        self.email = new_email
+        return self
+    }
+    self.update_email = update_email
+
+    return self
 }</code></pre>
-                </div>
-                <div class="cmd-group">
-                    <span class="cmd-label">2. Creating and Extending Handlers</span>
-                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">To create a custom handler and inherit all functions from the base handler, include both the entity and the base handler:</p>
-                    <pre><code><span class="token-builtin">include</span>(<span class="token-string">"entities/entity.abi"</span>)
 
-<span class="token-builtin">include</span>(<span class="token-string">"handlers/handler.abi"</span>)
+            <p>To use this entity in your application:</p>
+            <pre><code>include("entities/user_entity.abi")
 
-<span class="token-keyword">func</span> <span class="token-function">show_profile</span>() {
-    <span class="token-keyword">return</span> <span class="token-builtin">screen</span>(<span class="token-string">"profile"</span>)
+user1 = UserEntity(1, "Abinash", "abinash@example.com")
+print user1.get_info()
+user1.update_email("abinash.official@example.com")
+print user1.get_info()</code></pre>
+
+            <h2>Handler Classes & OOP Inheritance</h2>
+            <p>Handlers manage application logic, coordinating between entities and screens. You can implement handler classes that inherit behavior from other classes using the extends keyword:</p>
+            
+            <pre><code># file: abicore/handlers/base_handler.abi
+class BaseHandler {
+    public func init(name) {
+        this.name = name
+    }
+
+    public func log_access() {
+        print "Access logged for: " + this.name
+    }
 }</code></pre>
-                </div>
+
+            <p>Then, extend the base class to inherit methods and properties:</p>
+            
+            <pre><code># file: abicore/handlers/handler.abi
+include("handlers/base_handler.abi")
+include("entities/entity.abi")
+
+class Handler extends BaseHandler {
+    public func index() {
+        this.log_access()
+        e = Entity()
+        print "Calling entity: " + e.data()
+        return screen("index")
+    }
+
+    public func docs() {
+        return screen("docx")
+    }
+}</code></pre>
+
+            <h2>Try / Catch / Finally</h2>
+            <p>AbiLang provides try-catch-finally block structures to safely capture and handle execution and syntax/runtime errors:</p>
+            <pre><code>try {
+    print undefined_var
+} catch (e) {
+    print "An error occurred: " + e
+} finally {
+    print "Clean execution finished"
+}</code></pre>
+
+            <h2>Built-in Database & Debugging Helpers</h2>
+            <p>Perform database connections, mutations, queries, and Laravel-like formatted variable dumping:</p>
+            <pre><code>conn = db_connect({ "host": "localhost", "port": 3306 })
+record = db_create("users", { "username": "Abinash", "email": "abinash@example.com" })
+records = db_fetch("users", { "status": "active" })
+dd(record)</code></pre>
+        </section>
+
+        <section id="navigation" class="docs-section">
+            <h1>Navigation & Screens</h1>
+            <p>AbiLang features standard routing structures built into the language engine, allowing you to define route schemas that map directly to handler actions.</p>
+            
+            <h3>Route Registration</h3>
+            <p>Register routes using the native <code>route</code> statement, specifying HTTP verb, endpoint, target handler action, and route alias:</p>
+            <pre><code># file: abicore/navigation/routes.abi
+include("handlers/handler.abi")
+
+route("get", "/profile", "handler@show_profile", "user.profile")</code></pre>
+
+            <h3>Returning Screens</h3>
+            <p>The built-in <code>screen("filename")</code> helper automatically loads and processes the corresponding user interface definition from the screens layout space:</p>
+            <pre><code># file: abicore/handlers/handler.abi
+class Handler {
+    public func index() {
+        return screen("index")
+    }
+}</code></pre>
+        </section>
+
+        <section id="ui-template" class="docs-section">
+            <h1>Component & View Syntax</h1>
+            <p>AbiLang uses <code>.abx</code> files as its screen/view layer — similar to <code>.jsx</code> or <code>.tsx</code> in React. Every <code>.abx</code> file is a server-side template that renders to plain HTML. AbiLang introduces its own clean keywords so the syntax feels natural and easy to read.</p>
+
+            <div class="callout callout-info">
+                <strong>Philosophy:</strong> The <code>.abx</code> template syntax is designed to look like React/JSX — without any of the JavaScript build tooling complexity. Write HTML, add logic, compose screens — that's it.
             </div>
 
-            <div class="os-content" id="os-navigation">
-                <div class="cmd-group">
-                    <span class="cmd-label">1. Route Registrations (navigation/routes.abi)</span>
-                    <pre><code><span class="token-builtin">include</span>(<span class="token-string">"handlers/handler.abi"</span>)
+            <h2>1. <code>render</code> — Include a Screen or Component</h2>
+            <p>The <code>render</code> keyword pulls another <code>.abx</code> file into the current screen, exactly where the statement appears. This makes rendering UI components feel extremely natural and explicit.</p>
 
-<span class="token-builtin">route</span>(<span class="token-string">"get"</span>, <span class="token-string">"/"</span>, <span class="token-string">"handler@index"</span>, <span class="token-string">"home"</span>)</code></pre>
-                </div>
-                <div class="cmd-group">
-                    <span class="cmd-label">2. Returning Screens with the <code>screen()</code> Method</span>
-                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Use the built-in <code>screen("filename")</code> helper inside your handler actions. The screen parser resolves filenames to <code>screens/filename.abx</code> automatically, so you don't have to specify folders or file extensions.</p>
-                </div>
-            </div>
+            <pre><code>render Header from "layout/header"
+render Docx   from "docx"
+render Footer from "layout/footer"</code></pre>
 
-            <div class="os-content" id="os-idesyntax">
-                <div class="cmd-group">
-                    <span class="cmd-label">IDE Syntax Highlight Integration</span>
-                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">AbiLang offers customized, React-like JSX syntax coloring configurations for popular code editors (VS Code, Vim, and Sublime Text). This colors standard classes, visibility modifiers, and UI component keywords seamlessly.</p>
-                </div>
-                <div class="cmd-group">
-                    <span class="cmd-label">Configuring Syntax Highlighting</span>
-                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">To configure syntax highlighting globally for all editors on your device, execute the installer script:</p>
-                    <pre><code>node scripts/install-syntax.js</code></pre>
-                </div>
-                <div class="cmd-group">
-                    <span class="cmd-label">Highlighting for .abx Components</span>
-                    <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Syntax coloring highlights components, render constructs, and expression placeholders identically to modern frontend codebases:</p>
-                    <pre><code><span class="token-comment"># Reusable layout components</span>
+            <h2>2. Reusable Layouts & Components</h2>
+            <p>In AbiLang, child layouts and reusable templates are simply plain <code>.abx</code> files. You do not need any special headers or keywords at the top of the file. The rendering context is automatically scoped to the component (via <code>with(context)</code>), meaning properties can be outputted directly using <code>{{ variableName }}</code> instead of <code>{{ context.variableName }}</code>.</p>
 
-<span class="token-keyword">render</span> Header <span class="token-keyword">from</span> <span class="token-string">"layout/header"</span> <span class="token-comment"># Highlights render &amp; from keywords</span>
-<span class="token-keyword">render</span> Footer <span class="token-keyword">from</span> <span class="token-string">"layout/footer"</span>
+            <p>For example, a sub-screen component:</p>
+            <pre><code># file: abicore/screens/docx.abx
+&lt;section class="docs-section"&gt;
+    &lt;h2&gt;Documentation V1&lt;/h2&gt;
+    &lt;p&gt;AbiLang reference material...&lt;/p&gt;
+&lt;/section&gt;</code></pre>
+
+            <p>Then render it inside another screen:</p>
+            <pre><code># file: abicore/screens/docs.abx
+render Header from "layout/header"
+render Docx   from "docx"
+render Footer from "layout/footer"
+
+&lt;Header /&gt;
+&lt;Docx /&gt;
+&lt;Footer /&gt;</code></pre>
+
+            <h2>3. <code>&lt;script prepare&gt;</code> — Logic Block</h2>
+            <p>Wrap server-side JavaScript logic inside a <code>&lt;script prepare&gt;&lt;/script&gt;</code> block. This runs before the HTML is rendered. Use it to load language files, read environment variables, or prepare data for the template.</p>
+
+            <pre><code>&lt;script prepare&gt;
+    const fs   = require('fs');
+    const path = require('path');
+    const os   = require('os');
+
+    let lang = {};
+    try {
+        const file = path.resolve('abicore/lang/en/messages.json');
+        lang = JSON.parse(fs.readFileSync(file, 'utf8'));
+    } catch (e) {
+        lang = { title: "AbiLang", subtitle: "Welcome" };
+    }
+&lt;/script&gt;</code></pre>
+
+            <h2>4. <code>{{ }}</code> — Inline Expression Output</h2>
+            <p>Use double curly braces to output any JavaScript expression directly into the HTML. This replaces the old <code>&lt;%= expr %&gt;</code> syntax.</p>
+
+            <pre><code>&lt;h1&gt;{{ lang.title }}&lt;/h1&gt;
+&lt;p&gt;{{ lang.subtitle }}&lt;/p&gt;
+ 
+&lt;div&gt;
+    &lt;strong&gt;Platform:&lt;/strong&gt;  {{ os.platform() }}
+    &lt;strong&gt;Memory:&lt;/strong&gt;   {{ Math.floor(os.freemem() / 1024 / 1024) }}MB
+    &lt;strong&gt;Uptime:&lt;/strong&gt;   {{ Math.floor(os.uptime()) }}s
+&lt;/div&gt;</code></pre>
+
+            <h2>5. Complete Screen Example</h2>
+            <p>Here is a full <code>abicore/screens/index.abx</code> showing all four features working together:</p>
+
+            <pre><code>render Header from "layout/header"
+render Footer from "layout/footer"
 
 &lt;script prepare&gt;
-    <span class="token-comment"># Highlighting enabled inside script prepare logic blocks</span>
+    const fs   = require('fs');
+    const path = require('path');
+    const os   = require('os');
+    let lang = {};
+    try {
+        lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
+    } catch (e) {
+        lang = { title: "AbiLang", subtitle: "Welcome" };
+    }
 &lt;/script&gt;
 
 &lt;Header /&gt;
-&lt;h1&gt;&#x7b;&#x7b; lang.title &#x7d;&#x7d;&lt;/h1&gt; <span class="token-comment"># Highlighting enabled inside output placeholders</span>
+
+&lt;section class="hero-section"&gt;
+    &lt;h1&gt;{{ lang.title }}&lt;/h1&gt;
+    &lt;p&gt;{{ lang.subtitle }}&lt;/p&gt;
+    &lt;div&gt;
+        Platform: {{ os.platform() }} |
+        Memory:   {{ Math.floor(os.freemem() / 1024 / 1024) }}MB
+    &lt;/div&gt;
+&lt;/section&gt;
+
 &lt;Footer /&gt;</code></pre>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+
+            <h2>6. Keyword Reference</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>AbiLang Keyword</th>
+                        <th>What it Does</th>
+                        <th>React / JSX Equivalent</th>
+                        <th>Old Syntax (EJS)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="strong"><code>render X from "path"</code></td>
+                        <td>Include another .abx file inline</td>
+                        <td class="check-yes"><code>render X from "./X"</code> + <code>&lt;X /&gt;</code></td>
+                        <td><code>@include("path")</code></td>
+                    </tr>
+                    <tr>
+                        <td class="strong"><code>&lt;script prepare&gt;...&lt;/script&gt;</code></td>
+                        <td>Server-side logic / data preparation</td>
+                        <td class="check-yes"><code>&lt;script prepare&gt;</code> (Unique)</td>
+                        <td><code>&lt;% code %&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td class="strong"><code>{{ expression }}</code></td>
+                        <td>Output a value into HTML</td>
+                        <td class="check-yes"><code>{expression}</code> in JSX</td>
+                        <td><code>&lt;%= expression %&gt;</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>7. Sharing Data & Exports (Context & Props)</h2>
+            <p>AbiLang templates share a dynamic <code>context</code> object between parent screens and child layout templates. This allows you to pass data (props) down to layouts, or export data up from components.</p>
+            
+            <h3>Passing Data Down (Props)</h3>
+            <p>Assign any variable to the <code>context</code> object inside the parent screen's logic block:</p>
+            <pre><code># file: abicore/screens/index.abx
+&lt;script prepare&gt;
+    context.pageTitle = "Home Dashboard";
+    context.user = { name: "Abinash", role: "Admin" };
+&lt;/script&gt;
+
+render Header from "layout/header"</code></pre>
+
+            <p>Then read and output the variables inside the child component/layout template:</p>
+            <pre><code># file: abicore/screens/layout/header.abx
+&lt;header&gt;
+    &lt;h1&gt;{{ context.pageTitle }}&lt;/h1&gt;
+    &lt;span&gt;Logged in as: {{ context.user.name }}&lt;/span&gt;
+&lt;/header&gt;</code></pre>
+
+            <h3>Exporting Data Up from Components</h3>
+            <p>If a reusable component prepares data or configuration, it can write directly to the shared <code>context</code> object to export it to the parent screen:</p>
+            <pre><code># file: abicore/screens/layout/sidebar.abx
+&lt;script prepare&gt;
+    # Export variable to parent template
+    context.sidebarLinks = ["Home", "Docs", "Settings"];
+&lt;/script&gt;</code></pre>
+
+            <p>The parent template can access the exported variables anywhere after rendering the component:</p>
+            <pre><code># file: abicore/screens/index.abx
+render Sidebar from "layout/sidebar"
+
+&lt;footer&gt;
+    &lt;p&gt;Available Links: {{ context.sidebarLinks.join(', ') }}&lt;/p&gt;
+&lt;/footer&gt;</code></pre>
+
+            <h2>8. Reusing the Profile Component</h2>
+            <p>Configure a component file, import/export its scope variables, and render it in multiple places with custom parameters.</p>
+            
+            <h3>1. Component View: <code>abicore/screens/components/profile_card.abx</code></h3>
+            <pre><code>&lt;script prepare&gt;
+    const os = require('os');
+    const name = context.profileName || "Guest User";
+    const role = context.profileRole || "Viewer";
+    const platform = os.platform();
+    const memory = Math.floor(os.freemem() / 1024 / 1024);
+&lt;/script&gt;
+
+&lt;div class="profile-card"&gt;
+    &lt;h2&gt;User Profile&lt;/h2&gt;
+    &lt;hr&gt;
+    &lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; {{ name }}&lt;/p&gt;
+    &lt;p&gt;&lt;strong&gt;Role:&lt;/strong&gt; {{ role }}&lt;/p>
+    
+    &lt;div class="system-stats"&gt;
+        &lt;h3&gt;System Details&lt;/h3&gt;
+        &lt;ul&gt;
+            &lt;li&gt;&lt;strong&gt;OS Platform:&lt;/strong&gt; {{ platform }}&lt;/li&gt;
+            &lt;li&gt;&lt;strong&gt;Free Memory:&lt;/strong&gt; {{ memory }} MB&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+            <h3>2. Reusing in Main Screen: <code>abicore/screens/dashboard.abx</code></h3>
+            <pre><code>render Header from "layout/header"
+render ProfileCard from "components/profile_card"
+render Footer from "layout/footer"
+
+&lt;Header /&gt;
+
+&lt;ProfileCard profileName="Abinash" profileRole="Administrator" /&gt;
+
+&lt;ProfileCard profileName="Jane Doe" profileRole="Support Manager" /&gt;
+
+&lt;Footer /&gt;</code></pre>
+        </section>
+
+        <section id="step-by-step-guide" class="docs-section">
+            <h1>Step-by-Step MVC Setup</h1>
+            <p>Configure a complete full-stack web application with handlers, entities, template views (using the unique <code>.abx</code> format), Node modules, and API mutators.</p>
+            
+            <h2>9. Master Layout Wrapper (Automatic Wrapping)</h2>
+            <p>Instead of rendering header and footer layouts manually on every page, you can define a single global layout template at <code>abicore/screens/layout/layout.abx</code>. The framework automatically detects this file and wraps your page screens in it.</p>
+            
+            <h3>1. Master Layout: <code>abicore/screens/layout/layout.abx</code></h3>
+            <p>Define the header, dynamic body view, and footer. Use the dynamic <code>context.viewPage</code> variable to render the targeted page view:</p>
+            <pre><code>render Header from "layout/header"
+render Body from context.viewPage
+render Footer from "layout/footer"
+
+&lt;Header /&gt;
+&lt;Body /&gt;
+&lt;Footer /&gt;</code></pre>
+
+            <h3>2. The Page View: <code>abicore/screens/dashboard.abx</code></h3>
+            <p>Since the header and footer are wrapped automatically, your screen file only needs to contain the middle content and setup block:</p>
+            <pre><code>&lt;script prepare&gt;
+    context.pageTitle = "My Dashboard";
+&lt;/script&gt;
+
+&lt;div class="container"&gt;
+    &lt;h1&gt;Dashboard Area&lt;/h1&gt;
+    &lt;p&gt;This content is injected directly in the middle of the screen layout.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+            
+            <h2>10. React-like Component Tag Rendering</h2>
+            <p>To write cleaner, component-driven layouts, declare renders at the top of your page using the standard <code>render</code> statement, and then render them inline inside your markup using custom component tags.</p>
+            
+            <h3>Sample View Page: <code>abicore/screens/dashboard.abx</code></h3>
+            <pre><code>render ProfileCard from "components/profile_card"
+
+&lt;script prepare&gt;
+    context.profileName = "Abinash";
+    context.profileRole = "Administrator";
+&lt;/script&gt;
+
+&lt;div class="container"&gt;
+    &lt;ProfileCard /&gt;
+&lt;/div&gt;</code></pre>
+            
+            <h2>11. Named Component Wrapping (Export Blocks)</h2>
+            <p>You can optionally wrap your HTML templates inside an <code>export ComponentName { ... }</code> block to define named layout structures explicitly:</p>
+            
+            <h3>Sample Component: <code>abicore/screens/components/profile_card.abx</code></h3>
+            <pre><code>&lt;script prepare&gt;
+    const os = require('os');
+    export name = context.profileName || "Guest User";
+    export role = context.profileRole || "Viewer";
+    export platform = os.platform();
+    export memory = Math.floor(os.freemem() / 1024 / 1024);
+&lt;/script&gt;
+
+export ProfileCard {
+    &lt;div class="profile-card"&gt;
+        &lt;h2&gt;User Profile&lt;/h2&gt;
+        &lt;hr&gt;
+        &lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; {{ name }}&lt;/p&gt;
+        &lt;p&gt;&lt;strong&gt;Role:&lt;/strong&gt; {{ role }}&lt;/p>
+        
+        &lt;div class="system-stats"&gt;
+            &lt;h3&gt;System Details&lt;/h3&gt;
+            &lt;ul&gt;
+                &lt;li&gt;&lt;strong&gt;OS Platform:&lt;/strong&gt; {{ platform }}&lt;/li&gt;
+                &lt;li&gt;&lt;strong&gt;Free Memory:&lt;/strong&gt; {{ memory }} MB&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+}</code></pre>
+            
+            <h2>Step 1: Scaffolding files</h2>
+            <p>Create these directories in your workspace: <code>abicore/navigation/</code>, <code>abicore/handlers/</code>, <code>abicore/entities/</code>, <code>abicore/screens/</code>, <code>abicore/support/</code>, <code>abicore/constants/</code>.</p>
+            <p>Your workspace directory tree will look like this:</p>
+            <pre><code>my-project/
+├── abicore/
+│   ├── constants/
+│   │   └── constants.abi
+│   ├── entities/
+│   │   └── entity.abi
+│   ├── handlers/
+│   │   └── handler.abi
+│   ├── lang/
+│   │   └── en/
+│   │       └── messages.json
+│   ├── navigation/
+│   │   └── routes.abi
+│   ├── screens/
+│   │   ├── components/
+│   │   ├── layout/
+│   │   │   ├── footer.abx
+│   │   │   ├── header.abx
+│   │   │   └── layout.abx
+│   │   ├── docs.abx
+│   │   └── index.abx
+│   └── support/
+│       └── helpers.abi
+├── public/
+│   ├── css/
+│   │   ├── style.css
+│   │   └── theme.css
+│   └── js/
+│       ├── abilang.min.js
+│       └── app.js
+├── .env
+├── package.json
+└── server.js</code></pre>
+            
+            <h2>Step 2: Database Config</h2>
+            <p>Use the built-in <code>env()</code> function to load database config settings directly from the <code>.env</code> file:</p>
+            <pre><code># file: abicore/constants/constants.abi
+APP_TITLE = env("APP_TITLE")
+VERSION = env("APP_VERSION")
+AUTHOR = env("APP_AUTHOR")
+
+DB_HOST = env("DB_HOST")
+DB_PORT = env("DB_PORT")
+DB_DATABASE = env("DB_DATABASE")
+DB_USERNAME = env("DB_USERNAME")
+DB_PASSWORD = env("DB_PASSWORD")</code></pre>
+            
+            <h2>Step 3: Database Entity Model</h2>
+            <pre><code># file: abicore/entities/entity.abi
+func Entity() {
+    self = {}
+    self.data = func() {
+        return "AbiLang Database Service Core Loaded"
+    }
+    return self
+}</code></pre>
+            
+            <h2>Step 4: Request Handler Controller</h2>
+            <p>Defines request handlers as controller classes and utilizes database constants:</p>
+            <pre><code># file: abicore/handlers/handler.abi
+include("entities/entity.abi")
+
+class Handler {
+    public func index() {
+        e = Entity()
+        print "Calling entity: " + e.data()
+        print "Database Config -> Host: " + DB_HOST + ", DB: " + DB_DATABASE
+        return screen("index")
+    }
+
+    public func docs() {
+        return screen("docx")
+    }
+}</code></pre>
+            
+            <h2>Step 5: Route Registrations</h2>
+            <pre><code># file: abicore/navigation/routes.abi
+include("constants/constants.abi")
+include("support/helpers.abi")
+include("handlers/handler.abi")
+
+route("get", "/", "handler@index", "home")
+route("get", "/docs", "handler@docs", "docs")</code></pre>
+            
+            <h2>Step 6: Frontend View Screens & Components (.abx)</h2>
+            
+            <h3>1. Main Entry screen: <code>abicore/screens/index.abx</code></h3>
+            <pre><code>render Header from "layout/header"
+render LandingBody from "components/landing_body"
+render Footer from "layout/footer"
+
+&lt;script prepare&gt;
+    const fs = require('fs');
+    const path = require('path');
+    const os = require('os');
+    let lang = {};
+    try {
+        const langCode = process.env.APP_LANG || 'en';
+        const langFile = path.resolve('abicore/lang/' + langCode + '/messages.json');
+        if (fs.existsSync(langFile)) {
+            lang = JSON.parse(fs.readFileSync(langFile, 'utf8'));
+        } else {
+            lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
+        }
+    } catch (e) {
+        lang = { title: "AbiLang", subtitle: "Welcome" };
+    }
+    context.lang = lang;
+    context.profileName = "Abinash";
+    context.profileRole = "Lead Platform Architect";
+&lt;/script&gt;
+
+&lt;Header /&gt;
+&lt;LandingBody /&gt;
+&lt;Footer /&gt;</code></pre>
+            
+            <h3>2. Body Component: <code>abicore/screens/components/landing_body.abx</code></h3>
+            <pre><code>render ProfileCard from "components/profile_card"
+
+&lt;script prepare&gt;
+    const os = require('os');
+&lt;/script&gt;
+
+&lt;section class="hero-section d-flex align-items-center"&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="row align-items-center justify-content-center"&gt;
+            &lt;div class="col-lg-9 text-center"&gt;
+                &lt;h1 class="display-3 fw-bold mb-4 text-white"&gt;
+                    {{ lang.title }}
+                &lt;/h1&gt;
+                &lt;p class="lead text-muted mb-5 fs-5"&gt;
+                    {{ lang.subtitle }}
+                &lt;/p&gt;
+                &lt;div class="mb-4"&gt;
+                    &lt;ProfileCard /&gt;
+                &lt;/div&gt;
+                &lt;div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;"&gt;
+                    &lt;h5 class="text-white mb-3"&gt;System Information&lt;/h5&gt;
+                    &lt;div class="row text-muted fs-6"&gt;
+                        &lt;div class="col-6 mb-2"&gt;&lt;strong&gt;Platform:&lt;/strong&gt; {{ os.platform() }}&lt;/div&gt;
+                        &lt;div class="col-6 mb-2"&gt;&lt;strong&gt;Architecture:&lt;/strong&gt; {{ os.arch() }}&lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/section&gt;</code></pre>
+            
+            <h3>3. Leaf Component: <code>abicore/screens/components/profile_card.abx</code></h3>
+            <pre><code>&lt;script prepare&gt;
+    const name = context.profileName || "Guest User";
+    const role = context.profileRole || "Viewer";
+&lt;/script&gt;
+
+&lt;div class="card card-custom p-4 text-start mx-auto mb-4" style="max-width: 600px; border-left: 4px solid var(--abi-green);"&gt;
+    &lt;h5 class="text-white mb-2"&gt;{{ name }}&lt;/h5&gt;
+    &lt;p class="text-muted mb-0"&gt;Role: &lt;span class="text-white-50"&gt;{{ role }}&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+        </section>
+
+        <section id="comparison-table-sec" class="docs-section">
+            <h1>Feature Comparison Table</h1>
+            <p>A quick summary of how AbiLang stacks up against other major languages:</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>AbiLang</th>
+                        <th>JavaScript</th>
+                        <th>Python</th>
+                        <th>PHP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="strong">Variable Keywords</td>
+                        <td class="check-yes">None (Dynamic)</td>
+                        <td class="check-no">const / let / var</td>
+                        <td class="check-yes">None (Dynamic)</td>
+                        <td class="check-no">None (Requires $)</td>
+                    </tr>
+                    <tr>
+                        <td class="strong">Semicolons</td>
+                        <td class="check-yes">Optional</td>
+                        <td class="check-yes">Optional</td>
+                        <td class="check-yes">None</td>
+                        <td class="check-no">Required</td>
+                    </tr>
+                    <tr>
+                        <td class="strong">Block Scoping</td>
+                        <td class="check-yes">Braces {}</td>
+                        <td class="check-yes">Braces {}</td>
+                        <td class="check-no">Indentation</td>
+                        <td class="check-yes">Braces {}</td>
+                    </tr>
+                    <tr>
+                        <td class="strong">Object Orientation</td>
+                        <td class="check-yes">Factory Closures / Classes</td>
+                        <td class="check-yes">Prototypes / Classes</td>
+                        <td class="check-yes">Classes (self)</td>
+                        <td class="check-yes">Classes ($this)</td>
+                    </tr>
+                    <tr>
+                        <td class="strong">Async Cloud API fetch</td>
+                        <td class="check-yes">Native Built-in</td>
+                        <td class="check-no">Library Fetch / Axios</td>
+                        <td class="check-no">Library Requests</td>
+                        <td class="check-no">Library cURL</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</div>
 EOF
 
 cat << 'EOF' > server.js

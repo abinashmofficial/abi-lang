@@ -824,6 +824,60 @@ window.addEventListener('DOMContentLoaded', () => {
       wrapper.appendChild(pre);
       wrapper.appendChild(copyBtn);
   });
+
+  // Live Search Filtering for Sidebar Docs
+  const searchInput = document.getElementById("search-input");
+  if (searchInput) {
+      searchInput.addEventListener("input", (e) => {
+          const query = e.target.value.toLowerCase().trim();
+          const navItems = document.querySelectorAll(".nav-item");
+          const sections = document.querySelectorAll(".docs-section");
+          
+          navItems.forEach(item => {
+              const text = item.textContent.toLowerCase();
+              if (query === "" || text.includes(query)) {
+                  item.style.display = "";
+              } else {
+                  item.style.display = "none";
+              }
+          });
+          
+          sections.forEach(section => {
+              const content = section.textContent.toLowerCase();
+              if (query === "" || content.includes(query)) {
+                  section.style.display = "";
+              } else {
+                  section.style.display = "none";
+              }
+          });
+      });
+  }
+
+  // Sidebar Active Scroll Highlighting
+  const sections = document.querySelectorAll(".docs-section");
+  const navLinks = document.querySelectorAll(".nav-link");
+  if (sections.length > 0 && navLinks.length > 0) {
+      window.addEventListener("scroll", () => {
+          let current = "";
+          sections.forEach(section => {
+              const sectionTop = section.offsetTop;
+              if (window.scrollY >= (sectionTop - 150)) {
+                  current = section.getAttribute("id");
+              }
+          });
+          
+          navLinks.forEach(link => {
+              link.classList.remove("active");
+              if (link.getAttribute("href") === "#" + current) {
+                  link.classList.add("active");
+                  const parent = link.closest('.nav-item');
+                  if (parent) {
+                      parent.style.display = "";
+                  }
+              }
+          });
+      });
+  }
 });
 
 const canvas = document.getElementById("star-rain-canvas");

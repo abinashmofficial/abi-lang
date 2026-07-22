@@ -740,6 +740,13 @@ window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => loadingAnim.remove(), 600);
   }
 
+  const allCodes = document.querySelectorAll('.install-code-blocks pre code');
+  allCodes.forEach(codeBlock => {
+      if (!codeBlock.querySelector('.token-keyword') && !codeBlock.querySelector('.token-string') && !codeBlock.querySelector('.token-comment')) {
+          codeBlock.innerHTML = highlightAbiLang(codeBlock.textContent);
+      }
+  });
+
   const installCodeBlocks = document.querySelectorAll('.install-code-blocks pre');
   installCodeBlocks.forEach(pre => {
       const codeElement = pre.querySelector('code');

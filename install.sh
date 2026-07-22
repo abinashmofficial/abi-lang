@@ -238,7 +238,7 @@ cat << 'EOF' > abicore/screens/layout/header.abx
 <body class="dark-theme">
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
+            <a class="navbar-brand d-flex align-items-center" href="/">
                 <span class="badge me-2 fs-5 px-3 abi-logo-badge">A</span>
                 <span class="fw-bold tracking-wider brand-title-text">Abi<span class="text-gradient">Lang</span></span>
             </a>
@@ -575,7 +575,7 @@ count = <span class="token-number">1</span>
 <span class="token-keyword">render</span> Footer <span class="token-keyword">from</span> <span class="token-string">"layout/footer"</span>
 
 &lt;script prepare&gt;
-<span class="token-comment"># Highlighting enabled inside script prepare logic blocks</span>
+    <span class="token-comment"># Highlighting enabled inside script prepare logic blocks</span>
 &lt;/script&gt;
 
 &lt;Header /&gt;

@@ -145,7 +145,7 @@
                 <h2>macOS & Linux Setup</h2>
                 <p>To run the single-click remote automated installation script, copy the command below:</p>
                 <pre><code class="language-bash"># Fetch and execute bash auto-installer script
-<span class="token-builtin">curl</span> <span class="token-string">-fsSL</span> <span class="token-constant">https://raw.githubusercontent.com/abinashmofficial/abi-abicore/lang/main/install.sh</span> <span class="token-logical">|</span> <span class="token-keyword">bash</span></code></pre>
+<span class="token-builtin">curl</span> <span class="token-string">-fsSL</span> <span class="token-constant">https://raw.githubusercontent.com/abinashmofficial/abi-lang/main/install.sh</span> <span class="token-logical">|</span> <span class="token-keyword">bash</span></code></pre>
 
                 <h2>Manual Compilation & Local Run</h2>
                 <p>If you prefer a manual setup, clone the repository, install its packages, and boot up the visual playground:</p>
@@ -1004,7 +1004,37 @@ render Footer from "layout/footer"
             });
         }
 
-        // 4. Code Blocks Copy-to-Clipboard
+        // 4. Code Blocks Highlighter & Copy-to-Clipboard
+        function highlightAbiLang(code) {
+            let html = code
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+
+            const tokenRegex = /(#(?:.*)$|\/\/(?:.*)$|\/\*[\s\S]*?\*\/)|(".*?"|'.*?')|(\b(?:if|else|while|return|func|class|extends|public|private|protected|try|catch|finally|import|from|inject|render|export)\b)|(\b(?:and|or|not)\b)|(\b(?:true|false|null)\b)|(\b(?:print|input|fetch|json_parse|create_text|create_button|create_column|create_row|render_ui|draw_screen|db_connect|db_create|db_update|db_delete|db_fetch|dd|include|route|screen)\b)|(\b[A-Z][a-zA-Z0-9_]*\b)|(\b[a-zA-Z_][a-zA-Z0-9_]*\b(?=\s*\xml|\s*\())|(\b\d+(?:\.\d+)?\b)/gm;
+
+            html = html.replace(tokenRegex, (match, comment, string, keyword, logical, constant, builtin, className, funcName, number) => {
+                if (comment) return `<span class="token-comment">${match}</span>`;
+                if (string) return `<span class="token-string">${match}</span>`;
+                if (keyword) return `<span class="token-keyword">${match}</span>`;
+                if (logical) return `<span class="token-logical">${match}</span>`;
+                if (constant) return `<span class="token-constant">${match}</span>`;
+                if (builtin) return `<span class="token-builtin">${match}</span>`;
+                if (className) return `<span class="token-class">${match}</span>`;
+                if (funcName) return `<span class="token-function">${match}</span>`;
+                if (number) return `<span class="token-number">${match}</span>`;
+                return match;
+            });
+
+            return html;
+        }
+
+        document.querySelectorAll("pre code").forEach(block => {
+            if (!block.querySelector(".token-keyword") && !block.querySelector(".token-string") && !block.querySelector(".token-comment")) {
+                block.innerHTML = highlightAbiLang(block.textContent);
+            }
+        });
+
         const preElements = document.querySelectorAll("pre");
         preElements.forEach(pre => {
             const code = pre.querySelector("code");

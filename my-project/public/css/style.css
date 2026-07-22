@@ -1361,8 +1361,9 @@ body.light-theme .cmd-desc code {
 }
 
 body.light-theme .copy-btn {
-    background: rgba(252, 251, 255, 0.8);
-    color: var(--text-muted);
+    background: #f1edfa !important;
+    border: 1px solid #c8b9f7 !important;
+    color: var(--abi-dark-blue) !important;
 }
 
 body.light-theme .copy-btn:hover {

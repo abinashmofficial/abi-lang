@@ -113,7 +113,7 @@ count = <span class="token-number">1</span>
 <span class="token-keyword">render</span> Footer <span class="token-keyword">from</span> <span class="token-string">"layout/footer"</span>
 
 &lt;script prepare&gt;
-<span class="token-comment"># Highlighting enabled inside script prepare logic blocks</span>
+    <span class="token-comment"># Highlighting enabled inside script prepare logic blocks</span>
 &lt;/script&gt;
 
 &lt;Header /&gt;

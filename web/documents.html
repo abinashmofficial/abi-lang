@@ -451,17 +451,17 @@ render Footer from "layout/footer"
                 <p>Wrap server-side JavaScript logic inside a <code>&lt;script prepare&gt;&lt;/script&gt;</code> block. This runs before the HTML is rendered. Use it to load language files, read environment variables, or prepare data for the template.</p>
 
                 <pre><code>&lt;script prepare&gt;
-const fs   = require('fs');
-const path = require('path');
-const os   = require('os');
+    const fs   = require('fs');
+    const path = require('path');
+    const os   = require('os');
 
-let lang = {};
-try {
-    const file = path.resolve('abicore/lang/en/messages.json');
-    lang = JSON.parse(fs.readFileSync(file, 'utf8'));
-} catch (e) {
-    lang = { title: "AbiLang", subtitle: "Welcome" };
-}
+    let lang = {};
+    try {
+        const file = path.resolve('abicore/lang/en/messages.json');
+        lang = JSON.parse(fs.readFileSync(file, 'utf8'));
+    } catch (e) {
+        lang = { title: "AbiLang", subtitle: "Welcome" };
+    }
 &lt;/script&gt;</code></pre>
 
                 <div class="callout callout-tip">
@@ -487,15 +487,15 @@ try {
 render Footer from "layout/footer"
 
 &lt;script prepare&gt;
-const fs   = require('fs');
-const path = require('path');
-const os   = require('os');
-let lang = {};
-try {
-    lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
-} catch (e) {
-    lang = { title: "AbiLang", subtitle: "Welcome" };
-}
+    const fs   = require('fs');
+    const path = require('path');
+    const os   = require('os');
+    let lang = {};
+    try {
+        lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
+    } catch (e) {
+        lang = { title: "AbiLang", subtitle: "Welcome" };
+    }
 &lt;/script&gt;
 
 &lt;Header /&gt;
@@ -550,8 +550,8 @@ try {
                 <p>Assign any variable to the <code>context</code> object inside the parent screen's logic block:</p>
                 <pre><code># file: abicore/screens/index.abx
 &lt;script prepare&gt;
-context.pageTitle = "Home Dashboard";
-context.user = { name: "Abinash", role: "Admin" };
+    context.pageTitle = "Home Dashboard";
+    context.user = { name: "Abinash", role: "Admin" };
 &lt;/script&gt;
 
 render Header from "layout/header"</code></pre>
@@ -567,8 +567,8 @@ render Header from "layout/header"</code></pre>
                 <p>If a reusable component prepares data or configuration, it can write directly to the shared <code>context</code> object to export it to the parent screen:</p>
                 <pre><code># file: abicore/screens/layout/sidebar.abx
 &lt;script prepare&gt;
-# Export variable to parent template
-context.sidebarLinks = ["Home", "Docs", "Settings"];
+    # Export variable to parent template
+    context.sidebarLinks = ["Home", "Docs", "Settings"];
 &lt;/script&gt;</code></pre>
 
                 <p>The parent template can access the exported variables anywhere after rendering the component:</p>
@@ -584,11 +584,11 @@ render Sidebar from "layout/sidebar"
                 
                 <h3>1. Component View: <code>abicore/screens/components/profile_card.abx</code></h3>
                 <pre><code>&lt;script prepare&gt;
-const os = require('os');
-const name = context.profileName || "Guest User";
-const role = context.profileRole || "Viewer";
-const platform = os.platform();
-const memory = Math.floor(os.freemem() / 1024 / 1024);
+    const os = require('os');
+    const name = context.profileName || "Guest User";
+    const role = context.profileRole || "Viewer";
+    const platform = os.platform();
+    const memory = Math.floor(os.freemem() / 1024 / 1024);
 &lt;/script&gt;
 
 &lt;div class="profile-card"&gt;
@@ -645,7 +645,7 @@ render Footer from "layout/footer"
                 <h3>2. The Page View: <code>abicore/screens/dashboard.abx</code></h3>
                 <p>Since the header and footer are wrapped automatically, your screen file only needs to contain the middle content and setup block:</p>
                 <pre><code>&lt;script prepare&gt;
-context.pageTitle = "My Dashboard";
+    context.pageTitle = "My Dashboard";
 &lt;/script&gt;
 
 &lt;div class="container"&gt;
@@ -660,8 +660,8 @@ context.pageTitle = "My Dashboard";
                 <pre><code>render ProfileCard from "components/profile_card"
 
 &lt;script prepare&gt;
-context.profileName = "Abinash";
-context.profileRole = "Administrator";
+    context.profileName = "Abinash";
+    context.profileRole = "Administrator";
 &lt;/script&gt;
 
 &lt;div class="container"&gt;
@@ -673,11 +673,11 @@ context.profileRole = "Administrator";
                 
                 <h3>Sample Component: <code>abicore/screens/components/profile_card.abx</code></h3>
                 <pre><code>&lt;script prepare&gt;
-const os = require('os');
-export name = context.profileName || "Guest User";
-export role = context.profileRole || "Viewer";
-export platform = os.platform();
-export memory = Math.floor(os.freemem() / 1024 / 1024);
+    const os = require('os');
+    export name = context.profileName || "Guest User";
+    export role = context.profileRole || "Viewer";
+    export platform = os.platform();
+    export memory = Math.floor(os.freemem() / 1024 / 1024);
 &lt;/script&gt;
 
 export ProfileCard {
@@ -794,24 +794,24 @@ render LandingBody from "components/landing_body"
 render Footer from "layout/footer"
 
 &lt;script prepare&gt;
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-let lang = {};
-try {
-    const langCode = process.env.APP_LANG || 'en';
-    const langFile = path.resolve('abicore/lang/' + langCode + '/messages.json');
-    if (fs.existsSync(langFile)) {
-        lang = JSON.parse(fs.readFileSync(langFile, 'utf8'));
-    } else {
-        lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
+    const fs = require('fs');
+    const path = require('path');
+    const os = require('os');
+    let lang = {};
+    try {
+        const langCode = process.env.APP_LANG || 'en';
+        const langFile = path.resolve('abicore/lang/' + langCode + '/messages.json');
+        if (fs.existsSync(langFile)) {
+            lang = JSON.parse(fs.readFileSync(langFile, 'utf8'));
+        } else {
+            lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
+        }
+    } catch (e) {
+        lang = { title: "AbiLang", subtitle: "Welcome" };
     }
-} catch (e) {
-    lang = { title: "AbiLang", subtitle: "Welcome" };
-}
-context.lang = lang;
-context.profileName = "Abinash";
-context.profileRole = "Lead Platform Architect";
+    context.lang = lang;
+    context.profileName = "Abinash";
+    context.profileRole = "Lead Platform Architect";
 &lt;/script&gt;
 
 &lt;Header /&gt;
@@ -823,7 +823,7 @@ context.profileRole = "Lead Platform Architect";
                 <pre><code>render ProfileCard from "components/profile_card"
 
 &lt;script prepare&gt;
-const os = require('os');
+    const os = require('os');
 &lt;/script&gt;
 
 &lt;section class="hero-section d-flex align-items-center"&gt;
@@ -854,8 +854,8 @@ const os = require('os');
                 <h3>3. Leaf Component: <code>abicore/screens/components/profile_card.abx</code></h3>
                 <p>A simple presentation component to display user details from parent context:</p>
                 <pre><code>&lt;script prepare&gt;
-const name = context.profileName || "Guest User";
-const role = context.profileRole || "Viewer";
+    const name = context.profileName || "Guest User";
+    const role = context.profileRole || "Viewer";
 &lt;/script&gt;
 
 &lt;div class="card card-custom p-4 text-start mx-auto mb-4" style="max-width: 600px; border-left: 4px solid var(--abi-green);"&gt;

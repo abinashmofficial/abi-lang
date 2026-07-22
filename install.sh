@@ -269,8 +269,8 @@ EOF
 
 cat << 'EOF' > abicore/screens/components/profile_card.abx
 <script prepare>
-const name = context.profileName || "Guest User";
-const role = context.profileRole || "Viewer";
+    const name = context.profileName || "Guest User";
+    const role = context.profileRole || "Viewer";
 </script>
 
 <div class="card card-custom p-4 text-start mx-auto mb-4" style="max-width: 600px; border-left: 4px solid var(--abi-green);">
@@ -283,7 +283,7 @@ cat << 'EOF' > abicore/screens/components/landing_body.abx
 render ProfileCard from "components/profile_card"
 
 <script prepare>
-const os = require('os');
+    const os = require('os');
 </script>
 
 <section class="hero-section d-flex align-items-center">
@@ -327,24 +327,24 @@ render LandingBody from "components/landing_body"
 render Footer from "layout/footer"
 
 <script prepare>
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-let lang = {};
-try {
-    const langCode = process.env.APP_LANG || 'en';
-    const langFile = path.resolve('abicore/lang/' + langCode + '/messages.json');
-    if (fs.existsSync(langFile)) {
-        lang = JSON.parse(fs.readFileSync(langFile, 'utf8'));
-    } else {
-        lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
+    const fs = require('fs');
+    const path = require('path');
+    const os = require('os');
+    let lang = {};
+    try {
+        const langCode = process.env.APP_LANG || 'en';
+        const langFile = path.resolve('abicore/lang/' + langCode + '/messages.json');
+        if (fs.existsSync(langFile)) {
+            lang = JSON.parse(fs.readFileSync(langFile, 'utf8'));
+        } else {
+            lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
+        }
+    } catch (e) {
+        lang = { title: "AbiLang", subtitle: "Welcome" };
     }
-} catch (e) {
-    lang = { title: "AbiLang", subtitle: "Welcome" };
-}
-context.lang = lang;
-context.profileName = "Abinash";
-context.profileRole = "Lead Platform Architect";
+    context.lang = lang;
+    context.profileName = "Abinash";
+    context.profileRole = "Lead Platform Architect";
 </script>
 
 <style>
@@ -859,7 +859,7 @@ function renderTemplate(filePath) {
     
     if (!isLayoutFile && fs.existsSync(layoutPath)) {
         const fileContent = fs.readFileSync(resolved, 'utf8');
-        const needsLayoutWrapper = !fileContent.includes('Header') && !fileContent.includes('Layout');
+        const needsLayoutWrapper = !/<Header\b/.test(fileContent) && !/<Layout\b/.test(fileContent);
         if (needsLayoutWrapper) {
             if (require.cache[layoutPath]) {
                 delete require.cache[layoutPath];

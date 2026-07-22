@@ -268,7 +268,7 @@ function renderTemplate(filePath) {
     
     if (!isLayoutFile && fs.existsSync(layoutPath)) {
         const fileContent = fs.readFileSync(resolved, 'utf8');
-        const needsLayoutWrapper = !fileContent.includes('Header') && !fileContent.includes('Layout');
+        const needsLayoutWrapper = !/<Header\b/.test(fileContent) && !/<Layout\b/.test(fileContent);
         if (needsLayoutWrapper) {
             if (require.cache[layoutPath]) {
                 delete require.cache[layoutPath];

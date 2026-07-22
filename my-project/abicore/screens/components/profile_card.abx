@@ -1,6 +1,6 @@
 <script prepare>
-const name = context.profileName || "Guest User";
-const role = context.profileRole || "Viewer";
+    const name = context.profileName || "Guest User";
+    const role = context.profileRole || "Viewer";
 </script>
 
 <div class="card card-custom p-4 text-start mx-auto mb-4" style="max-width: 600px; border-left: 4px solid var(--abi-green);">

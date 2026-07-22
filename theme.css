@@ -1,0 +1,47 @@
+body {
+    --bg-app: #f3f0ff;
+    --bg-pane: #fcfbff;
+    --border-color: #d4c8ff;
+    --abi-green: #4CAF50;
+    --abi-dark-blue: #6d28d9;
+    --abi-cyan: #00cfff;
+    --abi-rose: #ff4fcf;
+    --text-main: #23124f;
+    --text-muted: #75669f;
+    --btn-text: #ffffff;
+    --editor-bg: #fdfdfd;
+    --token-comment: #93a1a1;
+    --token-string: #2aa198;
+    --token-keyword: #d33682;
+    --token-logical: #d33682;
+    --token-constant: #b58900;
+    --token-builtin: #268bd2;
+    --token-function: #859900;
+    --token-number: #cb4b16;
+    --token-text: #586e75;
+    --token-class: #268bd2;
+}
+
+body.dark-theme {
+    --bg-app: #090014;
+    --bg-pane: #15082b;
+    --border-color: #32225a;
+    --abi-green: #7bff00;
+    --abi-dark-blue: #8f5cff;
+    --abi-cyan: #00eaff;
+    --abi-rose: #ff4fd8;
+    --text-main: #ffffff;
+    --text-muted: #b6add3;
+    --btn-text: #090014;
+    --editor-bg: #272822;
+    --token-comment: #75715E;
+    --token-string: #E6DB74;
+    --token-keyword: #F92672;
+    --token-logical: #F92672;
+    --token-constant: #AE81FF;
+    --token-builtin: #66D9EF;
+    --token-function: #A6E22E;
+    --token-number: #AE81FF;
+    --token-text: #F8F8F2;
+    --token-class: #66D9EF;
+}

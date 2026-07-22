@@ -12,6 +12,7 @@ require.extensions['.abx'] = function (module, filename) {
                     /from\s+['"]react['"]/i.test(content) || 
                     /import\s+React/i.test(content);
     const isTemplate = !isReact;
+    let transpiled;
     const resolveTemplatePath = (importPath) => {
         let directPath = path.resolve(path.dirname(filename), importPath);
         if (fs.existsSync(directPath)) return directPath;
@@ -84,11 +85,13 @@ require.extensions['.abx'] = function (module, filename) {
                 processedContent = processedContent.replace(imp.match, inlineReplacement);
             }
         });
+
         const includeRegex = /@include\(['"]([^'"]+)['"]\)/g;
         processedContent = processedContent.replace(includeRegex, (match, subPath) => {
             let resolved = resolveTemplatePath(subPath);
             return `<%= require(${JSON.stringify(resolved)})(require, console, context) %>`;
         });
+
         const pluginRegex = /@plugin\(['"]([^'"]+)['"](?:,\s*['"]([^'"]+)['"])?(?:,\s*(.+?))?\)/g;
         processedContent = processedContent.replace(pluginRegex, (match, moduleName, funcName, argsStr) => {
             return `<%= (function() {
@@ -110,7 +113,8 @@ require.extensions['.abx'] = function (module, filename) {
                 return String(plugin);
             })() %>`;
         });
-        processedContent = processedContent.replace(/<script\s+setup>([\s\S]*?)<\/script>/g, (match, code) => {
+
+        processedContent = processedContent.replace(/<script\s+prepare>([\s\S]*?)<\/script>/g, (match, code) => {
             let processedCode = code.trim();
             processedCode = processedCode.replace(/\bimport\s+\{\s*([\w\s,]+)\s*\}\s+from\s+['"]([^'"]+)['"]/g, (m, vars, importPath) => {
                 let includePath = path.resolve(path.dirname(filename), importPath);
@@ -120,7 +124,10 @@ require.extensions['.abx'] = function (module, filename) {
                 const randomId = Math.floor(Math.random() * 1000000);
                 return `const _import_ctx_${randomId} = {}; require(${JSON.stringify(includePath)})(require, console, _import_ctx_${randomId}); const { ${vars} } = _import_ctx_${randomId};`;
             });
-            processedCode = processedCode.replace(/\bexport\s+(const|let|var)\s+(\w+)\s*=/g, '$1 $2 = context.$2 =');
+            processedCode = processedCode.replace(/\bexport\s+(?:(const|let|var)\s+)?(\w+)\s*=/g, (m, keyword, name) => {
+                const kw = keyword || 'let';
+                return `${kw} ${name} = context.${name} =`;
+            });
             const matches = [...processedCode.matchAll(/\bexport\s+(function|class)\s+(\w+)\b/g)];
             processedCode = processedCode.replace(/\bexport\s+(function|class)\s+(\w+)\b/g, '$1 $2');
             matches.forEach(m => {
@@ -129,9 +136,11 @@ require.extensions['.abx'] = function (module, filename) {
             });
             return `<% ${processedCode} %>`;
         });
+
         processedContent = processedContent.replace(/\{\{\s*([\s\S]*?)\s*\}\}/g, (match, expr) => {
             return `<%= ${expr.trim()} %>`;
         });
+
         const codeRegex = /<%([\s\S]*?)%>/g;
         let index = 0;
         let match;
@@ -234,13 +243,7 @@ async function loadRoutes() {
         });
         return null;
     }));
-    let routeFile = path.resolve('navigation/routes.abi');
-    if (!fs.existsSync(routeFile)) {
-        routeFile = path.resolve('navigation/routes.ab');
-    }
-    if (!fs.existsSync(routeFile)) {
-        routeFile = path.resolve('navigation/routes.abilang');
-    }
+    const routeFile = path.resolve('navigation/routes.abi');
     if (fs.existsSync(routeFile)) {
         const source = fs.readFileSync(routeFile, 'utf8');
         const lexer = new Lexer(source);
@@ -372,7 +375,7 @@ async function startServer() {
             })();
             if (handlerClass && handlerClass.declaration && handlerClass.declaration.type === "ClassDeclStatement") {
                 const instance = await handlerClass.call(interpreter, []);
-                const method = instance.klass.findMethod(actionName);
+                const method = instance.klass.declaration.methods.find(m => m.name === actionName);
                 if (method) {
                     const { BoundMethod } = require("./dist/interpreter");
                     handlerFunc = new BoundMethod(instance, method, instance.klass.closure);

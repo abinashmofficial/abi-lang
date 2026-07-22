@@ -441,12 +441,16 @@ render Footer from "layout/footer"</code></pre>
                 <pre><code># file: screens/docs.abx
 render Header from "layout/header"
 render Docx   from "docx"
-render Footer from "layout/footer"</code></pre>
+render Footer from "layout/footer"
 
-                <h2>3. <code>&lt;script setup&gt;</code> — Logic Block</h2>
-                <p>Wrap server-side JavaScript logic inside a <code>&lt;script setup&gt;&lt;/script&gt;</code> block. This runs before the HTML is rendered. Use it to load language files, read environment variables, or prepare data for the template.</p>
+&lt;Header /&gt;
+&lt;Docx /&gt;
+&lt;Footer /&gt;</code></pre>
 
-                <pre><code>&lt;script setup&gt;
+                <h2>3. <code>&lt;script prepare&gt;</code> — Logic Block</h2>
+                <p>Wrap server-side JavaScript logic inside a <code>&lt;script prepare&gt;&lt;/script&gt;</code> block. This runs before the HTML is rendered. Use it to load language files, read environment variables, or prepare data for the template.</p>
+
+                <pre><code>&lt;script prepare&gt;
 const fs   = require('fs');
 const path = require('path');
 const os   = require('os');
@@ -461,7 +465,7 @@ try {
 &lt;/script&gt;</code></pre>
 
                 <div class="callout callout-tip">
-                    <strong>Tip:</strong> <code>&lt;script setup&gt;</code> replaces the old <code>&lt;% code %&gt;</code> EJS-style blocks. Everything inside runs as plain Node.js — <code>require</code>, <code>process.env</code>, <code>fs</code>, and <code>os</code> are all available.
+                    <strong>Tip:</strong> <code>&lt;script prepare&gt;</code> replaces the old <code>&lt;% code %&gt;</code> EJS-style blocks. Everything inside runs as plain Node.js — <code>require</code>, <code>process.env</code>, <code>fs</code>, and <code>os</code> are all available.
                 </div>
 
                 <h2>4. <code>{{ }}</code> — Inline Expression Output</h2>
@@ -480,8 +484,9 @@ try {
                 <p>Here is a full <code>screens/index.abx</code> showing all four features working together:</p>
 
                 <pre><code>render Header from "layout/header"
+render Footer from "layout/footer"
 
-&lt;script setup&gt;
+&lt;script prepare&gt;
 const fs   = require('fs');
 const path = require('path');
 const os   = require('os');
@@ -493,6 +498,8 @@ try {
 }
 &lt;/script&gt;
 
+&lt;Header /&gt;
+
 &lt;section class="hero-section"&gt;
     &lt;h1&gt;{{ lang.title }}&lt;/h1&gt;
     &lt;p&gt;{{ lang.subtitle }}&lt;/p&gt;
@@ -500,9 +507,9 @@ try {
         Platform: {{ os.platform() }} |
         Memory:   {{ Math.floor(os.freemem() / 1024 / 1024) }}MB
     &lt;/div&gt;
-&lt;/section>
+&lt;/section&gt;
 
-render Footer from "layout/footer"</code></pre>
+&lt;Footer /&gt;</code></pre>
 
                 <h2>6. Keyword Reference</h2>
                 <table class="comparison-table">
@@ -518,13 +525,13 @@ render Footer from "layout/footer"</code></pre>
                         <tr>
                             <td class="strong"><code>render X from "path"</code></td>
                             <td>Include another .abx file inline</td>
-                            <td class="check-yes"><code>import X from "./X"</code> + <code>&lt;X /&gt;</code></td>
+                            <td class="check-yes"><code>render X from "./X"</code> + <code>&lt;X /&gt;</code></td>
                             <td><code>@include("path")</code></td>
                         </tr>
                         <tr>
-                            <td class="strong"><code>&lt;script setup&gt;...&lt;/script&gt;</code></td>
+                            <td class="strong"><code>&lt;script prepare&gt;...&lt;/script&gt;</code></td>
                             <td>Server-side logic / data preparation</td>
-                            <td class="check-yes"><code>&lt;script setup&gt;</code> (Vue 3)</td>
+                            <td class="check-yes"><code>&lt;script prepare&gt;</code> (Unique)</td>
                             <td><code>&lt;% code %&gt;</code></td>
                         </tr>
                         <tr>
@@ -542,12 +549,12 @@ render Footer from "layout/footer"</code></pre>
                 <h3>Passing Data Down (Props)</h3>
                 <p>Assign any variable to the <code>context</code> object inside the parent screen's logic block:</p>
                 <pre><code># file: screens/index.abx
-&lt;script setup&gt;
+&lt;script prepare&gt;
 context.pageTitle = "Home Dashboard";
 context.user = { name: "Abinash", role: "Admin" };
 &lt;/script&gt;
 
-render Header from "screens/layout/header.abx"</code></pre>
+render Header from "layout/header"</code></pre>
 
                 <p>Then read and output the variables inside the child component/layout template:</p>
                 <pre><code># file: screens/layout/header.abx
@@ -559,14 +566,14 @@ render Header from "screens/layout/header.abx"</code></pre>
                 <h3>Exporting Data Up from Components</h3>
                 <p>If a reusable component prepares data or configuration, it can write directly to the shared <code>context</code> object to export it to the parent screen:</p>
                 <pre><code># file: screens/layout/sidebar.abx
-&lt;script setup&gt;
+&lt;script prepare&gt;
 # Export variable to parent template
 context.sidebarLinks = ["Home", "Docs", "Settings"];
 &lt;/script&gt;</code></pre>
 
                 <p>The parent template can access the exported variables anywhere after rendering the component:</p>
                 <pre><code># file: screens/index.abx
-render Sidebar from "screens/layout/sidebar.abx"
+render Sidebar from "layout/sidebar"
 
 &lt;footer&gt;
     &lt;p&gt;Available Links: {{ context.sidebarLinks.join(', ') }}&lt;/p&gt;
@@ -576,7 +583,7 @@ render Sidebar from "screens/layout/sidebar.abx"
                 <p>Configure a component file, import/export its scope variables, and render it in multiple places with custom parameters.</p>
                 
                 <h3>1. Component View: <code>screens/components/profile_card.abx</code></h3>
-                <pre><code>&lt;script setup&gt;
+                <pre><code>&lt;script prepare&gt;
 const os = require('os');
 const name = context.profileName || "Guest User";
 const role = context.profileRole || "Viewer";
@@ -600,21 +607,17 @@ const memory = Math.floor(os.freemem() / 1024 / 1024);
 &lt;/div&gt;</code></pre>
 
                 <h3>2. Reusing in Main Screen: <code>screens/dashboard.abx</code></h3>
-                <pre><code>render Header from "screens/layout/header.abx"
+                <pre><code>render Header from "layout/header"
+render ProfileCard from "components/profile_card"
+render Footer from "layout/footer"
 
-&lt;script setup&gt;
-context.profileName = "Abinash";
-context.profileRole = "Administrator";
-&lt;/script&gt;
-render ProfileCard1 from "screens/components/profile_card.abx"
+&lt;Header /&gt;
 
-&lt;script setup&gt;
-context.profileName = "Jane Doe";
-context.profileRole = "Support Manager";
-&lt;/script&gt;
-render ProfileCard2 from "screens/components/profile_card.abx"
+&lt;ProfileCard profileName="Abinash" profileRole="Administrator" /&gt;
 
-render Footer from "screens/layout/footer.abx"</code></pre>
+&lt;ProfileCard profileName="Jane Doe" profileRole="Support Manager" /&gt;
+
+&lt;Footer /&gt;</code></pre>
 
                 <div class="callout callout-info">
                     <strong>Backward Compatibility:</strong> The old <code>@include()</code> and <code>&lt;% %&gt;</code> / <code>&lt;%= %&gt;</code> syntax still works. You can mix old and new syntax in the same project during migration.
@@ -630,14 +633,18 @@ render Footer from "screens/layout/footer.abx"</code></pre>
                 <p>Instead of rendering header and footer layouts manually on every page, you can define a single global layout template at <code>screens/layout/layout.abx</code>. The framework automatically detects this file and wraps your page screens in it.</p>
                 
                 <h3>1. Master Layout: <code>screens/layout/layout.abx</code></h3>
-                <p>Define the header, dynamic body view, and footer. Use the dynamic <code>context.viewPage</code> variable to import the targeted page view:</p>
-                <pre><code>render Header from "screens/layout/header.abx"
+                <p>Define the header, dynamic body view, and footer. Use the dynamic <code>context.viewPage</code> variable to render the targeted page view:</p>
+                <pre><code>render Header from "layout/header"
 render Body from context.viewPage
-render Footer from "screens/layout/footer.abx"</code></pre>
+render Footer from "layout/footer"
+
+&lt;Header /&gt;
+&lt;Body /&gt;
+&lt;Footer /&gt;</code></pre>
 
                 <h3>2. The Page View: <code>screens/dashboard.abx</code></h3>
                 <p>Since the header and footer are wrapped automatically, your screen file only needs to contain the middle content and setup block:</p>
-                <pre><code>&lt;script setup&gt;
+                <pre><code>&lt;script prepare&gt;
 context.pageTitle = "My Dashboard";
 &lt;/script&gt;
 
@@ -647,12 +654,12 @@ context.pageTitle = "My Dashboard";
 &lt;/div&gt;</code></pre>
                 
                 <h2>10. React-like Component Tag Rendering</h2>
-                <p>To write cleaner, component-driven layouts, declare imports at the top of your page using the standard <code>render</code> statement, and then render them inline inside your markup using custom component tags (like <code>&lt;ProfileCard /&gt;</code>).</p>
+                <p>To write cleaner, component-driven layouts, declare renders at the top of your page using the standard <code>render</code> statement, and then render them inline inside your markup using custom component tags (like <code>&lt;ProfileCard /&gt;</code>).</p>
                 
                 <h3>Sample View Page: <code>screens/dashboard.abx</code></h3>
-                <pre><code>render ProfileCard from "screens/components/profile_card.abx"
+                <pre><code>render ProfileCard from "components/profile_card"
 
-&lt;script setup&gt;
+&lt;script prepare&gt;
 context.profileName = "Abinash";
 context.profileRole = "Administrator";
 &lt;/script&gt;
@@ -665,12 +672,12 @@ context.profileRole = "Administrator";
                 <p>You can optionally wrap your HTML templates inside an <code>export ComponentName { ... }</code> block to define named layout structures explicitly:</p>
                 
                 <h3>Sample Component: <code>screens/components/profile_card.abx</code></h3>
-                <pre><code>&lt;script setup&gt;
+                <pre><code>&lt;script prepare&gt;
 const os = require('os');
-export const name = context.profileName || "Guest User";
-export const role = context.profileRole || "Viewer";
-export const platform = os.platform();
-export const memory = Math.floor(os.freemem() / 1024 / 1024);
+export name = context.profileName || "Guest User";
+export role = context.profileRole || "Viewer";
+export platform = os.platform();
+export memory = Math.floor(os.freemem() / 1024 / 1024);
 &lt;/script&gt;
 
 export ProfileCard {
@@ -734,11 +741,12 @@ route("get", "/", "handler@index", "home")
 route("get", "/docs", "handler@docs", "docs")</code></pre>
                 
                 <h2>Step 6: Frontend View Screens (.abx)</h2>
-                <p>Screens use the custom <code>.abx</code> extension. Inside <code>&lt;script setup&gt;</code>, you can load standard Node modules using <code>require()</code> dynamically:</p>
+                <p>Screens use the custom <code>.abx</code> extension. Inside <code>&lt;script prepare&gt;</code>, you can load standard Node modules using <code>require()</code> dynamically:</p>
                 <pre><code># file: screens/index.abx
-import Header from "screens/layout/header.abx"
+render Header from "screens/layout/header.abx"
+render Footer from "screens/layout/footer.abx"
 
-&lt;script setup&gt;
+&lt;script prepare&gt;
 # Load standard node modules natively inside logic block
 const os = require('os');
 const fs = require('fs');
@@ -747,6 +755,8 @@ platform = os.platform()
 arch = os.arch()
 total_mem = Math.floor(os.totalmem() / 1024 / 1024)
 &lt;/script&gt;
+
+&lt;Header /&gt;
 
 &lt;div class="container mt-5"&gt;
     &lt;h1&gt;System Statistics&lt;/h1&gt;
@@ -757,7 +767,7 @@ total_mem = Math.floor(os.totalmem() / 1024 / 1024)
     &lt;/ul&gt;
 &lt;/div&gt;
 
-import Footer from "screens/layout/footer.abx"</code></pre>
+&lt;Footer /&gt;</code></pre>
             </section>
 
             <!-- Section: Comparison Table -->

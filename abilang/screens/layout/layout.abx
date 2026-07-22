@@ -1,5 +1,0 @@
-render Header from "screens/layout/header.abx"
-
-render Body from context.viewPage
-
-render Footer from "screens/layout/footer.abx"

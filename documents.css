@@ -641,6 +641,21 @@ body.light-theme .theme-toggle-floating:hover {
         margin-left: 0;
         padding: 16px 10px !important;
     }
+    .version-badge {
+        display: none;
+    }
+    .docs-header {
+        padding: 0 12px;
+    }
+    .header-nav {
+        gap: 10px;
+    }
+    .header-nav a {
+        font-size: 13px;
+    }
+    .header-left, .header-right {
+        gap: 8px;
+    }
 }
 
 .kw  { color: #c792ea; font-weight: 600; }

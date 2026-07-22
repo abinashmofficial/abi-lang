@@ -256,9 +256,10 @@ cat << 'EOF' > lang/en/messages.json
 EOF
 
 cat << 'EOF' > screens/index.abx
-render Header from "screens/layout/header.abx"
+render Header from "layout/header"
+render Footer from "layout/footer"
 
-<script setup>
+<script prepare>
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -347,6 +348,8 @@ try {
     #view-portal-link { color: var(--abi-green) !important; }
 </style>
 
+<Header />
+
 <section class="hero-section d-flex align-items-center">
     <div class="container">
         <div class="row align-items-center justify-content-center">
@@ -378,7 +381,7 @@ try {
     </div>
 </section>
 
-render Footer from "screens/layout/footer.abx"
+<Footer />
 EOF
 
 cat << 'EOF' > screens/layout/footer.abx
@@ -407,17 +410,23 @@ cat << 'EOF' > screens/layout/footer.abx
 EOF
 
 cat << 'EOF' > screens/layout/layout.abx
-render Header from "screens/layout/header.abx"
-
+render Header from "layout/header"
 render Body from context.viewPage
+render Footer from "layout/footer"
 
-render Footer from "screens/layout/footer.abx"
+<Header />
+<Body />
+<Footer />
 EOF
 
 cat << 'EOF' > screens/docs.abx
-render Header from "screens/layout/header.abx"
-render Docx from "screens/docx.abx"
-render Footer from "screens/layout/footer.abx"
+render Header from "layout/header"
+render Docx from "docx"
+render Footer from "layout/footer"
+
+<Header />
+<Docx />
+<Footer />
 EOF
 
 cat << 'EOF' > screens/docx.abx
@@ -532,14 +541,16 @@ route("get", "/", "handler@index", "home")</code></pre>
                     <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Syntax coloring highlights components, render constructs, and expression placeholders identically to modern frontend codebases:</p>
                     <pre><code># Reusable layout components
 
-render Header from "screens/layout/header.abx" # Highlights load & from keywords
-render Footer from "screens/layout/footer.abx"
+render Header from "layout/header" # Highlights render & from keywords
+render Footer from "layout/footer"
 
-&lt;script setup&gt;
-# Highlighting enabled inside script setup logic blocks
+&lt;script prepare&gt;
+# Highlighting enabled inside script prepare logic blocks
 &lt;/script&gt;
 
-&lt;h1&gt;&#x7b;&#x7b; lang.title &#x7d;&#x7d;&lt;/h1&gt; # Highlighting enabled inside output placeholders</code></pre>
+&lt;Header /&gt;
+&lt;h1&gt;&#x7b;&#x7b; lang.title &#x7d;&#x7d;&lt;/h1&gt; # Highlighting enabled inside output placeholders
+&lt;Footer /&gt;</code></pre>
                 </div>
             </div>
         </div>
@@ -578,7 +589,8 @@ require.extensions['.abx'] = function (module, filename) {
 
     if (isTemplate) {
         let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nconst __parts = [];\nwith(context) {\n';
-        let processedContent = content;        processedContent = processedContent.replace(/(?:export\s+component|export|component)\s+(\w+)\s*\{([\s\S]*?)\}/g, '$2');
+        let processedContent = content;
+        processedContent = processedContent.replace(/(?:export\s+component|export|component)\s+(\w+)\s*\{([\s\S]*?)\}/g, '$2');
         const importRegex = /^(?:export\s+)?(?:load|import|inject|render)\s+(\w+)\s+from\s+(?:['"]([^'"]+)['"]|([a-zA-Z0-9_\.]+))\s*$/gm;
         let m;
         const imports = [];
@@ -663,7 +675,7 @@ require.extensions['.abx'] = function (module, filename) {
             })() %>`;
         });
 
-        processedContent = processedContent.replace(/<script\s+setup>([\s\S]*?)<\/script>/g, (match, code) => {
+        processedContent = processedContent.replace(/<script\s+prepare>([\s\S]*?)<\/script>/g, (match, code) => {
             let processedCode = code.trim();
             processedCode = processedCode.replace(/\bimport\s+\{\s*([\w\s,]+)\s*\}\s+from\s+['"]([^'"]+)['"]/g, (m, vars, importPath) => {
                 let includePath = path.resolve(path.dirname(filename), importPath);
@@ -673,7 +685,10 @@ require.extensions['.abx'] = function (module, filename) {
                 const randomId = Math.floor(Math.random() * 1000000);
                 return `const _import_ctx_${randomId} = {}; require(${JSON.stringify(includePath)})(require, console, _import_ctx_${randomId}); const { ${vars} } = _import_ctx_${randomId};`;
             });
-            processedCode = processedCode.replace(/\bexport\s+(const|let|var)\s+(\w+)\s*=/g, '$1 $2 = context.$2 =');
+            processedCode = processedCode.replace(/\bexport\s+(?:(const|let|var)\s+)?(\w+)\s*=/g, (m, keyword, name) => {
+                const kw = keyword || 'let';
+                return `${kw} ${name} = context.${name} =`;
+            });
             const matches = [...processedCode.matchAll(/\bexport\s+(function|class)\s+(\w+)\b/g)];
             processedCode = processedCode.replace(/\bexport\s+(function|class)\s+(\w+)\b/g, '$1 $2');
             matches.forEach(m => {

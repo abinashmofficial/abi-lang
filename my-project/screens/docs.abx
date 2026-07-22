@@ -1,0 +1,7 @@
+render Header from "layout/header"
+render Docx from "docx"
+render Footer from "layout/footer"
+
+<Header />
+<Docx />
+<Footer />

@@ -1,5 +1,7 @@
-render Header from "screens/layout/header.abx"
-<%
+render Header from "layout/header"
+render Footer from "layout/footer"
+
+<script prepare>
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -15,7 +17,8 @@ try {
 } catch (e) {
     lang = { title: "AbiLang", subtitle: "Welcome" };
 }
-%>
+</script>
+
 <style>
     body {
         --bg-app: #f3f0ff;
@@ -45,21 +48,11 @@ try {
         --editor-bg: #272822;
     }
 
-    .text-white {
-        color: var(--text-main) !important;
-    }
-    .text-light {
-        color: var(--text-main) !important;
-    }
-    .text-muted {
-        color: var(--text-muted) !important;
-    }
-    .text-white-50 {
-        color: var(--text-muted) !important;
-    }
-    strong {
-        color: var(--text-main);
-    }
+    .text-white { color: var(--text-main) !important; }
+    .text-light { color: var(--text-main) !important; }
+    .text-muted { color: var(--text-muted) !important; }
+    .text-white-50 { color: var(--text-muted) !important; }
+    strong { color: var(--text-main); }
 
     .abi-logo-badge {
         background: linear-gradient(135deg, var(--abi-green), var(--abi-dark-blue)) !important;
@@ -67,9 +60,7 @@ try {
         font-weight: 800;
         box-shadow: 0 2px 8px rgba(66, 184, 131, 0.25);
     }
-    .brand-title-text {
-        color: var(--text-main) !important;
-    }
+    .brand-title-text { color: var(--text-main) !important; }
     .text-gradient {
         background: linear-gradient(135deg, var(--abi-green), var(--abi-cyan)) !important;
         -webkit-background-clip: text !important;
@@ -84,7 +75,6 @@ try {
         background: linear-gradient(135deg, var(--abi-dark-blue), var(--abi-cyan)) !important;
         color: var(--btn-text) !important;
     }
-
     #theme-toggle {
         border-radius: 50% !important;
         background: rgba(255, 255, 255, 0.08) !important;
@@ -97,10 +87,11 @@ try {
         background: var(--bg-pane) !important;
         border-color: var(--abi-green) !important;
     }
-    #view-portal-link {
-        color: var(--abi-green) !important;
-    }
+    #view-portal-link { color: var(--abi-green) !important; }
 </style>
+
+<Header />
+
 <section class="hero-section d-flex align-items-center">
     <div class="container">
         <div class="row align-items-center justify-content-center">
@@ -109,26 +100,27 @@ try {
                     AbiLang v1.2.0 (Bootstrap Cloud Release)
                 </div>
                 <h1 class="display-3 fw-bold mb-4 text-white">
-                    <%= lang.title %>
+                    {{ lang.title }}
                 </h1>
                 <p class="lead text-muted mb-5 fs-5">
-                    <%= lang.subtitle %>
+                    {{ lang.subtitle }}
                 </p>
                 <div class="d-flex justify-content-center gap-3 mb-5">
-                    <button class="btn btn-gradient btn-lg px-4" id="launch-btn"><%= lang.get_started %></button>
-                    <a class="btn btn-outline-secondary btn-lg px-4" href="https://github.com/abinashmofficial/abi-lang" target="_blank"><%= lang.view_docs %></a>
+                    <button class="btn btn-gradient btn-lg px-4" id="launch-btn">{{ lang.get_started }}</button>
+                    <a class="btn btn-outline-secondary btn-lg px-4" href="https://github.com/abinashmofficial/abi-lang" target="_blank">{{ lang.view_docs }}</a>
                 </div>
                 <div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;">
-                    <h5 class="text-white mb-3"><%= lang.system_info %></h5>
+                    <h5 class="text-white mb-3">{{ lang.system_info }}</h5>
                     <div class="row text-muted fs-6">
-                        <div class="col-6 mb-2"><strong><%= lang.platform %>:</strong> <%= os.platform() %></div>
-                        <div class="col-6 mb-2"><strong><%= lang.architecture %>:</strong> <%= os.arch() %></div>
-                        <div class="col-6 mb-2"><strong><%= lang.uptime %>:</strong> <%= Math.floor(os.uptime()) %> <%= lang.seconds %></div>
-                        <div class="col-6 mb-2"><strong><%= lang.memory %>:</strong> <%= Math.floor(os.freemem() / 1024 / 1024) %>MB / <%= Math.floor(os.totalmem() / 1024 / 1024) %>MB</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.platform }}:</strong> {{ os.platform() }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.architecture }}:</strong> {{ os.arch() }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.uptime }}:</strong> {{ Math.floor(os.uptime()) }} {{ lang.seconds }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.memory }}:</strong> {{ Math.floor(os.freemem() / 1024 / 1024) }}MB / {{ Math.floor(os.totalmem() / 1024 / 1024) }}MB</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-render Footer from "screens/layout/footer.abx"
+
+<Footer />

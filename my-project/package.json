@@ -1,5 +1,5 @@
 {
-  "name": "abilang",
+  "name": "my-project",
   "version": "1.0.0",
   "description": "The Progressive Scripting Language Project with Bootstrap and Layouts",
   "main": "dist/index.js",

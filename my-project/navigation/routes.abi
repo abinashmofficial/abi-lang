@@ -7,5 +7,3 @@ include("handlers/handler.abi")
 route("get", "/", "handler@index", "home")
 
 route("get", "/docs", "handler@docs", "docs")
-
-route("get", "/test-react", "handler@testReact", "testReact")

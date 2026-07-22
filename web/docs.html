@@ -89,6 +89,7 @@
                     <button class="os-tab-btn" data-os="handlers">Handlers & Entities</button>
                     <button class="os-tab-btn" data-os="navigation">Navigation & Screens</button>
                     <button class="os-tab-btn" data-os="idesyntax">IDE Syntax Coloring</button>
+                    <button class="os-tab-btn" data-os="comparison">Feature Comparison</button>
                 </div>
 
                 <div class="install-code-blocks">
@@ -199,16 +200,79 @@ route("get", "/", "handler@index", "home")</code></pre>
                         <div class="cmd-group">
                             <span class="cmd-label">Highlighting for .abx Components</span>
                             <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Syntax coloring highlights components, render constructs, and expression placeholders identically to modern frontend codebases:</p>
-                            <pre><code>component # Highlights component declarations
-
-render Header from "screens/layout/header.abx" # Highlights render & from keywords
+                            <pre><code>render Header from "screens/layout/header.abx" # Highlights render & from keywords
 render Footer from "screens/layout/footer.abx"
 
-&lt;script setup&gt;
-# Highlighting enabled inside script setup logic blocks
+&lt;script prepare&gt;
+# Highlighting enabled inside script prepare logic blocks
 &lt;/script&gt;
 
-&lt;h1&gt;{{ lang.title }}&lt;/h1&gt; # Highlighting enabled inside output placeholders</code></pre>
+&lt;Header /&gt;
+&lt;h1&gt;{{ lang.title }}&lt;/h1&gt; # Highlighting enabled inside output placeholders
+&lt;Footer /&gt;</code></pre>
+                        </div>
+                    </div>
+                    <div class="os-content" id="os-comparison">
+                        <div class="cmd-group">
+                            <span class="cmd-label">Feature Comparison Table</span>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 15px;">A quick summary of how AbiLang stacks up against other major languages:</p>
+                            <div style="overflow-x: auto;">
+                                <table class="comparison-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Feature</th>
+                                            <th>AbiLang</th>
+                                            <th>JavaScript</th>
+                                            <th>Python</th>
+                                            <th>PHP</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="strong">Variable Keywords</td>
+                                            <td class="check-yes">None (Dynamic)</td>
+                                            <td class="check-no">const / let / var</td>
+                                            <td class="check-yes">None (Dynamic)</td>
+                                            <td class="check-no">None (Requires $)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="strong">Semicolons</td>
+                                            <td class="check-yes">Optional</td>
+                                            <td class="check-yes">Optional</td>
+                                            <td class="check-yes">None</td>
+                                            <td class="check-no">Required</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="strong">Block Scoping</td>
+                                            <td class="check-yes">Braces {}</td>
+                                            <td class="check-yes">Braces {}</td>
+                                            <td class="check-no">Indentation</td>
+                                            <td class="check-yes">Braces {}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="strong">Condition Parentheses</td>
+                                            <td class="check-yes">Optional</td>
+                                            <td class="check-no">Required</td>
+                                            <td class="check-yes">Optional</td>
+                                            <td class="check-no">Required</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="strong">Browser Playground</td>
+                                            <td class="check-yes">Native / Built-in</td>
+                                            <td class="check-yes">Native</td>
+                                            <td class="check-no">Heavy (WASM)</td>
+                                            <td class="check-no">No (Server only)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="strong">Routing & Controllers</td>
+                                            <td class="check-yes">Built-in helpers</td>
+                                            <td class="check-no">Framework required</td>
+                                            <td class="check-no">Framework required</td>
+                                            <td class="check-no">Framework/Server required</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

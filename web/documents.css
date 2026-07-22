@@ -559,6 +559,37 @@ body.dark-theme .tab-headers {
     align-items: center;
 }
 
+.theme-toggle-floating {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-pane);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-toggle-floating:hover {
+    transform: scale(1.1) rotate(20deg);
+    border-color: var(--abi-green);
+    background: #ffffff;
+    color: #0a090e;
+    box-shadow: 0 0 14px rgba(174, 68, 90, 0.25);
+}
+
+body.light-theme .theme-toggle-floating:hover {
+    background: #111016;
+    color: #f4f4f5;
+    border-color: var(--abi-green);
+    box-shadow: 0 0 14px rgba(174, 68, 90, 0.25);
+}
+
 /* Overlay for Mobile Navigation */
 .sidebar-overlay {
     display: none;
@@ -610,4 +641,61 @@ body.dark-theme .tab-headers {
         margin-left: 0;
         padding: 16px 10px !important;
     }
+    .version-badge {
+        display: none;
+    }
+    .docs-header {
+        padding: 0 12px;
+    }
+    .header-nav {
+        gap: 10px;
+    }
+    .header-nav a {
+        font-size: 13px;
+    }
+    .header-left, .header-right {
+        gap: 8px;
+    }
 }
+
+.kw  { color: #c792ea; font-weight: 600; }
+.cls { color: #82aaff; }
+.fn  { color: #82cfff; }
+.str { color: #c3e88d; }
+.num { color: #f78c6c; }
+.param { color: #ffcb6b; }
+.cmt { color: #546e7a; font-style: italic; }
+
+body.light-theme .kw  { color: #7c3aed; }
+body.light-theme .cls { color: #1d4ed8; }
+body.light-theme .fn  { color: #0369a1; }
+body.light-theme .str { color: #16a34a; }
+body.light-theme .num { color: #ea580c; }
+body.light-theme .param { color: #b45309; }
+body.light-theme .cmt { color: #94a3b8; }
+
+.color-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 16px 0 24px;
+}
+.color-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+.swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.kw-swatch  { background: #c792ea; }
+.cls-swatch { background: #82aaff; }
+.fn-swatch  { background: #82cfff; }
+.str-swatch { background: #c3e88d; }
+.num-swatch { background: #f78c6c; }

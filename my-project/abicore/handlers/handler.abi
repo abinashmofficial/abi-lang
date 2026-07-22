@@ -9,6 +9,6 @@ class Handler {
     }
 
     public func docs() {
-        return screen("docs")
+        return screen("docx")
     }
 }

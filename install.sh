@@ -22,21 +22,27 @@ else
     TTY_IN=/dev/tty
 fi
 
-read -r -p "Enter project name [abilang]: " PROJECT_NAME_INPUT <"$TTY_IN"
-PROJECT_NAME="${PROJECT_NAME_INPUT:-abilang}"
+if [ -z "$PROJECT_NAME" ]; then
+    read -r -p "Enter project name [abilang]: " PROJECT_NAME_INPUT <"$TTY_IN"
+    PROJECT_NAME="${PROJECT_NAME_INPUT:-abilang}"
+fi
 
-read -r -p "Enter port number [3000]: " PORT_INPUT <"$TTY_IN"
-PORT="${PORT_INPUT:-3000}"
+if [ -z "$PORT" ]; then
+    read -r -p "Enter port number [3000]: " PORT_INPUT <"$TTY_IN"
+    PORT="${PORT_INPUT:-3000}"
+fi
 
-echo ""
-echo "Select a database type:"
-echo "  1) MySQL"
-echo "  2) PostgreSQL"
-echo "  3) MongoDB"
-echo "  4) SQLite"
-echo "  5) None"
-read -r -p "Enter choice [5]: " DB_CHOICE_INPUT <"$TTY_IN"
-DB_CHOICE="${DB_CHOICE_INPUT:-5}"
+if [ -z "$DB_CHOICE" ]; then
+    echo ""
+    echo "Select a database type:"
+    echo "  1) MySQL"
+    echo "  2) PostgreSQL"
+    echo "  3) MongoDB"
+    echo "  4) SQLite"
+    echo "  5) None"
+    read -r -p "Enter choice [5]: " DB_CHOICE_INPUT <"$TTY_IN"
+    DB_CHOICE="${DB_CHOICE_INPUT:-5}"
+fi
 
 case "$DB_CHOICE" in
     1)
@@ -63,10 +69,16 @@ esac
 
 if [ "$DB_DRIVER" != "none" ]; then
     echo ""
-    read -r -p "Enter database name: " DB_DATABASE <"$TTY_IN"
-    read -r -p "Enter database username: " DB_USERNAME <"$TTY_IN"
-    read -r -s -p "Enter database password: " DB_PASSWORD <"$TTY_IN"
-    echo ""
+    if [ -z "$DB_DATABASE" ]; then
+        read -r -p "Enter database name: " DB_DATABASE <"$TTY_IN"
+    fi
+    if [ -z "$DB_USERNAME" ]; then
+        read -r -p "Enter database username: " DB_USERNAME <"$TTY_IN"
+    fi
+    if [ -z "$DB_PASSWORD" ]; then
+        read -r -s -p "Enter database password: " DB_PASSWORD <"$TTY_IN"
+        echo ""
+    fi
 else
     DB_DATABASE=""
     DB_USERNAME=""
@@ -446,15 +458,6 @@ render Footer from "layout/footer"
 <Footer />
 EOF
 
-cat << 'EOF' > abicore/screens/docs.abx
-render Header from "layout/header"
-render Docx from "docx"
-render Footer from "layout/footer"
-
-<Header />
-<Docx />
-<Footer />
-EOF
 
 cat << 'EOF' > abicore/screens/docx.abx
 
@@ -1054,7 +1057,7 @@ class Handler {
     }
 
     public func docs() {
-        return screen("docs")
+        return screen("docx")
     }
 }
 EOF

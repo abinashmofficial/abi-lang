@@ -311,6 +311,27 @@ async function startServer() {
     await loadRoutes();
     startWatcher();
 
+    if (process.stdin.setRawMode) {
+        process.stdin.setRawMode(true);
+        process.stdin.resume();
+        process.stdin.setEncoding('utf8');
+        process.stdin.on('data', async (key) => {
+            if (key === '\u0003') {
+                process.exit();
+            }
+            if (key === 'r' || key === 'R') {
+                console.log('\n[Reloading...] Cleared all cache and reloaded routes.');
+                clearAllCache();
+                try {
+                    await loadRoutes();
+                    console.log('[Reload] Routes successfully reloaded.');
+                } catch (err) {
+                    console.error('[Reload Error] Failed to reload:', err.message);
+                }
+            }
+        });
+    }
+
     const server = http.createServer(async (req, res) => {
         // CORS Headers
         res.setHeader('Access-Control-Allow-Origin', '*');
@@ -415,7 +436,7 @@ async function startServer() {
         }
     });
     server.on('listening', () => {
-        console.log(`Server running at http://127.0.0.1:${port}/`);
+        console.log(`Server running at http://127.0.0.1:${port}/ (Press 'r' to reload)`);
     });
     server.listen(port, '127.0.0.1');
 }

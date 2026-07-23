@@ -14,7 +14,7 @@ echo ""
 echo "┌──────────────────────────────────────────────┐"
 echo "│                                              │"
 echo "│           ⚡ Welcome to AbiLang              │"
-echo "│               Installer v1.0                │"
+echo "│               Installer v1.0                 │"
 echo "│                                              │"
 echo "└──────────────────────────────────────────────┘"
 echo ""
@@ -247,7 +247,7 @@ cat << 'EOF' > abicore/screens/layout/header.abx
             </a>
             <div class="d-flex align-items-center gap-3 ms-auto">
                 <a href="https://abinashmofficial.github.io/abi-lang/documents.html" style="color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500;" onmouseover="this.style.color='var(--abi-green)'" onmouseout="this.style.color='var(--text-muted)'">Documentation</a>
-                <button id="theme-toggle" class="btn btn-outline-secondary border-0" style="border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                <button id="theme-toggle" class="btn border-0">
                     <span id="theme-toggle-icon">☀</span>
                 </button>
             </div>
@@ -408,10 +408,19 @@ render Footer from "layout/footer"
     }
     #theme-toggle {
         border-radius: 50% !important;
+        width: 38px !important;
+        height: 38px !important;
+        min-width: 38px !important;
+        min-height: 38px !important;
+        padding: 0 !important;
+        line-height: 1 !important;
         background: rgba(255, 255, 255, 0.08) !important;
         border: 1px solid var(--border-color) !important;
         color: var(--text-main) !important;
         transition: transform 0.2s, background-color 0.2s;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
     #theme-toggle:hover {
         transform: scale(1.1) rotate(15deg);
@@ -973,23 +982,10 @@ mkdir -p .vscode
 cat << 'EOF' > .vscode/settings.json
 {
   "files.associations": {
-    "*.abi": "php",
-    "*.ab": "php",
-    "*.abilang": "php",
-    "*.abx": "html"
-  }
-}
-EOF
-
-# Create VS Code local settings for default syntax coloring
-mkdir -p .vscode
-cat << 'EOF' > .vscode/settings.json
-{
-  "files.associations": {
-    "*.abi": "php",
-    "*.ab": "php",
-    "*.abilang": "php",
-    "*.abx": "html"
+    "*.abi": "abilang",
+    "*.ab": "abilang",
+    "*.abilang": "abilang",
+    "*.abx": "abilangui"
   }
 }
 EOF

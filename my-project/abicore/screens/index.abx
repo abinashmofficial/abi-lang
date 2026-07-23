@@ -81,10 +81,19 @@ render Footer from "layout/footer"
     }
     #theme-toggle {
         border-radius: 50% !important;
+        width: 38px !important;
+        height: 38px !important;
+        min-width: 38px !important;
+        min-height: 38px !important;
+        padding: 0 !important;
+        line-height: 1 !important;
         background: rgba(255, 255, 255, 0.08) !important;
         border: 1px solid var(--border-color) !important;
         color: var(--text-main) !important;
         transition: transform 0.2s, background-color 0.2s;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
     #theme-toggle:hover {
         transform: scale(1.1) rotate(15deg);

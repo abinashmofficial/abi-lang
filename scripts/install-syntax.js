@@ -18,14 +18,15 @@ const abilangTmGrammar = {
     { "include": "#function-declarations" },
     { "include": "#strings" },
     { "include": "#numbers" },
+    { "include": "#operators" },
     { "include": "#keywords" },
     { "include": "#identifiers" }
   ],
   "repository": {
     "comments": {
       "patterns": [
-        { "name": "comment.line.double-slash.abi", "match": "//.*" },
-        { "name": "comment.line.number-sign.abi", "match": "#.*" }
+        { "name": "comment.line.double-slash.abi", "match": "//.*$" },
+        { "name": "comment.line.number-sign.abi",  "match": "#.*$" }
       ]
     },
     "class-declarations": {
@@ -36,7 +37,7 @@ const abilangTmGrammar = {
             "1": { "name": "storage.type.class.abi" },
             "2": { "name": "entity.name.type.class.abi" },
             "3": { "name": "keyword.control.abi" },
-            "4": { "name": "entity.other.inherited-class.abi" }
+            "4": { "name": "entity.name.type.inherited-class.abi" }
           }
         }
       ]
@@ -67,7 +68,7 @@ const abilangTmGrammar = {
           "patterns": [{ "name": "constant.character.escape.abi", "match": "\\\\." }]
         },
         {
-          "name": "string.quoted.template.abi",
+          "name": "string.quoted.other.template.abi",
           "begin": "`",
           "end": "`",
           "patterns": [{ "name": "constant.character.escape.abi", "match": "\\\\." }]
@@ -76,34 +77,37 @@ const abilangTmGrammar = {
     },
     "numbers": {
       "patterns": [
-        { "name": "constant.numeric.abi", "match": "\\b\\d+(\\.\\d+)?\\b" }
+        { "name": "constant.numeric.decimal.abi", "match": "\\b\\d+(\\.\\d+)?\\b" }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        { "name": "keyword.operator.comparison.abi", "match": "(==|!=|<=|>=|<|>)" },
+        { "name": "keyword.operator.assignment.abi",  "match": "(?<![=!<>])=(?!=)" },
+        { "name": "keyword.operator.arithmetic.abi",  "match": "(\\+|-|\\*|/|%)" }
       ]
     },
     "keywords": {
       "patterns": [
         {
           "name": "keyword.control.abi",
-          "match": "\\b(if|else|while|return|for|in|try|catch|finally|import|export|from|implements|extends|extents)\\b"
+          "match": "\\b(if|else|while|for|in|return|try|catch|finally|import|export|from|implements|extends|extents)\\b"
         },
         {
-          "name": "storage.type.class.abi",
-          "match": "\\bclass\\b"
-        },
-        {
-          "name": "storage.type.function.abi",
-          "match": "\\bfunc\\b"
-        },
-        {
-          "name": "keyword.declaration.abi",
-          "match": "\\b(const|let|interface|var|new|async|await|throw)\\b"
+          "name": "storage.type.abi",
+          "match": "\\b(class|func)\\b"
         },
         {
           "name": "storage.modifier.abi",
           "match": "\\b(public|private|protected)\\b"
         },
         {
-          "name": "keyword.other.abi",
-          "match": "\\b(print|input|db_connect|db_create|db_update|db_delete|db_fetch|dd)\\b"
+          "name": "keyword.declaration.abi",
+          "match": "\\b(const|let|var|interface|new|async|await|throw)\\b"
+        },
+        {
+          "name": "support.function.builtin.abi",
+          "match": "\\b(print|input|db_connect|db_create|db_update|db_delete|db_fetch|dd|include|route|screen|env)\\b"
         },
         {
           "name": "constant.language.boolean.abi",
@@ -125,8 +129,9 @@ const abilangTmGrammar = {
     },
     "identifiers": {
       "patterns": [
-        { "name": "entity.name.function.abi", "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=\\s*\\()" },
-        { "name": "entity.name.type.class.abi", "match": "\\b[A-Z][a-zA-Z0-9_]*\\b" }
+        { "name": "entity.name.function.abi",      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=\\s*\\()" },
+        { "name": "entity.name.type.class.abi",    "match": "\\b[A-Z][a-zA-Z0-9_]*\\b" },
+        { "name": "variable.other.readwrite.abi",  "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b" }
       ]
     }
   },

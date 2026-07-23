@@ -18,6 +18,9 @@
       "include": "#numbers"
     },
     {
+      "include": "#operators"
+    },
+    {
       "include": "#keywords"
     },
     {
@@ -29,11 +32,11 @@
       "patterns": [
         {
           "name": "comment.line.double-slash.abi",
-          "match": "//.*"
+          "match": "//.*$"
         },
         {
           "name": "comment.line.number-sign.abi",
-          "match": "#.*"
+          "match": "#.*$"
         }
       ]
     },
@@ -52,7 +55,7 @@
               "name": "keyword.control.abi"
             },
             "4": {
-              "name": "entity.other.inherited-class.abi"
+              "name": "entity.name.type.inherited-class.abi"
             }
           }
         }
@@ -98,7 +101,7 @@
           ]
         },
         {
-          "name": "string.quoted.template.abi",
+          "name": "string.quoted.other.template.abi",
           "begin": "`",
           "end": "`",
           "patterns": [
@@ -113,8 +116,24 @@
     "numbers": {
       "patterns": [
         {
-          "name": "constant.numeric.abi",
+          "name": "constant.numeric.decimal.abi",
           "match": "\\b\\d+(\\.\\d+)?\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.comparison.abi",
+          "match": "(==|!=|<=|>=|<|>)"
+        },
+        {
+          "name": "keyword.operator.assignment.abi",
+          "match": "(?<![=!<>])=(?!=)"
+        },
+        {
+          "name": "keyword.operator.arithmetic.abi",
+          "match": "(\\+|-|\\*|/|%)"
         }
       ]
     },
@@ -122,27 +141,23 @@
       "patterns": [
         {
           "name": "keyword.control.abi",
-          "match": "\\b(if|else|while|return|for|in|try|catch|finally|import|export|from|implements|extends|extents)\\b"
+          "match": "\\b(if|else|while|for|in|return|try|catch|finally|import|export|from|implements|extends|extents)\\b"
         },
         {
-          "name": "storage.type.class.abi",
-          "match": "\\bclass\\b"
-        },
-        {
-          "name": "storage.type.function.abi",
-          "match": "\\bfunc\\b"
-        },
-        {
-          "name": "keyword.declaration.abi",
-          "match": "\\b(const|let|interface|var|new|async|await|throw)\\b"
+          "name": "storage.type.abi",
+          "match": "\\b(class|func)\\b"
         },
         {
           "name": "storage.modifier.abi",
           "match": "\\b(public|private|protected)\\b"
         },
         {
-          "name": "keyword.other.abi",
-          "match": "\\b(print|input|db_connect|db_create|db_update|db_delete|db_fetch|dd)\\b"
+          "name": "keyword.declaration.abi",
+          "match": "\\b(const|let|var|interface|new|async|await|throw)\\b"
+        },
+        {
+          "name": "support.function.builtin.abi",
+          "match": "\\b(print|input|db_connect|db_create|db_update|db_delete|db_fetch|dd|include|route|screen|env)\\b"
         },
         {
           "name": "constant.language.boolean.abi",
@@ -171,6 +186,10 @@
         {
           "name": "entity.name.type.class.abi",
           "match": "\\b[A-Z][a-zA-Z0-9_]*\\b"
+        },
+        {
+          "name": "variable.other.readwrite.abi",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
         }
       ]
     }

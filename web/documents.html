@@ -120,12 +120,12 @@
                 </ul>
 
                 <h2>2. What Makes AbiLang Different?</h2>
-                <p>Unlike standard languages (like JavaScript or PHP), AbiLang introduces a streamlined development experience:</p>
+                <p>AbiLang introduces a streamlined development experience:</p>
                 <ul>
                     <li><strong>No Boilerplate Declarations</strong>: Variables are dynamically initialized on first assignment. No extra lexical keywords needed.</li>
                     <li><strong>Native App Architecture</strong>: Built-in classes for logical Handlers and Entities, dynamic routes registration, and automatic Screens resolution.</li>
-                    <li><strong>Robust Variable Inspector</strong>: Dynamic inspection using the Laravel-like <code>dd()</code> helper without crashing the active environment.</li>
-                    <li><strong>Cross-Platform Portability</strong>: Designed to run identically inside terminal shells (using Node) and inside sandboxed web frames (using HTML5/JS).</li>
+                    <li><strong>Robust Variable Inspector</strong>: Dynamic inspection using the built-in <code>dd()</code> helper without crashing the active environment.</li>
+                    <li><strong>Cross-Platform Portability</strong>: Designed to run identically inside terminal shells and inside sandboxed web frames.</li>
                 </ul>
 
                 <h2>3. Use Cases & Applications</h2>
@@ -177,9 +177,6 @@ npm run web</code></pre>
                     <li><code>.abx</code> - Component template and layouts extension</li>
                 </ul>
 
-                <h2>Laravel/PHP Style Highlights</h2>
-                <p>Classes, methods, and visibility scopes (<code>public</code>, <code>private</code>, <code>protected</code>) are configured to match standard Laravel PHP color profiles, highlighting classes and function namespaces dynamically. This works natively for <code>.abi</code> files and <code>.abx</code> templates without requiring opening <code>&lt;?php</code> tags.</p>
-                
                 <h2>Auto-Installer Script</h2>
                 <p>To register the file type associations and coloring configurations globally for all editors on your machine (including VS Code and VS Code Insiders), run:</p>
                 <pre><code class="language-bash"># Run syntax installer globally
@@ -365,17 +362,10 @@ route("get", "/user/show", "user_handler@show", "user.show")</code></pre>
 }</code></pre>
 
                 <h2>Built-in Database & Debugging Helpers</h2>
-                <p>Perform mock database connections, mutations, queries, and Laravel-like formatted variable dumping:</p>
-                <pre><code># Connect to DB
-conn = db_connect({ "host": "localhost", "port": 3306 })
-
-# Create a record
+                <p>Perform mock database connections, mutations, queries, and formatted variable dumping:</p>
+                <pre><code>conn = db_connect({ "host": "localhost", "port": 3306 })
 record = db_create("users", { "username": "Abinash", "email": "abinash@example.com" })
-
-# Fetch records
 records = db_fetch("users", { "status": "active" })
-
-# Laravel-like DD Dump (shows type/values in console/logs without hard halting)
 dd(record)</code></pre>
             </section>
 
@@ -406,10 +396,10 @@ class Handler {
             <!-- Section: Component & View Syntax -->
             <section id="ui-template" class="docs-section">
                 <h1>Component & View Syntax</h1>
-                <p>AbiLang uses <code>.abx</code> files as its screen/view layer — similar to <code>.jsx</code> or <code>.tsx</code> in React. Every <code>.abx</code> file is a server-side template that renders to plain HTML. AbiLang introduces its own clean keywords so the syntax feels natural and easy to read.</p>
+                <p>AbiLang uses <code>.abx</code> files as its screen/view layer. Every <code>.abx</code> file is a server-side template that renders to plain HTML, using clean keywords so the syntax feels natural and easy to read.</p>
 
                 <div class="callout callout-info">
-                    <strong>Philosophy:</strong> The <code>.abx</code> template syntax is designed to look like React/JSX — without any of the JavaScript build tooling complexity. Write HTML, add logic, compose screens — that's it.
+                    <strong>Philosophy:</strong> The <code>.abx</code> template syntax is designed to be clean, modular, and fast — without any build tooling complexity. Write HTML, add logic, compose screens — that's it.
                 </div>
 
                 <h2>1. <code>render</code> — Include a Screen or Component</h2>
@@ -653,7 +643,7 @@ context.pageTitle = "My Dashboard";
     &lt;p&gt;This content is injected directly in the middle of the screen layout.&lt;/p&gt;
 &lt;/div&gt;</code></pre>
                 
-                <h2>10. React-like Component Tag Rendering</h2>
+                <h2>10. Component Tag Rendering</h2>
                 <p>To write cleaner, component-driven layouts, declare renders at the top of your page using the standard <code>render</code> statement, and then render them inline inside your markup using custom component tags (like <code>&lt;ProfileCard /&gt;</code>).</p>
                 
                 <h3>Sample View Page: <code>abicore/screens/dashboard.abx</code></h3>
@@ -734,11 +724,11 @@ export ProfileCard {
 └── server.js</code></pre>
                 
                 <h3>Why this Architecture and File Extensions? (How they differ from other languages)</h3>
-                <p>AbiLang introduces a deliberate architectural model that addresses the common bottlenecks and overheads found in other major web programming languages (such as PHP/Laravel, JavaScript/Express, or Python/Django):</p>
+                <p>AbiLang introduces a deliberate architectural model that addresses common bottlenecks and overheads found in traditional web programming environments:</p>
                 <ul>
-                    <li><strong><code>.abi</code> Files (Pure Logic Engine)</strong>: Other platforms require verbose declarations (<code>let</code>, <code>const</code>, <code>my</code>, <code>$</code>) and compile-time configurations. <code>.abi</code> files allow direct assignment and dynamic scoping. Semicolons are optional, variable checks are handled automatically, and closures can be defined instantly to act as private scopes.</li>
-                    <li><strong><code>.abx</code> Files (React-like View Templates)</strong>: In JavaScript/React, rendering layouts requires extensive build packages, bundle loaders, and client hydration pipelines that slow down initial page speeds. In EJS or Blade, templates are cluttered with scripting tags. <code>.abx</code> files provide the modular tag interface of React (e.g. <code>&lt;Header /&gt;</code>) but are parsed and pre-compiled on the backend in a single pass to render static, lightweight HTML.</li>
-                    <li><strong>Scaffolded <code>abicore/</code> Architecture</strong>: Frameworks like Django or Laravel are packed with heavy class loaders that consume significant server memory. AbiLang divides logic cleanly into <code>navigation/</code>, <code>handlers/</code>, <code>entities/</code>, and <code>screens/</code>, providing a batteries-included MVC structure that loads instantly, running smoothly even on highly constrained 4 GB hardware.</li>
+                    <li><strong><code>.abi</code> Files (Pure Logic Engine)</strong>: Avoids verbose variable declarations and complex compiler flags. <code>.abi</code> files allow direct assignment and dynamic scoping. Semicolons are optional, variable allocations are handled dynamically, and closures can be defined instantly to act as private scopes.</li>
+                    <li><strong><code>.abx</code> Files (Modular View Templates)</strong>: Renders modular component tags (e.g. <code>&lt;Header /&gt;</code>) directly on the backend without heavy build tooling, complex bundlers, or client-side runtime overhead. Templates are parsed, compiled, and cached in a single pass to output clean, static HTML.</li>
+                    <li><strong>Scaffolded <code>abicore/</code> Architecture</strong>: Eliminates heavy class loaders and dependency trees that consume server memory. The directory groups logic cleanly into <code>navigation/</code>, <code>handlers/</code>, <code>entities/</code>, and <code>screens/</code>, providing a lightweight, structured MVC pipeline that starts instantly on entry-level hardware.</li>
                 </ul>
 
                 <h2>Step 2: Database Config</h2>

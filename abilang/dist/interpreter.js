@@ -174,6 +174,7 @@ class Interpreter {
     io;
     globals = new Environment();
     environment = this.globals;
+    createdDatabases = new Set();
     getVariables() {
         const vars = {};
         let curr = this.environment;
@@ -254,8 +255,31 @@ class Interpreter {
             }
             return null;
         }));
+        this.globals.define("create_db", new BuiltinFunction(1, (args) => {
+            const dbName = args[0];
+            if (!dbName || typeof dbName !== "string") {
+                this.io.print(`[DB Error] Database name is required\n`);
+                return false;
+            }
+            if (this.createdDatabases.has(dbName)) {
+                this.io.print(`this db name is alrready exist\n`);
+                return false;
+            }
+            this.createdDatabases.add(dbName);
+            this.io.print(`[DB Created] Database '${dbName}' created successfully\n`);
+            return true;
+        }));
         this.globals.define("db_connect", new BuiltinFunction(1, (args) => {
-            return { connected: true, config: args[0], host: "localhost" };
+            const config = args[0] || {};
+            if (config.host && config.database) {
+                this.io.print(`[DB Connected] Successfully connected to database: ${config.database} at ${config.host}:${config.port || 3306}\n`);
+                return { connected: true, config: config, host: config.host };
+            }
+            else {
+                const errorMsg = !config.host ? "Missing database host parameter" : "Missing database name parameter";
+                this.io.print(`[DB Connection Error] Connection failed: ${errorMsg}\n`);
+                return { connected: false, error: errorMsg, config: config };
+            }
         }));
         this.globals.define("db_create", new BuiltinFunction(2, (args) => {
             const table = args[0];

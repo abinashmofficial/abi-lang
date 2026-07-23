@@ -174,6 +174,7 @@ class Interpreter {
     io;
     globals = new Environment();
     environment = this.globals;
+    createdDatabases = new Set();
     getVariables() {
         const vars = {};
         let curr = this.environment;
@@ -244,67 +245,6 @@ class Interpreter {
         this.globals.define("create_row", new BuiltinFunction(1, (args) => {
             return { type: "row", children: Array.isArray(args[0]) ? args[0] : [args[0]] };
         }));
-        this.globals.define("include", new BuiltinFunction(1, async (args) => {
-            const filePath = String(args[0]);
-            const fs = require("fs");
-            const path = require("path");
-            let absolutePath = path.resolve(filePath);
-            if (!fs.existsSync(absolutePath)) {
-                absolutePath = path.resolve("abicore/" + filePath);
-            }
-            if (!fs.existsSync(absolutePath)) {
-                throw new Error(`Include file not found: \'${filePath}\'`);
-            }
-            const source = fs.readFileSync(absolutePath, "utf-8");
-            const lexer = new (require("./lexer").Lexer)(source);
-            const tokens = lexer.tokenize();
-            const parser = new (require("./parser").Parser)(tokens);
-            const statements = parser.parse();
-            for (const statement of statements) {
-                await this.execute(statement);
-            }
-            return null;
-        }));
-        this.globals.define("screen", new BuiltinFunction(1, async (args) => {
-            const pathName = String(args[0]);
-            const cleanPath = pathName.startsWith("abicore/screens/") ? pathName : "abicore/screens/" + pathName;
-            return cleanPath.endsWith(".abx") ? cleanPath : cleanPath + ".abx";
-        }));
-        this.globals.define("env", new BuiltinFunction(1, async (args) => {
-            const key = String(args[0]);
-            return (typeof process !== "undefined" && process.env) ? (process.env[key] || "") : "";
-        }));
-        this.globals.define("route", new BuiltinFunction(4, async (args) => {
-            const method = String(args[0]);
-            const path = String(args[1]);
-            const action = String(args[2]);
-            const name = String(args[3]);
-            this.io.print(`[Route Registered] ${method.toUpperCase()} ${path} -> ${action} (${name})\n`);
-            if (path === "/") {
-                const parts = action.split("@");
-                const handlerNamespace = parts[0];
-                const actionName = parts[1];
-                let handlerFunc = this.globals.get(actionName);
-
-                const handlerClass = this.globals.get(handlerNamespace) || this.globals.get(handlerNamespace.charAt(0).toUpperCase() + handlerNamespace.slice(1));
-                if (handlerClass && handlerClass.declaration && handlerClass.declaration.type === "ClassDeclStatement") {
-                    const instance = await handlerClass.call(this, []);
-                    const method = instance.klass.findMethod(actionName);
-                    if (method) {
-                        const { BoundMethod } = require("./interpreter");
-                        handlerFunc = new BoundMethod(instance, method, instance.klass.closure);
-                    }
-                }
-
-                if (handlerFunc && typeof handlerFunc.call === "function") {
-                    const result = await handlerFunc.call(this, []);
-                    this.io.print(`[Route Executed] Result: ${result}\n`);
-                } else {
-                    this.io.print(`[Route Error] Action \'${actionName}\' not found in global scope.\n`);
-                }
-            }
-            return null;
-        }));
         this.globals.define("render_ui", new BuiltinFunction(1, async (args) => {
             const uiElement = args[0];
             if (this.io && "renderUI" in this.io && typeof this.io.renderUI === "function") {
@@ -315,8 +255,31 @@ class Interpreter {
             }
             return null;
         }));
+        this.globals.define("create_db", new BuiltinFunction(1, (args) => {
+            const dbName = args[0];
+            if (!dbName || typeof dbName !== "string") {
+                this.io.print(`[DB Error] Database name is required\n`);
+                return false;
+            }
+            if (this.createdDatabases.has(dbName)) {
+                this.io.print(`this db name is alrready exist\n`);
+                return false;
+            }
+            this.createdDatabases.add(dbName);
+            this.io.print(`[DB Created] Database '${dbName}' created successfully\n`);
+            return true;
+        }));
         this.globals.define("db_connect", new BuiltinFunction(1, (args) => {
-            return { connected: true, config: args[0], host: "localhost" };
+            const config = args[0] || {};
+            if (config.host && config.database) {
+                this.io.print(`[DB Connected] Successfully connected to database: ${config.database} at ${config.host}:${config.port || 3306}\n`);
+                return { connected: true, config: config, host: config.host };
+            }
+            else {
+                const errorMsg = !config.host ? "Missing database host parameter" : "Missing database name parameter";
+                this.io.print(`[DB Connection Error] Connection failed: ${errorMsg}\n`);
+                return { connected: false, error: errorMsg, config: config };
+            }
         }));
         this.globals.define("db_create", new BuiltinFunction(2, (args) => {
             const table = args[0];

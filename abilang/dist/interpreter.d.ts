@@ -62,6 +62,7 @@ export declare class Interpreter {
     private io;
     globals: Environment;
     private environment;
+    private createdDatabases;
     getVariables(): Record<string, any>;
     constructor(io: IOHandler);
     private setupGlobals;

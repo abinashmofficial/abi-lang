@@ -997,9 +997,10 @@ DB_PORT = env("DB_PORT")
 DB_DATABASE = env("DB_DATABASE")
 DB_USERNAME = env("DB_USERNAME")
 DB_PASSWORD = env("DB_PASSWORD")
+DB_DRIVER = env("DB_DRIVER")
 
-if DB_HOST != "" {
-    db_connect({ "host": DB_HOST, "port": DB_PORT, "database": DB_DATABASE, "username": DB_USERNAME, "password": DB_PASSWORD })
+if DB_DATABASE != "" or DB_HOST != "" {
+    db_connect({ "driver": DB_DRIVER, "host": DB_HOST, "port": DB_PORT, "database": DB_DATABASE, "username": DB_USERNAME, "password": DB_PASSWORD })
 }
 EOF
 

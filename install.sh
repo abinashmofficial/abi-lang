@@ -11,14 +11,10 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo ""
-echo "┌──────────────────────────────────────────────┐"
-echo "│                                              │"
-echo "│           ⚡ Welcome to AbiLang               │"
-echo "│               Installer v1.0                 │"
-echo "│                                              │"
-echo "└──────────────────────────────────────────────┘"
+echo "============================================="
+echo "   AbiLang Installer"
+echo "============================================="
 echo ""
-
 
 if [ -t 0 ]; then
     TTY_IN=/dev/stdin
@@ -278,13 +274,13 @@ cat << 'EOF' > abicore/screens/components/profile_card.abx
 </script>
 
 <div class="card card-custom p-4 text-start mx-auto mb-4" style="max-width: 600px; border-left: 4px solid var(--abi-green);">
-    <h5 class="text-white mb-2">{&#123; name }}</h5>
-    <p class="text-muted mb-0">Role: <span class="text-white-50">{&#123; role }}</span></p>
+    <h5 class="text-white mb-2">{{ name }}</h5>
+    <p class="text-muted mb-0">Role: <span class="text-white-50">{{ role }}</span></p>
 </div>
 EOF
 
 cat << 'EOF' > abicore/screens/components/landing_body.abx
-re&#110;der ProfileCard from "components/profile_card"
+render ProfileCard from "components/profile_card"
 
 <script prepare>
     const os = require('os');
@@ -298,10 +294,10 @@ re&#110;der ProfileCard from "components/profile_card"
                     AbiLang v1.2.0 (Bootstrap Cloud Release)
                 </div>
                 <h1 class="display-3 fw-bold mb-4 text-white">
-                    {&#123; lang.title }}
+                    {{ lang.title }}
                 </h1>
                 <p class="lead text-muted mb-5 fs-5">
-                    {&#123; lang.subtitle }}
+                    {{ lang.subtitle }}
                 </p>
                 <div class="d-flex justify-content-center gap-3 mb-5">
                     <button class="btn btn-gradient btn-lg px-4" id="launch-btn">{{ lang.get_started }}</button>
@@ -313,10 +309,10 @@ re&#110;der ProfileCard from "components/profile_card"
                 <div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;">
                     <h5 class="text-white mb-3">{{ lang.system_info }}</h5>
                     <div class="row text-muted fs-6">
-                        <div class="col-6 mb-2"><strong>{{ lang.platform }}:</strong> {&#123; os.platform() }}</div>
-                        <div class="col-6 mb-2"><strong>{{ lang.architecture }}:</strong> {&#123; os.arch() }}</div>
-                        <div class="col-6 mb-2"><strong>{{ lang.uptime }}:</strong> {&#123; Math.floor(os.uptime()) }} {{ lang.seconds }}</div>
-                        <div class="col-6 mb-2"><strong>{{ lang.memory }}:</strong> {&#123; Math.floor(os.freemem() / 1024 / 1024) }}MB / {{ Math.floor(os.totalmem() / 1024 / 1024) }}MB</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.platform }}:</strong> {{ os.platform() }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.architecture }}:</strong> {{ os.arch() }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.uptime }}:</strong> {{ Math.floor(os.uptime()) }} {{ lang.seconds }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.memory }}:</strong> {{ Math.floor(os.freemem() / 1024 / 1024) }}MB / {{ Math.floor(os.totalmem() / 1024 / 1024) }}MB</div>
                     </div>
                 </div>
             </div>
@@ -326,9 +322,9 @@ re&#110;der ProfileCard from "components/profile_card"
 EOF
 
 cat << 'EOF' > abicore/screens/index.abx
-re&#110;der Header from "layout/header"
-re&#110;der LandingBody from "components/landing_body"
-re&#110;der Footer from "layout/footer"
+render Header from "layout/header"
+render LandingBody from "components/landing_body"
+render Footer from "layout/footer"
 
 <script prepare>
     const fs = require('fs');
@@ -453,9 +449,9 @@ cat << 'EOF' > abicore/screens/layout/footer.abx
 EOF
 
 cat << 'EOF' > abicore/screens/layout/layout.abx
-re&#110;der Header from "layout/header"
-re&#110;der Body from context.viewPage
-re&#110;der Footer from "layout/footer"
+render Header from "layout/header"
+render Body from context.viewPage
+render Footer from "layout/footer"
 
 <Header />
 <Body />
@@ -1769,10 +1765,13 @@ EOF
 
 cat << 'EOF' > abicore/navigation/routes.abi
 include("constants/constants.abi")
+
 include("support/helpers.abi")
+
 include("handlers/handler.abi")
 
 route("get", "/", "handler@index", "home")
+
 route("get", "/docs", "handler@docs", "docs")
 EOF
 
@@ -1903,14 +1902,9 @@ if [ -f "$SCRIPT_DIR/scripts/install-syntax.js" ]; then
 fi
 
 echo ""
-echo "╭─────────────────────────────────────────────╮"
-echo "│  🚀 AbiLang                                 │"
-echo "│                                             │"
-echo "│  ✓ Project created successfully             │"
-echo "│                                             │"
-echo "│  📂 $(pwd)                                  │"
-echo "│                                             │"
-echo "│  ▶ Start development                        │"
-echo "│     npm run web                             │"
-echo "╰─────────────────────────────────────────────╯"
-echo ""
+echo "============================================="
+echo "AbiLang Project successfully created!"
+echo "Project Path: $(pwd)"
+echo "To start the web server, run:"
+echo "  npm run web"
+echo "============================================="

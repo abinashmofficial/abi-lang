@@ -1082,6 +1082,14 @@ e&#120;port ProfileCard {
 ├── package.json
 └── server.js</code></pre>
             
+            <h3>Why this Architecture and File Extensions? (How they differ from other languages)</h3>
+            <p>AbiLang introduces a deliberate architectural model that addresses the common bottlenecks and overheads found in other major web programming languages (such as PHP/Laravel, JavaScript/Express, or Python/Django):</p>
+            <ul>
+                <li><strong><code>.abi</code> Files (Pure Logic Engine)</strong>: Other platforms require verbose declarations (<code>let</code>, <code>const</code>, <code>my</code>, <code>$</code>) and compile-time configurations. <code>.abi</code> files allow direct assignment and dynamic scoping. Semicolons are optional, variable checks are handled automatically, and closures can be defined instantly to act as private scopes.</li>
+                <li><strong><code>.abx</code> Files (React-like View Templates)</strong>: In JavaScript/React, rendering layouts requires extensive build packages, bundle loaders, and client hydration pipelines that slow down initial page speeds. In EJS or Blade, templates are cluttered with scripting tags. <code>.abx</code> files provide the modular tag interface of React (e.g. <code>&lt;Header /&gt;</code>) but are parsed and pre-compiled on the backend in a single pass to render static, lightweight HTML.</li>
+                <li><strong>Scaffolded <code>abicore/</code> Architecture</strong>: Frameworks like Django or Laravel are packed with heavy class loaders that consume significant server memory. AbiLang divides logic cleanly into <code>navigation/</code>, <code>handlers/</code>, <code>entities/</code>, and <code>screens/</code>, providing a batteries-included MVC structure that loads instantly, running smoothly even on highly constrained 4 GB hardware.</li>
+            </ul>
+
             <h2>Step 2: Database Config</h2>
             <p>Use the built-in <code>env()</code> function to load database config settings directly from the <code>.env</code> file:</p>
             <pre><code># file: abicore/constants/constants.abi

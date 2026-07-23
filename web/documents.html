@@ -119,52 +119,8 @@
                     <li><strong>Evaluation Tree (Interpreter)</strong>: Evaluates AST nodes recursively, utilizing isolated lexical environments to execute instructions in real time.</li>
                 </ul>
 
-                <!-- Humanized Code Execution Flowchart -->
-                <div class="human-flow-wrapper">
-                    <div class="human-flow-title">
-                        <span>⚙️</span> How AbiLang Processes Code Step-by-Step
-                    </div>
-                    <div class="human-flow-grid">
-                        
-                        <!-- Step 1 -->
-                        <div class="human-flow-step">
-                            <span class="step-badge">STEP 1</span>
-                            <h4 class="step-heading">Source Script</h4>
-                            <p class="step-desc">Developer writes clean, declarative code with dynamic variables.</p>
-                            <div class="step-code-snippet">name = "Abi"<br>print name</div>
-                        </div>
-
-                        <div class="human-flow-arrow">➔</div>
-
-                        <!-- Step 2 -->
-                        <div class="human-flow-step">
-                            <span class="step-badge">STEP 2</span>
-                            <h4 class="step-heading">Lexer & Tokens</h4>
-                            <p class="step-desc">Scans characters into distinct language tokens.</p>
-                            <div class="step-code-snippet">[IDENT: name]<br>[ASSIGN: =]<br>[STR: "Abi"]</div>
-                        </div>
-
-                        <div class="human-flow-arrow">➔</div>
-
-                        <!-- Step 3 -->
-                        <div class="human-flow-step">
-                            <span class="step-badge">STEP 3</span>
-                            <h4 class="step-heading">Parser & AST</h4>
-                            <p class="step-desc">Builds an Abstract Syntax Tree representing program logic.</p>
-                            <div class="step-code-snippet">Program &gt;<br>&nbsp;&nbsp;VarAssign(name)<br>&nbsp;&nbsp;PrintStmt(name)</div>
-                        </div>
-
-                        <div class="human-flow-arrow">➔</div>
-
-                        <!-- Step 4 -->
-                        <div class="human-flow-step">
-                            <span class="step-badge">STEP 4</span>
-                            <h4 class="step-heading">Interpreter</h4>
-                            <p class="step-desc">Evaluates AST nodes inside isolated lexical scopes.</p>
-                            <div class="step-code-snippet">&gt;&gt; Abi</div>
-                        </div>
-
-                    </div>
+                <div class="flowchart-container" style="margin: 28px 0; text-align: center;">
+                    <img src="abilang_flowchart.jpg" alt="AbiLang Execution Flowchart" style="width: 100%; max-width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-md);">
                 </div>
 
                 <h2>2. What Makes AbiLang Different?</h2>

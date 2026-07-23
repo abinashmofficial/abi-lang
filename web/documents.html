@@ -719,7 +719,6 @@ export ProfileCard {
 │   │   │   ├── footer.abx
 │   │   │   ├── header.abx
 │   │   │   └── layout.abx
-│   │   ├── docs.abx
 │   │   └── index.abx
 │   └── support/
 │       └── helpers.abi
@@ -777,10 +776,6 @@ class Handler {
         print "Database Config -> Host: " + DB_HOST + ", DB: " + DB_DATABASE
         return screen("index")
     }
-
-    public func docs() {
-        return screen("docs")
-    }
 }</code></pre>
                 
                 <h2>Step 5: Route Registrations</h2>
@@ -789,8 +784,7 @@ include("constants/constants.abi")
 include("support/helpers.abi")
 include("handlers/handler.abi")
 
-route("get", "/", "handler@index", "home")
-route("get", "/docs", "handler@docs", "docs")</code></pre>
+route("get", "/", "handler@index", "home")</code></pre>
                 
                 <h2>Step 6: Frontend View Screens & Components (.abx)</h2>
                 <p>Screens use the custom <code>.abx</code> extension. To encourage modularity, the landing screen (<code>index.abx</code>) contains only the high-level layout declarations (Header and Footer) and embeds the main content via a dedicated body component. All other parts are loaded dynamically from nested components.</p>

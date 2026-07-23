@@ -7,8 +7,4 @@ class Handler {
         print "Database Config -> Host: " + DB_HOST + ", DB: " + DB_DATABASE
         return screen("index")
     }
-
-    public func docs() {
-        return screen("docx")
-    }
 }

@@ -78,7 +78,7 @@
                 <span class="fw-bold tracking-wider brand-title-text">Abi<span class="text-gradient">Lang</span></span>
             </a>
             <div class="d-flex align-items-center gap-3 ms-auto">
-                <a href="/docs" style="color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500;" onmouseover="this.style.color='var(--abi-green)'" onmouseout="this.style.color='var(--text-muted)'">Documentation</a>
+                <a href="https://abinashmofficial.github.io/abi-lang/documents.html" style="color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500;" onmouseover="this.style.color='var(--abi-green)'" onmouseout="this.style.color='var(--text-muted)'">Documentation</a>
                 <button id="theme-toggle" class="btn btn-outline-secondary border-0" style="border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
                     <span id="theme-toggle-icon">☀</span>
                 </button>

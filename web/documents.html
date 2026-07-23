@@ -526,7 +526,7 @@ try {
                             <td class="strong"><code>render X from "path"</code></td>
                             <td>Include another .abx file inline</td>
                             <td class="check-yes"><code>render X from "./X"</code> + <code>&lt;X /&gt;</code></td>
-                            <td><code>@include("path")</code></td>
+                            <td><code>&#64;include("path")</code></td>
                         </tr>
                         <tr>
                             <td class="strong"><code>&lt;script prepare&gt;...&lt;/script&gt;</code></td>
@@ -620,7 +620,7 @@ render Footer from "layout/footer"
 &lt;Footer /&gt;</code></pre>
 
                 <div class="callout callout-info">
-                    <strong>Backward Compatibility:</strong> The old <code>@include()</code> and <code>&lt;% %&gt;</code> / <code>&lt;%= %&gt;</code> syntax still works. You can mix old and new syntax in the same project during migration.
+                    <strong>Backward Compatibility:</strong> The old <code>&#64;include()</code> and <code>&lt;% %&gt;</code> / <code>&lt;%= %&gt;</code> syntax still works. You can mix old and new syntax in the same project during migration.
                 </div>
             </section>
 

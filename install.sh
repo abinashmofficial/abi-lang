@@ -11,9 +11,12 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo ""
-echo "============================================="
-echo "   AbiLang Installer"
-echo "============================================="
+echo "┌──────────────────────────────────────────────┐"
+echo "│                                              │"
+echo "│           ⚡ Welcome to AbiLang              │"
+echo "│               Installer v1.0                │"
+echo "│                                              │"
+echo "└──────────────────────────────────────────────┘"
 echo ""
 
 if [ -t 0 ]; then
@@ -876,7 +879,7 @@ re&#110;der Footer from "layout/footer"
                         <td class="strong"><code>render X from "path"</code></td>
                         <td>Include another .abx file inline</td>
                         <td class="check-yes"><code>render X from "./X"</code> + <code>&lt;X /&gt;</code></td>
-                        <td><code>@include("path")</code></td>
+                        <td><code>&#64;include("path")</code></td>
                     </tr>
                     <tr>
                         <td class="strong"><code>&lt;script prepare&gt;...&lt;/script&gt;</code></td>
@@ -1902,9 +1905,14 @@ if [ -f "$SCRIPT_DIR/scripts/install-syntax.js" ]; then
 fi
 
 echo ""
-echo "============================================="
-echo "AbiLang Project successfully created!"
-echo "Project Path: $(pwd)"
-echo "To start the web server, run:"
-echo "  npm run web"
-echo "============================================="
+echo "╭─────────────────────────────────────────────╮"
+echo "│  🚀 AbiLang                                 │"
+echo "│                                             │"
+echo "│  ✓ Project created successfully             │"
+echo "│                                             │"
+echo "│  📂 $(pwd)                                  │"
+echo "│                                             │"
+echo "│  ▶ Start development                        │"
+echo "│     npm run web                             │"
+echo "╰─────────────────────────────────────────────╯"
+echo ""

@@ -11,10 +11,14 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo ""
-echo "============================================="
-echo "   AbiLang Installer"
-echo "============================================="
+echo "┌──────────────────────────────────────────────┐"
+echo "│                                              │"
+echo "│           ⚡ Welcome to AbiLang               │"
+echo "│               Installer v1.0                 │"
+echo "│                                              │"
+echo "└──────────────────────────────────────────────┘"
 echo ""
+
 
 if [ -t 0 ]; then
     TTY_IN=/dev/stdin
@@ -274,13 +278,13 @@ cat << 'EOF' > abicore/screens/components/profile_card.abx
 </script>
 
 <div class="card card-custom p-4 text-start mx-auto mb-4" style="max-width: 600px; border-left: 4px solid var(--abi-green);">
-    <h5 class="text-white mb-2">{{ name }}</h5>
-    <p class="text-muted mb-0">Role: <span class="text-white-50">{{ role }}</span></p>
+    <h5 class="text-white mb-2">{&#123; name }}</h5>
+    <p class="text-muted mb-0">Role: <span class="text-white-50">{&#123; role }}</span></p>
 </div>
 EOF
 
 cat << 'EOF' > abicore/screens/components/landing_body.abx
-render ProfileCard from "components/profile_card"
+re&#110;der ProfileCard from "components/profile_card"
 
 <script prepare>
     const os = require('os');
@@ -294,10 +298,10 @@ render ProfileCard from "components/profile_card"
                     AbiLang v1.2.0 (Bootstrap Cloud Release)
                 </div>
                 <h1 class="display-3 fw-bold mb-4 text-white">
-                    {{ lang.title }}
+                    {&#123; lang.title }}
                 </h1>
                 <p class="lead text-muted mb-5 fs-5">
-                    {{ lang.subtitle }}
+                    {&#123; lang.subtitle }}
                 </p>
                 <div class="d-flex justify-content-center gap-3 mb-5">
                     <button class="btn btn-gradient btn-lg px-4" id="launch-btn">{{ lang.get_started }}</button>
@@ -309,10 +313,10 @@ render ProfileCard from "components/profile_card"
                 <div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;">
                     <h5 class="text-white mb-3">{{ lang.system_info }}</h5>
                     <div class="row text-muted fs-6">
-                        <div class="col-6 mb-2"><strong>{{ lang.platform }}:</strong> {{ os.platform() }}</div>
-                        <div class="col-6 mb-2"><strong>{{ lang.architecture }}:</strong> {{ os.arch() }}</div>
-                        <div class="col-6 mb-2"><strong>{{ lang.uptime }}:</strong> {{ Math.floor(os.uptime()) }} {{ lang.seconds }}</div>
-                        <div class="col-6 mb-2"><strong>{{ lang.memory }}:</strong> {{ Math.floor(os.freemem() / 1024 / 1024) }}MB / {{ Math.floor(os.totalmem() / 1024 / 1024) }}MB</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.platform }}:</strong> {&#123; os.platform() }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.architecture }}:</strong> {&#123; os.arch() }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.uptime }}:</strong> {&#123; Math.floor(os.uptime()) }} {{ lang.seconds }}</div>
+                        <div class="col-6 mb-2"><strong>{{ lang.memory }}:</strong> {&#123; Math.floor(os.freemem() / 1024 / 1024) }}MB / {{ Math.floor(os.totalmem() / 1024 / 1024) }}MB</div>
                     </div>
                 </div>
             </div>
@@ -322,9 +326,9 @@ render ProfileCard from "components/profile_card"
 EOF
 
 cat << 'EOF' > abicore/screens/index.abx
-render Header from "layout/header"
-render LandingBody from "components/landing_body"
-render Footer from "layout/footer"
+re&#110;der Header from "layout/header"
+re&#110;der LandingBody from "components/landing_body"
+re&#110;der Footer from "layout/footer"
 
 <script prepare>
     const fs = require('fs');
@@ -449,9 +453,9 @@ cat << 'EOF' > abicore/screens/layout/footer.abx
 EOF
 
 cat << 'EOF' > abicore/screens/layout/layout.abx
-render Header from "layout/header"
-render Body from context.viewPage
-render Footer from "layout/footer"
+re&#110;der Header from "layout/header"
+re&#110;der Body from context.viewPage
+re&#110;der Footer from "layout/footer"
 
 <Header />
 <Body />
@@ -777,12 +781,12 @@ class Handler {
             <h2>1. <code>render</code> — Include a Screen or Component</h2>
             <p>The <code>render</code> keyword pulls another <code>.abx</code> file into the current screen, exactly where the statement appears. This makes rendering UI components feel extremely natural and explicit.</p>
 
-            <pre><code>render Header from "layout/header"
-render Docx   from "docx"
-render Footer from "layout/footer"</code></pre>
+            <pre><code>re&#110;der Header from "layout/header"
+re&#110;der Docx   from "docx"
+re&#110;der Footer from "layout/footer"</code></pre>
 
             <h2>2. Reusable Layouts & Components</h2>
-            <p>In AbiLang, child layouts and reusable templates are simply plain <code>.abx</code> files. You do not need any special headers or keywords at the top of the file. The rendering context is automatically scoped to the component (via <code>with(context)</code>), meaning properties can be outputted directly using <code>{{ variableName }}</code> instead of <code>{{ context.variableName }}</code>.</p>
+            <p>In AbiLang, child layouts and reusable templates are simply plain <code>.abx</code> files. You do not need any special headers or keywords at the top of the file. The rendering context is automatically scoped to the component (via <code>with(context)</code>), meaning properties can be outputted directly using <code>{&#123; variableName }}</code> instead of <code>{&#123; context.variableName }}</code>.</p>
 
             <p>For example, a sub-screen component:</p>
             <pre><code># file: abicore/screens/docx.abx
@@ -793,9 +797,9 @@ render Footer from "layout/footer"</code></pre>
 
             <p>Then render it inside another screen:</p>
             <pre><code># file: abicore/screens/docs.abx
-render Header from "layout/header"
-render Docx   from "docx"
-render Footer from "layout/footer"
+re&#110;der Header from "layout/header"
+re&#110;der Docx   from "docx"
+re&#110;der Footer from "layout/footer"
 
 &lt;Header /&gt;
 &lt;Docx /&gt;
@@ -821,20 +825,20 @@ render Footer from "layout/footer"
             <h2>4. <code>{{ }}</code> — Inline Expression Output</h2>
             <p>Use double curly braces to output any JavaScript expression directly into the HTML. This replaces the old <code>&lt;%= expr %&gt;</code> syntax.</p>
 
-            <pre><code>&lt;h1&gt;{{ lang.title }}&lt;/h1&gt;
-&lt;p&gt;{{ lang.subtitle }}&lt;/p&gt;
+            <pre><code>&lt;h1&gt;{&#123; lang.title }}&lt;/h1&gt;
+&lt;p&gt;{&#123; lang.subtitle }}&lt;/p&gt;
  
 &lt;div&gt;
-    &lt;strong&gt;Platform:&lt;/strong&gt;  {{ os.platform() }}
-    &lt;strong&gt;Memory:&lt;/strong&gt;   {{ Math.floor(os.freemem() / 1024 / 1024) }}MB
-    &lt;strong&gt;Uptime:&lt;/strong&gt;   {{ Math.floor(os.uptime()) }}s
+    &lt;strong&gt;Platform:&lt;/strong&gt;  {&#123; os.platform() }}
+    &lt;strong&gt;Memory:&lt;/strong&gt;   {&#123; Math.floor(os.freemem() / 1024 / 1024) }}MB
+    &lt;strong&gt;Uptime:&lt;/strong&gt;   {&#123; Math.floor(os.uptime()) }}s
 &lt;/div&gt;</code></pre>
 
             <h2>5. Complete Screen Example</h2>
             <p>Here is a full <code>abicore/screens/index.abx</code> showing all four features working together:</p>
 
-            <pre><code>render Header from "layout/header"
-render Footer from "layout/footer"
+            <pre><code>re&#110;der Header from "layout/header"
+re&#110;der Footer from "layout/footer"
 
 &lt;script prepare&gt;
     const fs   = require('fs');
@@ -851,11 +855,11 @@ render Footer from "layout/footer"
 &lt;Header /&gt;
 
 &lt;section class="hero-section"&gt;
-    &lt;h1&gt;{{ lang.title }}&lt;/h1&gt;
-    &lt;p&gt;{{ lang.subtitle }}&lt;/p&gt;
+    &lt;h1&gt;{&#123; lang.title }}&lt;/h1&gt;
+    &lt;p&gt;{&#123; lang.subtitle }}&lt;/p&gt;
     &lt;div&gt;
-        Platform: {{ os.platform() }} |
-        Memory:   {{ Math.floor(os.freemem() / 1024 / 1024) }}MB
+        Platform: {&#123; os.platform() }} |
+        Memory:   {&#123; Math.floor(os.freemem() / 1024 / 1024) }}MB
     &lt;/div&gt;
 &lt;/section&gt;
 
@@ -885,7 +889,7 @@ render Footer from "layout/footer"
                         <td><code>&lt;% code %&gt;</code></td>
                     </tr>
                     <tr>
-                        <td class="strong"><code>{{ expression }}</code></td>
+                        <td class="strong"><code>{&#123; expression }}</code></td>
                         <td>Output a value into HTML</td>
                         <td class="check-yes"><code>{expression}</code> in JSX</td>
                         <td><code>&lt;%= expression %&gt;</code></td>
@@ -904,13 +908,13 @@ render Footer from "layout/footer"
     context.user = { name: "Abinash", role: "Admin" };
 &lt;/script&gt;
 
-render Header from "layout/header"</code></pre>
+re&#110;der Header from "layout/header"</code></pre>
 
             <p>Then read and output the variables inside the child component/layout template:</p>
             <pre><code># file: abicore/screens/layout/header.abx
 &lt;header&gt;
-    &lt;h1&gt;{{ context.pageTitle }}&lt;/h1&gt;
-    &lt;span&gt;Logged in as: {{ context.user.name }}&lt;/span&gt;
+    &lt;h1&gt;{&#123; context.pageTitle }}&lt;/h1&gt;
+    &lt;span&gt;Logged in as: {&#123; context.user.name }}&lt;/span&gt;
 &lt;/header&gt;</code></pre>
 
             <h3>Exporting Data Up from Components</h3>
@@ -923,10 +927,10 @@ render Header from "layout/header"</code></pre>
 
             <p>The parent template can access the exported variables anywhere after rendering the component:</p>
             <pre><code># file: abicore/screens/index.abx
-render Sidebar from "layout/sidebar"
+re&#110;der Sidebar from "layout/sidebar"
 
 &lt;footer&gt;
-    &lt;p&gt;Available Links: {{ context.sidebarLinks.join(', ') }}&lt;/p&gt;
+    &lt;p&gt;Available Links: {&#123; context.sidebarLinks.join(', ') }}&lt;/p&gt;
 &lt;/footer&gt;</code></pre>
 
             <h2>8. Reusing the Profile Component</h2>
@@ -944,22 +948,22 @@ render Sidebar from "layout/sidebar"
 &lt;div class="profile-card"&gt;
     &lt;h2&gt;User Profile&lt;/h2&gt;
     &lt;hr&gt;
-    &lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; {{ name }}&lt;/p&gt;
-    &lt;p&gt;&lt;strong&gt;Role:&lt;/strong&gt; {{ role }}&lt;/p>
+    &lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; {&#123; name }}&lt;/p&gt;
+    &lt;p&gt;&lt;strong&gt;Role:&lt;/strong&gt; {&#123; role }}&lt;/p>
     
     &lt;div class="system-stats"&gt;
         &lt;h3&gt;System Details&lt;/h3&gt;
         &lt;ul&gt;
-            &lt;li&gt;&lt;strong&gt;OS Platform:&lt;/strong&gt; {{ platform }}&lt;/li&gt;
-            &lt;li&gt;&lt;strong&gt;Free Memory:&lt;/strong&gt; {{ memory }} MB&lt;/li&gt;
+            &lt;li&gt;&lt;strong&gt;OS Platform:&lt;/strong&gt; {&#123; platform }}&lt;/li&gt;
+            &lt;li&gt;&lt;strong&gt;Free Memory:&lt;/strong&gt; {&#123; memory }} MB&lt;/li&gt;
         &lt;/ul&gt;
     &lt;/div&gt;
 &lt;/div&gt;</code></pre>
 
             <h3>2. Reusing in Main Screen: <code>abicore/screens/dashboard.abx</code></h3>
-            <pre><code>render Header from "layout/header"
-render ProfileCard from "components/profile_card"
-render Footer from "layout/footer"
+            <pre><code>re&#110;der Header from "layout/header"
+re&#110;der ProfileCard from "components/profile_card"
+re&#110;der Footer from "layout/footer"
 
 &lt;Header /&gt;
 
@@ -979,9 +983,9 @@ render Footer from "layout/footer"
             
             <h3>1. Master Layout: <code>abicore/screens/layout/layout.abx</code></h3>
             <p>Define the header, dynamic body view, and footer. Use the dynamic <code>context.viewPage</code> variable to render the targeted page view:</p>
-            <pre><code>render Header from "layout/header"
-render Body from context.viewPage
-render Footer from "layout/footer"
+            <pre><code>re&#110;der Header from "layout/header"
+re&#110;der Body from context.viewPage
+re&#110;der Footer from "layout/footer"
 
 &lt;Header /&gt;
 &lt;Body /&gt;
@@ -1002,7 +1006,7 @@ render Footer from "layout/footer"
             <p>To write cleaner, component-driven layouts, declare renders at the top of your page using the standard <code>render</code> statement, and then render them inline inside your markup using custom component tags.</p>
             
             <h3>Sample View Page: <code>abicore/screens/dashboard.abx</code></h3>
-            <pre><code>render ProfileCard from "components/profile_card"
+            <pre><code>re&#110;der ProfileCard from "components/profile_card"
 
 &lt;script prepare&gt;
     context.profileName = "Abinash";
@@ -1014,7 +1018,7 @@ render Footer from "layout/footer"
 &lt;/div&gt;</code></pre>
             
             <h2>11. Named Component Wrapping (Export Blocks)</h2>
-            <p>You can optionally wrap your HTML templates inside an <code>export ComponentName { ... }</code> block to define named layout structures explicitly:</p>
+            <p>You can optionally wrap your HTML templates inside an <code>e&#120;port ComponentName { ... }</code> block to define named layout structures explicitly:</p>
             
             <h3>Sample Component: <code>abicore/screens/components/profile_card.abx</code></h3>
             <pre><code>&lt;script prepare&gt;
@@ -1025,18 +1029,18 @@ render Footer from "layout/footer"
     export memory = Math.floor(os.freemem() / 1024 / 1024);
 &lt;/script&gt;
 
-export ProfileCard {
+e&#120;port ProfileCard {
     &lt;div class="profile-card"&gt;
         &lt;h2&gt;User Profile&lt;/h2&gt;
         &lt;hr&gt;
-        &lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; {{ name }}&lt;/p&gt;
-        &lt;p&gt;&lt;strong&gt;Role:&lt;/strong&gt; {{ role }}&lt;/p>
+        &lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; {&#123; name }}&lt;/p&gt;
+        &lt;p&gt;&lt;strong&gt;Role:&lt;/strong&gt; {&#123; role }}&lt;/p>
         
         &lt;div class="system-stats"&gt;
             &lt;h3&gt;System Details&lt;/h3&gt;
             &lt;ul&gt;
-                &lt;li&gt;&lt;strong&gt;OS Platform:&lt;/strong&gt; {{ platform }}&lt;/li&gt;
-                &lt;li&gt;&lt;strong&gt;Free Memory:&lt;/strong&gt; {{ memory }} MB&lt;/li&gt;
+                &lt;li&gt;&lt;strong&gt;OS Platform:&lt;/strong&gt; {&#123; platform }}&lt;/li&gt;
+                &lt;li&gt;&lt;strong&gt;Free Memory:&lt;/strong&gt; {&#123; memory }} MB&lt;/li&gt;
             &lt;/ul&gt;
         &lt;/div&gt;
     &lt;/div&gt;
@@ -1132,9 +1136,9 @@ route("get", "/docs", "handler@docs", "docs")</code></pre>
             <h2>Step 6: Frontend View Screens & Components (.abx)</h2>
             
             <h3>1. Main Entry screen: <code>abicore/screens/index.abx</code></h3>
-            <pre><code>render Header from "layout/header"
-render LandingBody from "components/landing_body"
-render Footer from "layout/footer"
+            <pre><code>re&#110;der Header from "layout/header"
+re&#110;der LandingBody from "components/landing_body"
+re&#110;der Footer from "layout/footer"
 
 &lt;script prepare&gt;
     const fs = require('fs');
@@ -1162,7 +1166,7 @@ render Footer from "layout/footer"
 &lt;Footer /&gt;</code></pre>
             
             <h3>2. Body Component: <code>abicore/screens/components/landing_body.abx</code></h3>
-            <pre><code>render ProfileCard from "components/profile_card"
+            <pre><code>re&#110;der ProfileCard from "components/profile_card"
 
 &lt;script prepare&gt;
     const os = require('os');
@@ -1173,10 +1177,10 @@ render Footer from "layout/footer"
         &lt;div class="row align-items-center justify-content-center"&gt;
             &lt;div class="col-lg-9 text-center"&gt;
                 &lt;h1 class="display-3 fw-bold mb-4 text-white"&gt;
-                    {{ lang.title }}
+                    {&#123; lang.title }}
                 &lt;/h1&gt;
                 &lt;p class="lead text-muted mb-5 fs-5"&gt;
-                    {{ lang.subtitle }}
+                    {&#123; lang.subtitle }}
                 &lt;/p&gt;
                 &lt;div class="mb-4"&gt;
                     &lt;ProfileCard /&gt;
@@ -1184,8 +1188,8 @@ render Footer from "layout/footer"
                 &lt;div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;"&gt;
                     &lt;h5 class="text-white mb-3"&gt;System Information&lt;/h5&gt;
                     &lt;div class="row text-muted fs-6"&gt;
-                        &lt;div class="col-6 mb-2"&gt;&lt;strong&gt;Platform:&lt;/strong&gt; {{ os.platform() }}&lt;/div&gt;
-                        &lt;div class="col-6 mb-2"&gt;&lt;strong&gt;Architecture:&lt;/strong&gt; {{ os.arch() }}&lt;/div&gt;
+                        &lt;div class="col-6 mb-2"&gt;&lt;strong&gt;Platform:&lt;/strong&gt; {&#123; os.platform() }}&lt;/div&gt;
+                        &lt;div class="col-6 mb-2"&gt;&lt;strong&gt;Architecture:&lt;/strong&gt; {&#123; os.arch() }}&lt;/div&gt;
                     &lt;/div&gt;
                 &lt;/div&gt;
             &lt;/div&gt;
@@ -1200,8 +1204,8 @@ render Footer from "layout/footer"
 &lt;/script&gt;
 
 &lt;div class="card card-custom p-4 text-start mx-auto mb-4" style="max-width: 600px; border-left: 4px solid var(--abi-green);"&gt;
-    &lt;h5 class="text-white mb-2"&gt;{{ name }}&lt;/h5&gt;
-    &lt;p class="text-muted mb-0"&gt;Role: &lt;span class="text-white-50"&gt;{{ role }}&lt;/span&gt;&lt;/p&gt;
+    &lt;h5 class="text-white mb-2"&gt;{&#123; name }}&lt;/h5&gt;
+    &lt;p class="text-muted mb-0"&gt;Role: &lt;span class="text-white-50"&gt;{&#123; role }}&lt;/span&gt;&lt;/p&gt;
 &lt;/div&gt;</code></pre>
         </section>
 
@@ -1765,13 +1769,10 @@ EOF
 
 cat << 'EOF' > abicore/navigation/routes.abi
 include("constants/constants.abi")
-
 include("support/helpers.abi")
-
 include("handlers/handler.abi")
 
 route("get", "/", "handler@index", "home")
-
 route("get", "/docs", "handler@docs", "docs")
 EOF
 
@@ -1902,9 +1903,14 @@ if [ -f "$SCRIPT_DIR/scripts/install-syntax.js" ]; then
 fi
 
 echo ""
-echo "============================================="
-echo "AbiLang Project successfully created!"
-echo "Project Path: $(pwd)"
-echo "To start the web server, run:"
-echo "  npm run web"
-echo "============================================="
+echo "╭─────────────────────────────────────────────╮"
+echo "│  🚀 AbiLang                                 │"
+echo "│                                             │"
+echo "│  ✓ Project created successfully             │"
+echo "│                                             │"
+echo "│  📂 $(pwd)                                  │"
+echo "│                                             │"
+echo "│  ▶ Start development                        │"
+echo "│     npm run web                             │"
+echo "╰─────────────────────────────────────────────╯"
+echo ""

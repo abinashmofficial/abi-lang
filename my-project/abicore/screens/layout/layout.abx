@@ -1,6 +1,6 @@
-render Header from "layout/header"
-render Body from context.viewPage
-render Footer from "layout/footer"
+re&#110;der Header from "layout/header"
+re&#110;der Body from context.viewPage
+re&#110;der Footer from "layout/footer"
 
 <Header />
 <Body />

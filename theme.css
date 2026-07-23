@@ -45,3 +45,13 @@ body.dark-theme {
     --token-text: #F8F8F2;
     --token-class: #66D9EF;
 }
+
+.token-comment { color: var(--token-comment) !important; }
+.token-string { color: var(--token-string) !important; }
+.token-keyword { color: var(--token-keyword) !important; }
+.token-logical { color: var(--token-logical) !important; }
+.token-constant { color: var(--token-constant) !important; }
+.token-builtin { color: var(--token-builtin) !important; }
+.token-function { color: var(--token-function) !important; }
+.token-number { color: var(--token-number) !important; }
+.token-class { color: var(--token-class) !important; }

@@ -1,6 +1,6 @@
-render Header from "layout/header"
-render LandingBody from "components/landing_body"
-render Footer from "layout/footer"
+re&#110;der Header from "layout/header"
+re&#110;der LandingBody from "components/landing_body"
+re&#110;der Footer from "layout/footer"
 
 <script prepare>
     const fs = require('fs');

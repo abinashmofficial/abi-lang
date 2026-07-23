@@ -415,16 +415,16 @@ class Handler {
                 <h2>1. <code>render</code> — Include a Screen or Component</h2>
                 <p>The <code>render</code> keyword pulls another <code>.abx</code> file into the current screen, exactly where the statement appears. This makes rendering UI components feel extremely natural and explicit.</p>
 
-                <pre><code>render Header from "layout/header"
-render Docx   from "docx"
-render Footer from "layout/footer"</code></pre>
+                <pre><code>re&#110;der Header from "layout/header"
+re&#110;der Docx   from "docx"
+re&#110;der Footer from "layout/footer"</code></pre>
 
                 <div class="callout callout-tip">
                     <strong>Tip:</strong> The alias name (e.g. <code>Header</code>, <code>Docx</code>) is just a label for readability — it does not create a variable. The file is inlined at render time.
                 </div>
 
                 <h2>2. Reusable Layouts & Components</h2>
-                <p>In AbiLang, child layouts and reusable templates are simply plain <code>.abx</code> files. You do not need any special headers or keywords (like <code>component</code> or <code>export</code>) at the top of the file. Just write standard HTML and templating syntax. The rendering context is automatically scoped to the component (via <code>with(context)</code>), meaning properties can be outputted directly using <code>{{ variableName }}</code> instead of <code>{{ context.variableName }}</code>.</p>
+                <p>In AbiLang, child layouts and reusable templates are simply plain <code>.abx</code> files. You do not need any special headers or keywords (like <code>component</code> or <code>export</code>) at the top of the file. Just write standard HTML and templating syntax. The rendering context is automatically scoped to the component (via <code>with(context)</code>), meaning properties can be outputted directly using <code>{&#123; variableName }}</code> instead of <code>{&#123; context.variableName }}</code>.</p>
 
                 <div class="callout callout-info">
                     <strong>CORS Support:</strong> The built-in web server automatically configures CORS methods (<code>GET, POST, PUT, DELETE, OPTIONS</code>) and handles preflight options requests, ensuring backend APIs can be reached from external clients and browsers seamlessly.
@@ -439,9 +439,9 @@ render Footer from "layout/footer"</code></pre>
 
                 <p>Then render it inside another screen:</p>
                 <pre><code># file: abicore/screens/docs.abx
-render Header from "layout/header"
-render Docx   from "docx"
-render Footer from "layout/footer"
+re&#110;der Header from "layout/header"
+re&#110;der Docx   from "docx"
+re&#110;der Footer from "layout/footer"
 
 &lt;Header /&gt;
 &lt;Docx /&gt;
@@ -468,16 +468,16 @@ try {
                     <strong>Tip:</strong> <code>&lt;script prepare&gt;</code> replaces the old <code>&lt;% code %&gt;</code> EJS-style blocks. Everything inside runs as plain Node.js — <code>require</code>, <code>process.env</code>, <code>fs</code>, and <code>os</code> are all available.
                 </div>
 
-                <h2>4. <code>{{ }}</code> — Inline Expression Output</h2>
+                <h2>4. <code>{&#123; }}</code> — Inline Expression Output</h2>
                 <p>Use double curly braces to output any JavaScript expression directly into the HTML. This replaces the old <code>&lt;%= expr %&gt;</code> syntax.</p>
 
-                <pre><code>&lt;h1&gt;{{ lang.title }}&lt;/h1&gt;
-&lt;p&gt;{{ lang.subtitle }}&lt;/p&gt;
+                <pre><code>&lt;h1&gt;{&#123; lang.title }}&lt;/h1&gt;
+&lt;p&gt;{&#123; lang.subtitle }}&lt;/p&gt;
  
 &lt;div&gt;
-    &lt;strong&gt;Platform:&lt;/strong&gt;  {{ os.platform() }}
-    &lt;strong&gt;Memory:&lt;/strong&gt;   {{ Math.floor(os.freemem() / 1024 / 1024) }}MB
-    &lt;strong&gt;Uptime:&lt;/strong&gt;   {{ Math.floor(os.uptime()) }}s
+    &lt;strong&gt;Platform:&lt;/strong&gt;  {&#123; os.platform() }}
+    &lt;strong&gt;Memory:&lt;/strong&gt;   {&#123; Math.floor(os.freemem() / 1024 / 1024) }}MB
+    &lt;strong&gt;Uptime:&lt;/strong&gt;   {&#123; Math.floor(os.uptime()) }}s
 &lt;/div&gt;</code></pre>
 
                 <h2>5. Complete Screen Example</h2>

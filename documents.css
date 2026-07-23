@@ -324,6 +324,110 @@ body.dark-theme .nav-link:hover {
     color: var(--text-main);
 }
 
+/* Humanized Interactive Flowchart Diagram */
+.human-flow-wrapper {
+    margin: 32px 0;
+    padding: 24px;
+    background: var(--bg-pane);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+.human-flow-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.human-flow-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.human-flow-step {
+    flex: 1;
+    min-width: 170px;
+    background-color: rgba(0, 0, 0, 0.03);
+    border: 1.5px dashed var(--border-color);
+    border-radius: 10px;
+    padding: 16px;
+    transition: var(--transition-base);
+    position: relative;
+}
+
+body.dark-theme .human-flow-step {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.human-flow-step:hover {
+    border-color: var(--abi-green);
+    border-style: solid;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
+}
+
+.step-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--abi-green);
+    background: rgba(76, 175, 80, 0.12);
+    margin-bottom: 8px;
+}
+
+.step-heading {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0 0 6px 0;
+}
+
+.step-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
+
+.step-code-snippet {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: var(--abi-cyan);
+    word-break: break-word;
+}
+
+.human-flow-arrow {
+    font-size: 20px;
+    color: var(--abi-green);
+    font-weight: bold;
+    user-select: none;
+}
+
+@media (max-width: 768px) {
+    .human-flow-grid {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .human-flow-arrow {
+        text-align: center;
+        transform: rotate(90deg);
+        margin: -8px 0;
+    }
+}
+
 /* Code Blocks styling */
 pre {
     background-color: #120b24;

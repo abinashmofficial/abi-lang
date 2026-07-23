@@ -165,6 +165,27 @@ function highlightAbiLang(code) {
     return html;
 }
 
+function highlightBash(code) {
+    let html = code
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+    const tokenRegex = /(#(?:.*)$)|(".*?"|'.*?')|(\b(?:curl|git|npm|node|cd|bash|mkdir|sudo)\b)|(-\w+|--\w+[-\w]*)|(\b(?:clone|install|run|build|web|init|push|pull|add|commit|checkout|status)\b)|(https?:\/\/[^\s<]+)/gm;
+
+    html = html.replace(tokenRegex, (match, comment, string, cmd, option, param, url) => {
+        if (comment) return `<span class="token-comment">${match}</span>`;
+        if (string) return `<span class="token-string">${match}</span>`;
+        if (cmd) return `<span class="token-keyword">${match}</span>`;
+        if (option) return `<span class="token-logical">${match}</span>`;
+        if (param) return `<span class="token-builtin">${match}</span>`;
+        if (url) return `<span class="token-class">${match}</span>`;
+        return match;
+    });
+
+    return html;
+}
+
 function updateHighlighting() {
     const highlightContent = document.getElementById("highlighting-content");
     if (highlightContent) {
@@ -740,10 +761,14 @@ window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => loadingAnim.remove(), 600);
   }
 
-  const allCodes = document.querySelectorAll('.install-code-blocks pre code');
+  const allCodes = document.querySelectorAll('pre code');
   allCodes.forEach(codeBlock => {
-      if (!codeBlock.querySelector('.token-keyword') && !codeBlock.querySelector('.token-string') && !codeBlock.querySelector('.token-comment')) {
-          codeBlock.innerHTML = highlightAbiLang(codeBlock.textContent);
+      if (codeBlock.id === 'highlighting-content') return;
+      const rawText = codeBlock.textContent;
+      if (codeBlock.classList.contains("language-bash") || codeBlock.classList.contains("bash") || rawText.trim().startsWith("curl") || rawText.trim().startsWith("git") || rawText.trim().startsWith("npm") || rawText.trim().startsWith("node")) {
+          codeBlock.innerHTML = highlightBash(rawText);
+      } else {
+          codeBlock.innerHTML = highlightAbiLang(rawText);
       }
   });
 

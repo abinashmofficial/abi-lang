@@ -1029,9 +1029,33 @@ render Footer from "layout/footer"
             return html;
         }
 
+        function highlightBash(code) {
+            let html = code
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+
+            const tokenRegex = /(#(?:.*)$)|(".*?"|'.*?')|(\b(?:curl|git|npm|node|cd|bash|mkdir|sudo)\b)|(-\w+|--\w+[-\w]*)|(\b(?:clone|install|run|build|web|init|push|pull|add|commit|checkout|status)\b)|(https?:\/\/[^\s<]+)/gm;
+
+            html = html.replace(tokenRegex, (match, comment, string, cmd, option, param, url) => {
+                if (comment) return `<span class="token-comment">${match}</span>`;
+                if (string) return `<span class="token-string">${match}</span>`;
+                if (cmd) return `<span class="token-keyword">${match}</span>`;
+                if (option) return `<span class="token-logical">${match}</span>`;
+                if (param) return `<span class="token-builtin">${match}</span>`;
+                if (url) return `<span class="token-class">${match}</span>`;
+                return match;
+            });
+
+            return html;
+        }
+
         document.querySelectorAll("pre code").forEach(block => {
-            if (!block.querySelector(".token-keyword") && !block.querySelector(".token-string") && !block.querySelector(".token-comment")) {
-                block.innerHTML = highlightAbiLang(block.textContent);
+            const rawText = block.textContent;
+            if (block.classList.contains("language-bash") || block.classList.contains("bash") || rawText.trim().startsWith("curl") || rawText.trim().startsWith("git") || rawText.trim().startsWith("npm") || rawText.trim().startsWith("node")) {
+                block.innerHTML = highlightBash(rawText);
+            } else {
+                block.innerHTML = highlightAbiLang(rawText);
             }
         });
 

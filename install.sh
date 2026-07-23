@@ -303,7 +303,7 @@ render ProfileCard from "components/profile_card"
                     {{ lang.subtitle }}
                 </p>
                 <div class="d-flex justify-content-center gap-3 mb-5">
-                    <button class="btn btn-gradient btn-lg px-4" id="launch-btn">{{ lang.get_started }}</button>
+                    <a class="btn btn-gradient btn-lg px-4" href="https://abinashmofficial.github.io/abi-lang/documents.html">{{ lang.get_started }}</a>
                     <a class="btn btn-outline-secondary btn-lg px-4" href="https://github.com/abinashmofficial/abi-lang" target="_blank">{{ lang.view_docs }}</a>
                 </div>
                 <div class="mb-4">
@@ -966,6 +966,32 @@ include("support/helpers.abi")
 include("handlers/handler.abi")
 
 route("get", "/", "handler@index", "home")
+EOF
+
+# Create VS Code local settings for default syntax coloring
+mkdir -p .vscode
+cat << 'EOF' > .vscode/settings.json
+{
+  "files.associations": {
+    "*.abi": "php",
+    "*.ab": "php",
+    "*.abilang": "php",
+    "*.abx": "html"
+  }
+}
+EOF
+
+# Create VS Code local settings for default syntax coloring
+mkdir -p .vscode
+cat << 'EOF' > .vscode/settings.json
+{
+  "files.associations": {
+    "*.abi": "php",
+    "*.ab": "php",
+    "*.abilang": "php",
+    "*.abx": "html"
+  }
+}
 EOF
 
 # 8. Download or copy design assets (CSS, JS, layout etc.)

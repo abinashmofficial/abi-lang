@@ -192,6 +192,11 @@ cat << 'EOF' > abicore/screens/layout/header.abx
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
         }
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link,
+        .navbar-custom a {
+            color: var(--text-main) !important;
+        }
         .hero-section {
             background: radial-gradient(circle at top center, rgba(143, 92, 255, 0.18), transparent 60%);
             padding: 90px 0;
@@ -202,6 +207,7 @@ cat << 'EOF' > abicore/screens/layout/header.abx
             backdrop-filter: blur(8px);
             border: 1px solid var(--border-color);
             border-radius: 16px;
+            color: var(--text-main);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .card-custom:hover {
@@ -229,6 +235,14 @@ cat << 'EOF' > abicore/screens/layout/header.abx
             color: #ffffff;
             box-shadow: 0 0 15px rgba(143, 92, 255, 0.4);
         }
+        .btn-outline-secondary {
+            color: var(--text-main) !important;
+            border-color: var(--border-color) !important;
+        }
+        .btn-outline-secondary:hover {
+            background: var(--bg-pane) !important;
+            color: var(--text-main) !important;
+        }
         footer {
             background: var(--bg-app);
             border-top: 1px solid var(--border-color);
@@ -236,10 +250,22 @@ cat << 'EOF' > abicore/screens/layout/header.abx
             font-size: 0.9rem;
             color: var(--text-muted);
         }
+        .version-badge-pill {
+            background: var(--bg-pane);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            border-radius: 999px;
+            padding: 4px 14px;
+            font-size: 13px;
+            display: inline-block;
+        }
+        h1, h2, h3, h4, h5, h6 { color: var(--text-main); }
+        p, li, span { color: inherit; }
+        strong { color: var(--text-main); }
     </style>
 </head>
 <body class="dark-theme">
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
+    <nav class="navbar navbar-expand-lg navbar-custom py-3">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="/">
                 <span class="badge me-2 fs-5 px-3 abi-logo-badge">A</span>
@@ -277,8 +303,8 @@ cat << 'EOF' > abicore/screens/components/profile_card.abx
 </script>
 
 <div class="card card-custom p-4 text-start mx-auto mb-4" style="max-width: 600px; border-left: 4px solid var(--abi-green);">
-    <h5 class="text-white mb-2">{{ name }}</h5>
-    <p class="text-muted mb-0">Role: <span class="text-white-50">{{ role }}</span></p>
+    <h5 class="mb-2" style="color: var(--text-main);">{{ name }}</h5>
+    <p class="mb-0" style="color: var(--text-muted);">Role: <span style="color: var(--text-main);">{{ role }}</span></p>
 </div>
 EOF
 
@@ -293,13 +319,13 @@ render ProfileCard from "components/profile_card"
     <div class="container">
         <div class="row align-items-center justify-content-center">
             <div class="col-lg-9 text-center">
-                <div class="badge bg-secondary bg-opacity-25 text-light mb-3 px-3 py-2 border border-secondary border-opacity-50">
+                <div class="version-badge-pill mb-3">
                     AbiLang v1.2.0 (Bootstrap Cloud Release)
                 </div>
-                <h1 class="display-3 fw-bold mb-4 text-white">
+                <h1 class="display-3 fw-bold mb-4">
                     {{ lang.title }}
                 </h1>
-                <p class="lead text-muted mb-5 fs-5">
+                <p class="lead mb-5 fs-5" style="color: var(--text-muted);">
                     {{ lang.subtitle }}
                 </p>
                 <div class="d-flex justify-content-center gap-3 mb-5">
@@ -310,12 +336,12 @@ render ProfileCard from "components/profile_card"
                     <ProfileCard />
                 </div>
                 <div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;">
-                    <h5 class="text-white mb-3">{{ lang.system_info }}</h5>
-                    <div class="row text-muted fs-6">
-                        <div class="col-6 mb-2"><strong>{{ lang.platform }}:</strong> {{ os.platform() }}</div>
-                        <div class="col-6 mb-2"><strong>{{ lang.architecture }}:</strong> {{ os.arch() }}</div>
-                        <div class="col-6 mb-2"><strong>{{ lang.uptime }}:</strong> {{ Math.floor(os.uptime()) }} {{ lang.seconds }}</div>
-                        <div class="col-6 mb-2"><strong>{{ lang.memory }}:</strong> {{ Math.floor(os.freemem() / 1024 / 1024) }}MB / {{ Math.floor(os.totalmem() / 1024 / 1024) }}MB</div>
+                    <h5 class="mb-3" style="color: var(--text-main);">{{ lang.system_info }}</h5>
+                    <div class="row fs-6" style="color: var(--text-muted);">
+                        <div class="col-6 mb-2"><strong style="color: var(--text-main);">{{ lang.platform }}:</strong> {{ os.platform() }}</div>
+                        <div class="col-6 mb-2"><strong style="color: var(--text-main);">{{ lang.architecture }}:</strong> {{ os.arch() }}</div>
+                        <div class="col-6 mb-2"><strong style="color: var(--text-main);">{{ lang.uptime }}:</strong> {{ Math.floor(os.uptime()) }} {{ lang.seconds }}</div>
+                        <div class="col-6 mb-2"><strong style="color: var(--text-main);">{{ lang.memory }}:</strong> {{ Math.floor(os.freemem() / 1024 / 1024) }}MB / {{ Math.floor(os.totalmem() / 1024 / 1024) }}MB</div>
                     </div>
                 </div>
             </div>
@@ -379,11 +405,11 @@ render Footer from "layout/footer"
         --editor-bg: #272822;
     }
 
-    .text-white { color: var(--text-main) !important; }
-    .text-light { color: var(--text-main) !important; }
-    .text-muted { color: var(--text-muted) !important; }
-    .text-white-50 { color: var(--text-muted) !important; }
+    .text-white, .text-light { color: var(--text-main) !important; }
+    .text-muted, .text-white-50 { color: var(--text-muted) !important; }
     strong { color: var(--text-main); }
+    p { color: var(--text-muted); }
+    h1, h2, h3, h4, h5, h6 { color: var(--text-main); }
 
     .abi-logo-badge {
         background: linear-gradient(135deg, var(--abi-green), var(--abi-dark-blue)) !important;
@@ -444,10 +470,10 @@ cat << 'EOF' > abicore/screens/layout/footer.abx
                         View Landing Portal
                     </a>
                 </div>
-                <div class="col-md-4 mb-3 mb-md-0 text-white-50">
+                <div class="col-md-4 mb-3 mb-md-0" style="color: var(--text-muted);">
                     Progressive Language Platform
                 </div>
-                <div class="col-md-4 text-md-end text-white-50">
+                <div class="col-md-4 text-md-end" style="color: var(--text-muted);">
                     Made for Abinash
                 </div>
             </div>

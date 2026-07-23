@@ -6,10 +6,10 @@
                         View Landing Portal
                     </a>
                 </div>
-                <div class="col-md-4 mb-3 mb-md-0 text-white-50">
+                <div class="col-md-4 mb-3 mb-md-0" style="color: var(--text-muted);">
                     Progressive Language Platform
                 </div>
-                <div class="col-md-4 text-md-end text-white-50">
+                <div class="col-md-4 text-md-end" style="color: var(--text-muted);">
                     Made for Abinash
                 </div>
             </div>

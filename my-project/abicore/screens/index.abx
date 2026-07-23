@@ -52,11 +52,29 @@ render Footer from "layout/footer"
         --editor-bg: #272822;
     }
 
-    .text-white { color: var(--text-main) !important; }
-    .text-light { color: var(--text-main) !important; }
-    .text-muted { color: var(--text-muted) !important; }
-    .text-white-50 { color: var(--text-muted) !important; }
+    .text-white, .text-light { color: var(--text-main) !important; }
+    .text-muted, .text-white-50 { color: var(--text-muted) !important; }
     strong { color: var(--text-main); }
+    p { color: var(--text-muted); }
+    h1, h2, h3, h4, h5, h6 { color: var(--text-main); }
+
+    .btn-outline-secondary {
+        color: var(--text-main) !important;
+        border-color: var(--border-color) !important;
+    }
+    .btn-outline-secondary:hover {
+        background: var(--bg-pane) !important;
+        color: var(--text-main) !important;
+    }
+    .version-badge-pill {
+        background: var(--bg-pane);
+        border: 1px solid var(--border-color);
+        color: var(--text-muted);
+        border-radius: 999px;
+        padding: 4px 14px;
+        font-size: 13px;
+        display: inline-block;
+    }
 
     .abi-logo-badge {
         background: linear-gradient(135deg, var(--abi-green), var(--abi-dark-blue)) !important;

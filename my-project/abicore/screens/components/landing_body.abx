@@ -8,13 +8,13 @@ render ProfileCard from "components/profile_card"
     <div class="container">
         <div class="row align-items-center justify-content-center">
             <div class="col-lg-9 text-center">
-                <div class="badge bg-secondary bg-opacity-25 text-light mb-3 px-3 py-2 border border-secondary border-opacity-50">
+                <div class="version-badge-pill mb-3">
                     AbiLang v1.2.0 (Bootstrap Cloud Release)
                 </div>
-                <h1 class="display-3 fw-bold mb-4 text-white">
+                <h1 class="display-3 fw-bold mb-4">
                     {{ lang.title }}
                 </h1>
-                <p class="lead text-muted mb-5 fs-5">
+                <p class="lead mb-5 fs-5" style="color: var(--text-muted);">
                     {{ lang.subtitle }}
                 </p>
                 <div class="d-flex justify-content-center gap-3 mb-5">
@@ -25,8 +25,8 @@ render ProfileCard from "components/profile_card"
                     <ProfileCard />
                 </div>
                 <div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;">
-                    <h5 class="text-white mb-3">{{ lang.system_info }}</h5>
-                    <div class="row text-muted fs-6">
+                    <h5 class="mb-3" style="color: var(--text-main);">{{ lang.system_info }}</h5>
+                    <div class="row fs-6" style="color: var(--text-muted);">
                         <div class="col-6 mb-2"><strong>{{ lang.platform }}:</strong> {{ os.platform() }}</div>
                         <div class="col-6 mb-2"><strong>{{ lang.architecture }}:</strong> {{ os.arch() }}</div>
                         <div class="col-6 mb-2"><strong>{{ lang.uptime }}:</strong> {{ Math.floor(os.uptime()) }} {{ lang.seconds }}</div>

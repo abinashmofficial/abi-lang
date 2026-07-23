@@ -144,22 +144,14 @@
                 
                 <h2>macOS & Linux Setup</h2>
                 <p>To run the single-click remote automated installation script, copy the command below:</p>
-                <pre><code class="language-bash"># Fetch and execute bash auto-installer script
-<span class="token-builtin">curl</span> <span class="token-string">-fsSL</span> <span class="token-constant">https://raw.githubusercontent.com/abinashmofficial/abi-lang/main/install.sh</span> <span class="token-logical">|</span> <span class="token-keyword">bash</span></code></pre>
+                <pre><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/abinashmofficial/abi-lang/main/install.sh | bash</code></pre>
 
                 <h2>Manual Compilation & Local Run</h2>
                 <p>If you prefer a manual setup, clone the repository, install its packages, and boot up the visual playground:</p>
-                <pre><code class="language-bash"># 1. Clone repository
-git clone https://github.com/abinashmofficial/abi-lang.git
+                <pre><code class="language-bash">git clone https://github.com/abinashmofficial/abi-lang.git
 cd abi-lang
-
-# 2. Install TypeScript development tooling
 npm install
-
-# 3. Build compiler engine binaries
 npm run build
-
-# 4. Spin up local interactive web playground
 npm run web</code></pre>
             </section>
 
@@ -179,8 +171,7 @@ npm run web</code></pre>
 
                 <h2>Auto-Installer Script</h2>
                 <p>To register the file type associations and coloring configurations globally for all editors on your machine (including VS Code and VS Code Insiders), run:</p>
-                <pre><code class="language-bash"># Run syntax installer globally
-node scripts/install-syntax.js</code></pre>
+                <pre><code class="language-bash">node scripts/install-syntax.js</code></pre>
             </section>
 
             <!-- Section: Variables -->
@@ -240,7 +231,7 @@ print message</code></pre>
             <!-- Section: Handlers & Entities -->
             <section id="handlers" class="docs-section">
                 <h1>Handlers & Entities (OOP Concepts)</h1>
-                <p>AbiLang utilizes **Object-Oriented Programming (OOP)** paradigms by leveraging the dynamic nature of dictionary literals and lexical closures. Since AbiLang focuses on a clean syntax without boilerplate class decorators, objects are instantiated using **Factory Constructor Patterns**.</p>
+                <p>AbiLang utilizes <strong>Object-Oriented Programming (OOP)</strong> paradigms by leveraging the dynamic nature of dictionary literals and lexical closures. Since AbiLang focuses on a clean syntax without boilerplate class decorators, objects are instantiated using <strong>Factory Constructor Patterns</strong>.</p>
                 
                 <div class="callout callout-tip">
                     <strong>OOP Architecture in AbiLang:</strong>
@@ -254,17 +245,12 @@ print message</code></pre>
                 <h2>Defining OOP Entities</h2>
                 <p>In AbiLang, entities represent database models and domain objects. You can structure them as constructor classes using factory functions:</p>
                 
-                <pre><code># file: abicore/entities/user_entity.abi
-
-# Factory constructor for UserEntity
-func UserEntity(id, name, email) {
-    # 1. Instantiate the object dictionary
+                <pre><code>func UserEntity(id, name, email) {
     self = {}
     self.id = id
     self.name = name
     self.email = email
 
-    # 2. Define member methods (encapsulation)
     func get_info() {
         return "User: " + self.name + " (" + self.email + ")"
     }
@@ -282,19 +268,17 @@ func UserEntity(id, name, email) {
                 <p>To use this entity in your application:</p>
                 <pre><code>include("abicore/entities/user_entity.abi")
 
-# Create user instances
 user1 = UserEntity(1, "Abinash", "abinash@example.com")
 user2 = UserEntity(2, "Developer", "dev@example.com")
 
-print user1.get_info()  # Outputs: User: Abinash (abinash@example.com)
+print user1.get_info()
 user1.update_email("abinash.official@example.com")
-print user1.get_info()  # Outputs: User: Abinash (abinash.official@example.com)</code></pre>
+print user1.get_info()</code></pre>
 
                 <h2>Handler Classes & OOP Inheritance</h2>
                 <p>Handlers manage application logic, coordinating between entities and screens. You can implement handler classes that inherit behavior from other classes using the <code>extends</code> keyword:</p>
                 
-                <pre><code># file: abicore/handlers/base_handler.abi
-class BaseHandler {
+                <pre><code>class BaseHandler {
     public func init(name) {
         this.name = name
     }
@@ -306,8 +290,7 @@ class BaseHandler {
 
                 <p>Then, extend the base class to inherit methods and properties:</p>
                 
-                <pre><code># file: abicore/handlers/handler.abi
-include("abicore/handlers/base_handler.abi")
+                <pre><code>include("abicore/handlers/base_handler.abi")
 include("abicore/entities/entity.abi")
 
 class Handler extends BaseHandler {
@@ -317,16 +300,11 @@ class Handler extends BaseHandler {
         print "Calling entity: " + e.data()
         return screen("index")
     }
-
-    public func docs() {
-        return screen("docs")
-    }
 }</code></pre>
 
                 <p>Additionally, you can define classes with public and private methods, using <code>this</code> to reference instance properties and methods:</p>
                 
-                <pre><code># file: abicore/handlers/user_handler.abi
-include("abicore/entities/user_entity.abi")
+                <pre><code>include("abicore/entities/user_entity.abi")
 
 class UserHandler {
     public func init(user_id) {
@@ -345,10 +323,8 @@ class UserHandler {
 }</code></pre>
 
                 <p>Finally, register the handler action in your routing system:</p>
-                <pre><code># file: abicore/navigation/routes.abi
-include("abicore/handlers/user_handler.abi")
+                <pre><code>include("abicore/handlers/user_handler.abi")
 
-# Routing maps actions to class methods:
 route("get", "/user/show", "user_handler@show", "user.show")</code></pre>
 
                 <h2>Try / Catch / Finally</h2>
@@ -376,17 +352,14 @@ dd(record)</code></pre>
                 
                 <h3>Route Registration</h3>
                 <p>Register routes using the native <code>route</code> statement, specifying HTTP verb, endpoint, target handler action, and route alias:</p>
-                <pre><code># file: abicore/navigation/routes.abi
-include("abicore/handlers/handler.abi")
+                <pre><code>include("abicore/handlers/handler.abi")
 
 route("get", "/profile", "handler@show_profile", "user.profile")</code></pre>
 
                 <h3>Returning Screens</h3>
                 <p>The built-in <code>screen("filename")</code> helper automatically loads and processes the corresponding user interface definition from the screens layout space:</p>
-                <pre><code># file: abicore/handlers/handler.abi
-class Handler {
+                <pre><code>class Handler {
     public func index() {
-        # Automatically resolves to abicore/screens/index.abx template
         return screen("index")
     }
 }</code></pre>
@@ -421,15 +394,13 @@ re&#110;der Footer from "layout/footer"</code></pre>
                 </div>
 
                 <p>For example, a sub-screen component:</p>
-                <pre><code># file: abicore/screens/docx.abx
-&lt;section class="docs-section"&gt;
+                <pre><code>&lt;section class="docs-section"&gt;
     &lt;h2&gt;Documentation V1&lt;/h2&gt;
     &lt;p&gt;AbiLang reference material...&lt;/p&gt;
 &lt;/section&gt;</code></pre>
 
                 <p>Then render it inside another screen:</p>
-                <pre><code># file: abicore/screens/docs.abx
-re&#110;der Header from "layout/header"
+                <pre><code>re&#110;der Header from "layout/header"
 re&#110;der Docx   from "docx"
 re&#110;der Footer from "layout/footer"
 
@@ -507,7 +478,7 @@ try {
                         <tr>
                             <th>AbiLang Keyword</th>
                             <th>What it Does</th>
-                            <th>React / JSX Equivalent</th>
+                            <th>AbiLang Equivalent</th>
                             <th>Old Syntax (EJS)</th>
                         </tr>
                     </thead>
@@ -515,19 +486,19 @@ try {
                         <tr>
                             <td class="strong"><code>render X from "path"</code></td>
                             <td>Include another .abx file inline</td>
-                            <td class="check-yes"><code>render X from "./X"</code> + <code>&lt;X /&gt;</code></td>
+                            <td class="check-yes"><code>&lt;X /&gt;</code> component tag (AbiLang native)</td>
                             <td><code>&#64;include("path")</code></td>
                         </tr>
                         <tr>
                             <td class="strong"><code>&lt;script prepare&gt;...&lt;/script&gt;</code></td>
                             <td>Server-side logic / data preparation</td>
-                            <td class="check-yes"><code>&lt;script prepare&gt;</code> (Unique)</td>
+                            <td class="check-yes"><code>&lt;script prepare&gt;</code> (AbiLang native)</td>
                             <td><code>&lt;% code %&gt;</code></td>
                         </tr>
                         <tr>
                             <td class="strong"><code>{{ expression }}</code></td>
                             <td>Output a value into HTML</td>
-                            <td class="check-yes"><code>{expression}</code> in JSX</td>
+                            <td class="check-yes"><code>{{ expression }}</code> (AbiLang native)</td>
                             <td><code>&lt;%= expression %&gt;</code></td>
                         </tr>
                     </tbody>
@@ -538,8 +509,7 @@ try {
                 
                 <h3>Passing Data Down (Props)</h3>
                 <p>Assign any variable to the <code>context</code> object inside the parent screen's logic block:</p>
-                <pre><code># file: abicore/screens/index.abx
-&lt;script prepare&gt;
+                <pre><code>&lt;script prepare&gt;
 context.pageTitle = "Home Dashboard";
 context.user = { name: "Abinash", role: "Admin" };
 &lt;/script&gt;
@@ -547,23 +517,19 @@ context.user = { name: "Abinash", role: "Admin" };
 render Header from "layout/header"</code></pre>
 
                 <p>Then read and output the variables inside the child component/layout template:</p>
-                <pre><code># file: abicore/screens/layout/header.abx
-&lt;header&gt;
+                <pre><code>&lt;header&gt;
     &lt;h1&gt;{{ context.pageTitle }}&lt;/h1&gt;
     &lt;span&gt;Logged in as: {{ context.user.name }}&lt;/span&gt;
 &lt;/header&gt;</code></pre>
 
                 <h3>Exporting Data Up from Components</h3>
                 <p>If a reusable component prepares data or configuration, it can write directly to the shared <code>context</code> object to export it to the parent screen:</p>
-                <pre><code># file: abicore/screens/layout/sidebar.abx
-&lt;script prepare&gt;
-# Export variable to parent template
+                <pre><code>&lt;script prepare&gt;
 context.sidebarLinks = ["Home", "Docs", "Settings"];
 &lt;/script&gt;</code></pre>
 
                 <p>The parent template can access the exported variables anywhere after rendering the component:</p>
-                <pre><code># file: abicore/screens/index.abx
-render Sidebar from "layout/sidebar"
+                <pre><code>render Sidebar from "layout/sidebar"
 
 &lt;footer&gt;
     &lt;p&gt;Available Links: {{ context.sidebarLinks.join(', ') }}&lt;/p&gt;
@@ -733,8 +699,7 @@ export ProfileCard {
 
                 <h2>Step 2: Database Config</h2>
                 <p>Use the built-in <code>env()</code> function to load database config settings directly from the <code>.env</code> file:</p>
-                <pre><code># file: abicore/constants/constants.abi
-APP_TITLE = "AbiLang Bootstrap Portal"
+                <pre><code>APP_TITLE = "AbiLang Bootstrap Portal"
 VERSION = "1.2.0"
 AUTHOR = "Abinash"
 
@@ -745,8 +710,7 @@ DB_USERNAME = env("DB_USERNAME")
 DB_PASSWORD = env("DB_PASSWORD")</code></pre>
                 
                 <h2>Step 3: Database Entity Model</h2>
-                <pre><code># file: abicore/entities/entity.abi
-func Entity() {
+                <pre><code>func Entity() {
     self = {}
     self.data = func() {
         return "AbiLang Database Service Core Loaded"
@@ -756,8 +720,7 @@ func Entity() {
                 
                 <h2>Step 4: Request Handler Controller</h2>
                 <p>Defines request handlers as controller classes and utilizes database constants:</p>
-                <pre><code># file: abicore/handlers/handler.abi
-include("entities/entity.abi")
+                <pre><code>include("entities/entity.abi")
 
 class Handler {
     public func index() {
@@ -769,8 +732,7 @@ class Handler {
 }</code></pre>
                 
                 <h2>Step 5: Route Registrations</h2>
-                <pre><code># file: abicore/navigation/routes.abi
-include("constants/constants.abi")
+                <pre><code>include("constants/constants.abi")
 include("support/helpers.abi")
 include("handlers/handler.abi")
 
@@ -859,7 +821,7 @@ const role = context.profileRole || "Viewer";
             <!-- Section: Comparison Table -->
             <section id="comparison-table-sec" class="docs-section">
                 <h1>Feature Comparison Table</h1>
-                <p>A quick summary of how AbiLang stacks up against other major languages:</p>
+                <p>A quick summary of AbiLang features at a glance:</p>
 
                 <table class="comparison-table">
                     <thead>
@@ -999,23 +961,26 @@ const role = context.profileRole || "Viewer";
         // 4. Code Blocks Highlighter & Copy-to-Clipboard
         function highlightAbiLang(code) {
             let html = code
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;");
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
 
-            const tokenRegex = /(#(?:.*)$|\/\/(?:.*)$|\/\*[\s\S]*?\*\/)|(".*?"|'.*?')|(\b(?:if|else|while|return|func|class|extends|public|private|protected|try|catch|finally|import|from|inject|render|export)\b)|(\b(?:and|or|not)\b)|(\b(?:true|false|null)\b)|(\b(?:print|input|fetch|json_parse|create_text|create_button|create_column|create_row|render_ui|draw_screen|db_connect|db_create|db_update|db_delete|db_fetch|dd|include|route|screen)\b)|(\b[A-Z][a-zA-Z0-9_]*\b)|(\b[a-zA-Z_][a-zA-Z0-9_]*\b(?=\s*\xml|\s*\())|(\b\d+(?:\.\d+)?\b)/gm;
+            const tokenRegex = /(#.*$|\/\/.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(class|func|extends|implements|extents)\b|\b(public|private|protected)\b|\b(if|else|while|for|in|return|try|catch|finally|import|export|from|async|await|throw|new|const|let|var|interface)\b|\b(print|input|dd|db_connect|db_create|db_update|db_delete|db_fetch|include|route|screen|env|json_parse|fetch)\b|\b(true|false|null)\b|\b(and|or|not)\b|\b([A-Z][a-zA-Z0-9_]*)\b|\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*\()|([=!<>]=?|[+\-*\/%])|\b(\d+(?:\.\d+)?)\b/gm;
 
-            html = html.replace(tokenRegex, (match, comment, string, keyword, logical, constant, builtin, className, funcName, number) => {
-                if (comment) return `<span class="token-comment">${match}</span>`;
-                if (string) return `<span class="token-string">${match}</span>`;
-                if (keyword) return `<span class="token-keyword">${match}</span>`;
-                if (logical) return `<span class="token-logical">${match}</span>`;
-                if (constant) return `<span class="token-constant">${match}</span>`;
-                if (builtin) return `<span class="token-builtin">${match}</span>`;
-                if (className) return `<span class="token-class">${match}</span>`;
-                if (funcName) return `<span class="token-function">${match}</span>`;
-                if (number) return `<span class="token-number">${match}</span>`;
-                return match;
+            html = html.replace(tokenRegex, (m, cmt, str, storage, modifier, keyword, builtin, constant, logical, cls, fn, op, num) => {
+                if (cmt)      return `<span class="token-comment">${m}</span>`;
+                if (str)      return `<span class="token-string">${m}</span>`;
+                if (storage)  return `<span class="token-storage">${m}</span>`;
+                if (modifier) return `<span class="token-modifier">${m}</span>`;
+                if (keyword)  return `<span class="token-keyword">${m}</span>`;
+                if (builtin)  return `<span class="token-builtin">${m}</span>`;
+                if (constant) return `<span class="token-constant">${m}</span>`;
+                if (logical)  return `<span class="token-logical">${m}</span>`;
+                if (cls)      return `<span class="token-class">${m}</span>`;
+                if (fn)       return `<span class="token-function">${m}</span>`;
+                if (op)       return `<span class="token-operator">${m}</span>`;
+                if (num)      return `<span class="token-number">${m}</span>`;
+                return m;
             });
 
             return html;

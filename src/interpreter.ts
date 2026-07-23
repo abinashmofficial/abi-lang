@@ -350,6 +350,51 @@ export class Interpreter {
       })
     );
 
+    this.globals.define("include", new BuiltinFunction(1, async (args) => {
+      const filePath = String(args[0]);
+      if (typeof window !== "undefined") return null;
+      const fsModule = require("fs");
+      const pathModule = require("path");
+      let absolutePath = pathModule.resolve(filePath);
+      if (!fsModule.existsSync(absolutePath)) {
+        absolutePath = pathModule.resolve("abicore/" + filePath);
+      }
+      if (!fsModule.existsSync(absolutePath)) {
+        throw new Error(`Include file not found: '${filePath}'`);
+      }
+      const source = fsModule.readFileSync(absolutePath, "utf-8");
+      const Lexer = require("./lexer").Lexer;
+      const Parser = require("./parser").Parser;
+      const lexer = new Lexer(source);
+      const tokens = lexer.tokenize();
+      const parser = new Parser(tokens);
+      const statements = parser.parse();
+      for (const statement of statements) {
+        await this.execute(statement);
+      }
+      return null;
+    }));
+
+    this.globals.define("screen", new BuiltinFunction(1, async (args) => {
+      const pathName = String(args[0]);
+      const cleanPath = pathName.startsWith("abicore/screens/") ? pathName : "abicore/screens/" + pathName;
+      return cleanPath.endsWith(".abx") ? cleanPath : cleanPath + ".abx";
+    }));
+
+    this.globals.define("env", new BuiltinFunction(1, async (args) => {
+      const key = String(args[0]);
+      return (typeof process !== "undefined" && process.env) ? (process.env[key] || "") : "";
+    }));
+
+    this.globals.define("route", new BuiltinFunction(4, async (args) => {
+      const method = String(args[0]);
+      const path = String(args[1]);
+      const action = String(args[2]);
+      const name = String(args[3]);
+      this.io.print(`[Route Registered] ${method.toUpperCase()} ${path} -> ${action} (${name})\n`);
+      return null;
+    }));
+
     this.globals.define("create_db", new BuiltinFunction(1, (args) => {
       const dbName = args[0];
       if (!dbName || typeof dbName !== "string") {

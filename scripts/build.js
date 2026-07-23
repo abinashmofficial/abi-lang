@@ -16,7 +16,7 @@ try {
     });
 
     console.log("Bundling for web...");
-    execSync('npx esbuild src/index.ts --bundle --minify --format=iife --global-name=AbiLang --outfile=web/dist/abilang.min.js', { stdio: 'inherit' });
+    execSync('npx esbuild src/index.ts --bundle --minify --external:fs --external:path --format=iife --global-name=AbiLang --outfile=web/dist/abilang.min.js', { stdio: 'inherit' });
     
     console.log("Build completed successfully!");
 } catch (error) {

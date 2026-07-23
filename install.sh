@@ -111,7 +111,11 @@ API_KEY="xyz123secret"
     echo "APP_NAME=$APP_NAME"
     echo "APP_LANG=en"
     echo "DB_DRIVER=$DB_DRIVER"
-    echo "DB_HOST=127.0.0.1"
+    if [ "$DB_DRIVER" != "none" ]; then
+        echo "DB_HOST=127.0.0.1"
+    else
+        echo "DB_HOST="
+    fi
     echo "DB_PORT=$DB_DEFAULT_PORT"
     echo "DB_DATABASE=$DB_DATABASE"
     echo "DB_USERNAME=$DB_USERNAME"
@@ -264,7 +268,7 @@ cat << 'EOF' > abicore/screens/layout/header.abx
         strong { color: var(--text-main); }
     </style>
 </head>
-<body class="dark-theme">
+<body>
     <nav class="navbar navbar-expand-lg navbar-custom py-3">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="/">
@@ -993,6 +997,10 @@ DB_PORT = env("DB_PORT")
 DB_DATABASE = env("DB_DATABASE")
 DB_USERNAME = env("DB_USERNAME")
 DB_PASSWORD = env("DB_PASSWORD")
+
+if DB_HOST != "" {
+    db_connect({ "host": DB_HOST, "port": DB_PORT, "database": DB_DATABASE, "username": DB_USERNAME, "password": DB_PASSWORD })
+}
 EOF
 
 cat << 'EOF' > abicore/navigation/routes.abi
@@ -1140,6 +1148,11 @@ npm link --force
 if [ -f "$SCRIPT_DIR/scripts/install-syntax.js" ]; then
     echo "Configuring local IDE syntax coloring..."
     node "$SCRIPT_DIR/scripts/install-syntax.js"
+fi
+
+if [ -f "abicore/navigation/routes.abi" ]; then
+    echo "Verifying Database Connection & Routing:"
+    node dist/cli.js abicore/navigation/routes.abi || true
 fi
 
 echo ""

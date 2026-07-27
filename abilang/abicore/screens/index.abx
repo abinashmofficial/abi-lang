@@ -6,22 +6,22 @@ render Footer from "layout/footer"
 <script prepare>
     const fs = require('fs');
     const path = require('path');
-    const os = require('os');
-    let lang = {};
-    try {
-        const langCode = process.env.APP_LANG || 'en';
-        const langFile = path.resolve('abicore/lang/' + langCode + '/messages.json');
-        if (fs.existsSync(langFile)) {
-            lang = JSON.parse(fs.readFileSync(langFile, 'utf8'));
-        } else {
-            lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
+
+    function loadMessages(langCode = process.env.APP_LANG || 'en') {
+        try {
+            const langFile = path.resolve(`abicore/lang/${langCode}/messages.json`);
+            if (fs.existsSync(langFile)) {
+                return JSON.parse(fs.readFileSync(langFile, 'utf8'));
+            }
+            return JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
+        } catch {
+            return { title: "AbiLang", subtitle: "Welcome" };
         }
-    } catch (e) {
-        lang = { title: "AbiLang", subtitle: "Welcome" };
     }
-    context.lang = lang;
-    context.profileName = "Abinash";
-    context.profileRole = "Lead Platform Architect";
+
+    export const lang = loadMessages();
+    export const profileName = "Abinash";
+    export const profileRole = "Lead Platform Architect";
 </script>
 
 <style>

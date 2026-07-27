@@ -149,13 +149,13 @@ const abilangUiTmGrammar = {
     },
     {
       "name": "meta.keyword.load.abiui",
-      "match": "\\b(?:(export)\\s+)?(load|import|inject|render)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(from)\\s+(\"[^\"]*\"|'[^']*')",
+      "match": "\\b(?:(export)\\s+)?(load|import|inject|render)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(from)\\s+(\"[^\"]*\"|'[^']*'|[a-zA-Z_][a-zA-Z0-9_.]*)",
       "captures": {
         "1": { "name": "keyword.control.import.abiui" },
         "2": { "name": "keyword.control.import.abiui" },
         "3": { "name": "entity.name.type.class.abiui" },
         "4": { "name": "keyword.control.import.abiui" },
-        "5": { "name": "string.quoted.double.abiui" }
+        "5": { "name": "variable.other.readwrite.abiui" }
       }
     },
     {
@@ -163,19 +163,27 @@ const abilangUiTmGrammar = {
       "match": "\\b(component)\\b"
     },
     {
-      "begin": "<script\\b[^>]*>",
-      "beginCaptures": { "0": { "name": "punctuation.definition.tag.begin.html" } },
-      "end": "</script>",
-      "endCaptures": { "0": { "name": "punctuation.definition.tag.end.html" } },
-      "name": "meta.embedded.block.javascript",
+      "begin": "(?:^|\\s)*(<script\\b[^>]*>)",
+      "beginCaptures": {
+        "1": { "name": "entity.name.tag.html" }
+      },
+      "end": "(</script>)",
+      "endCaptures": {
+        "1": { "name": "entity.name.tag.html" }
+      },
+      "name": "meta.embedded.block.html",
       "patterns": [{ "include": "source.js" }]
     },
     {
-      "begin": "<style\\b[^>]*>",
-      "beginCaptures": { "0": { "name": "punctuation.definition.tag.begin.html" } },
-      "end": "</style>",
-      "endCaptures": { "0": { "name": "punctuation.definition.tag.end.html" } },
-      "name": "meta.embedded.block.css",
+      "begin": "(?:^|\\s)*(<style\\b[^>]*>)",
+      "beginCaptures": {
+        "1": { "name": "entity.name.tag.html" }
+      },
+      "end": "(</style>)",
+      "endCaptures": {
+        "1": { "name": "entity.name.tag.html" }
+      },
+      "name": "meta.embedded.block.html",
       "patterns": [{ "include": "source.css" }]
     },
     {

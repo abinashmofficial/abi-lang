@@ -430,17 +430,23 @@ body.dark-theme .human-flow-step {
 
 /* Code Blocks styling */
 pre {
-    background-color: #120b24;
+    background-color: var(--pre-bg, #120b24);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 18px;
     overflow-x: auto;
     margin: 20px 0;
     position: relative;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 body.dark-theme pre {
     background-color: #0b0316;
+}
+
+body:not(.dark-theme) pre {
+    background-color: #f7f4ff;
+    border-color: #d4c8ff;
 }
 
 code {
@@ -448,6 +454,11 @@ code {
     font-size: 14px;
     line-height: 1.5;
     color: #f8f8f2;
+    transition: color 0.25s ease;
+}
+
+body:not(.dark-theme) code {
+    color: #2d1a5e;
 }
 
 p code, li code {
@@ -458,10 +469,16 @@ p code, li code {
     border: 1px solid var(--border-color);
     border-radius: 4px;
     color: var(--abi-rose);
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 body.dark-theme p code, body.dark-theme li code {
-    background-color: rgba(255, 255, 255, 0.04);
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+body:not(.dark-theme) p code, body:not(.dark-theme) li code {
+    background-color: rgba(109, 40, 217, 0.06);
+    color: #9d174d;
 }
 
 .code-copy-btn {
@@ -809,13 +826,6 @@ body:not(.dark-theme) .token-variable  { color: #222; }
     font-size: 14px;
     color: var(--text-muted);
 }
-.swatch {
-    width: 14px;
-    height: 14px;
-    border-radius: 3px;
-    flex-shrink: 0;
-    border: 1px solid rgba(255,255,255,0.1);
-}
 .kw-swatch     { background: #f92672; }
 .cls-swatch    { background: #a6e22e; }
 .fn-swatch     { background: #a6e22e; }
@@ -823,3 +833,19 @@ body:not(.dark-theme) .token-variable  { color: #222; }
 .num-swatch    { background: #ae81ff; }
 .builtin-swatch{ background: #66d9e8; }
 .cmt-swatch    { background: #75715e; }
+
+body:not(.dark-theme) .kw-swatch     { background: #c2185b; }
+body:not(.dark-theme) .cls-swatch    { background: #00695c; }
+body:not(.dark-theme) .fn-swatch     { background: #1565c0; }
+body:not(.dark-theme) .str-swatch    { background: #8b5e3c; }
+body:not(.dark-theme) .num-swatch    { background: #6a1a8a; }
+body:not(.dark-theme) .builtin-swatch{ background: #388e3c; }
+body:not(.dark-theme) .cmt-swatch    { background: #8c8c8c; }
+
+.swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    border: 1px solid var(--border-color);
+}

@@ -458,13 +458,31 @@ export class Interpreter {
       return mockRecords;
     }));
 
-    this.globals.define("dd", new BuiltinFunction(1, (args) => {
+    this.globals.define("dx", new BuiltinFunction(1, (args) => {
       const val = args[0];
-      const dumpStr = `\n================ [Laravel-like DD Dump] ================\n` +
-                      `Type: ${val === null ? 'null' : typeof val}\n` +
-                      `Value: ${this.stringify(val)}\n` +
-                      `=======================================================\n`;
+      const valType = val === null ? "null" : typeof val;
+      const formattedValue = typeof val === "object" ? JSON.stringify(val, null, 2) : this.stringify(val);
+      const dumpStr = `\x1b[48;5;234m\x1b[38;5;213m\n ┌─────────────────────────────────────────────────────────────┐ \x1b[0m\n` +
+                      `\x1b[48;5;234m\x1b[38;5;213m │  ⚡ [AbiLang dx() Dump]                                      │ \x1b[0m\n` +
+                      `\x1b[48;5;234m\x1b[38;5;213m ├─────────────────────────────────────────────────────────────┤ \x1b[0m\n` +
+                      `\x1b[48;5;234m\x1b[38;5;117m │  Type  : ${valType.padEnd(50)} │ \x1b[0m\n` +
+                      `\x1b[48;5;234m\x1b[38;5;220m │  Value : ${formattedValue.replace(/\n/g, "\n │          ").padEnd(50)} │ \x1b[0m\n` +
+                      `\x1b[48;5;234m\x1b[38;5;213m └─────────────────────────────────────────────────────────────┘ \x1b[0m\n`;
       this.io.print(dumpStr);
+      throw new Error("[Execution Halted by dx()]");
+    }));
+
+    this.globals.define("log_core", new BuiltinFunction(1, (args) => {
+      const val = args[0];
+      const logStr = `[CORE LOG] ${typeof val === 'object' ? JSON.stringify(val) : String(val)}\n`;
+      this.io.print(logStr);
+      return val;
+    }));
+
+    this.globals.define("log_view", new BuiltinFunction(1, (args) => {
+      const val = args[0];
+      const logStr = `[VIEW LOG] ${typeof val === 'object' ? JSON.stringify(val) : String(val)}\n`;
+      this.io.print(logStr);
       return val;
     }));
   }

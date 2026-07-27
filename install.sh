@@ -534,7 +534,7 @@ require.extensions['.abx'] = function (module, filename) {
     };
 
     if (isTemplate) {
-        let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nconst __parts = [];\nwith(context) {\n';
+        let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nif (!context.log_view) context.log_view = function(val) { console.log("[VIEW LOG]", val); return val; };\nif (!context.dx) context.dx = function(val) { console.log("%c[AbiLang dx() Dump]", "background: #1e1e2e; color: #f5c2e7; font-weight: bold; padding: 4px 8px; border-radius: 4px;", val); throw new Error("[Execution Halted by dx()]"); };\nconst __parts = [];\nwith(context) {\n';
         let processedContent = content;
         processedContent = processedContent.replace(/(?:export\s+component|export|component)\s+(\w+)\s*\{([\s\S]*?)\}/g, '$2');
         const importRegex = /^(?:export\s+)?(?:load|import|inject|render)\s+(\w+)\s+from\s+(?:['"]([^'"]+)['"]|([a-zA-Z0-9_\.]+))\s*$/gm;

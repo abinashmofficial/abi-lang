@@ -143,6 +143,11 @@ const abilangUiTmGrammar = {
   "name": "AbiLang UI",
   "patterns": [
     {
+      "name": "comment.block.abiui",
+      "begin": "<%--",
+      "end": "--%>"
+    },
+    {
       "name": "meta.keyword.load.abiui",
       "match": "\\b(?:(export)\\s+)?(load|import|inject|render)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(from)\\s+(\"[^\"]*\"|'[^']*')",
       "captures": {
@@ -158,13 +163,20 @@ const abilangUiTmGrammar = {
       "match": "\\b(component)\\b"
     },
     {
-      "begin": "<script\\s+setup>",
+      "begin": "<script\\b[^>]*>",
       "beginCaptures": { "0": { "name": "punctuation.definition.tag.begin.html" } },
       "end": "</script>",
       "endCaptures": { "0": { "name": "punctuation.definition.tag.end.html" } },
-      "name": "meta.embedded.block.html",
-      "contentName": "source.js",
+      "name": "meta.embedded.block.javascript",
       "patterns": [{ "include": "source.js" }]
+    },
+    {
+      "begin": "<style\\b[^>]*>",
+      "beginCaptures": { "0": { "name": "punctuation.definition.tag.begin.html" } },
+      "end": "</style>",
+      "endCaptures": { "0": { "name": "punctuation.definition.tag.end.html" } },
+      "name": "meta.embedded.block.css",
+      "patterns": [{ "include": "source.css" }]
     },
     {
       "begin": "\\{\\{",
@@ -172,7 +184,6 @@ const abilangUiTmGrammar = {
       "end": "\\}\\}",
       "endCaptures": { "0": { "name": "punctuation.section.embedded.end.abiui" } },
       "name": "meta.embedded.expression.abiui",
-      "contentName": "source.js",
       "patterns": [{ "include": "source.js" }]
     },
     {
@@ -184,18 +195,19 @@ const abilangUiTmGrammar = {
       "match": "@plugin\\s*\\(\\s*\"[^\"]*\"(?:,\\s*\"[^\"]*\")*(?:,\\s*[^)]*)?\\)"
     },
     {
-      "name": "comment.block.abiui",
-      "begin": "<%--",
-      "end": "--%>"
-    },
-    {
       "begin": "<%(=)?",
       "beginCaptures": { "0": { "name": "punctuation.section.embedded.begin.abiui" } },
       "end": "%>",
       "endCaptures": { "0": { "name": "punctuation.section.embedded.end.abiui" } },
       "name": "meta.embedded.block.abiui",
-      "contentName": "source.js",
       "patterns": [{ "include": "source.js" }]
+    },
+    {
+      "name": "entity.name.tag.component.abiui",
+      "match": "</?([A-Z][a-zA-Z0-9_]*)\\b([^>]*)>",
+      "captures": {
+        "1": { "name": "entity.name.tag.html" }
+      }
     },
     { "include": "text.html.basic" }
   ],

@@ -39,7 +39,10 @@ record = db_create("users", { "username": "Abinash", "email": "abinash@example.c
 records = db_fetch("users", { "status": "active" })
 
 print ""
-print "--- Testing Laravel-like dd() (without exiting) ---"
-dd(record)
+print "--- Testing AbiLang Logging Helpers ---"
+log_core(record)
+
+# To dump and halt execution, use dx():
+# dx(record)
 
 print "Execution finished successfully!"

@@ -116,7 +116,9 @@ Simulated Laravel-like rich debugging and database interactions:
 * `db_update(table, id, data)`: Update records.
 * `db_delete(table, id)`: Delete records.
 * `db_fetch(table, query)`: Fetch mock record lists.
-* `dd(value)`: Print rich, structured dump of the value to the console without halting execution.
+* `dx(value)`: Dump and die — prints a rich dark-styled structured dump of the value and **halts execution immediately** (Laravel-style).
+* `log_core(value)`: Lightweight logger for logic/script files — outputs `[CORE LOG] value`.
+* `log_view(value)`: Lightweight logger for template/screen files — outputs `[VIEW LOG] value`.
 
 ---
 

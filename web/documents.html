@@ -128,7 +128,7 @@
                 <ul>
                     <li><strong>No Boilerplate Declarations</strong>: Variables are dynamically initialized on first assignment. No extra lexical keywords needed.</li>
                     <li><strong>Native App Architecture</strong>: Built-in classes for logical Handlers and Entities, dynamic routes registration, and automatic Screens resolution.</li>
-                    <li><strong>Robust Variable Inspector</strong>: Dynamic inspection using the built-in <code>dd()</code> helper without crashing the active environment.</li>
+                    <li><strong>Dump &amp; Die Debugging</strong>: Powerful variable inspection via the built-in <code>dx()</code> helper — dumps value, type, and halts execution immediately. Use <code>log_core()</code> for non-halting logic-layer logs and <code>log_view()</code> for template/screen-layer logs.</li>
                     <li><strong>Cross-Platform Portability</strong>: Designed to run identically inside terminal shells and inside sandboxed web frames.</li>
                 </ul>
 
@@ -342,11 +342,50 @@ route("get", "/user/show", "user_handler@show", "user.show")</code></pre>
 }</code></pre>
 
                 <h2>Built-in Database & Debugging Helpers</h2>
-                <p>Perform mock database connections, mutations, queries, and formatted variable dumping:</p>
+                <p>Perform mock database connections, mutations, queries, and formatted variable dumping using debug and logging utilities:</p>
                 <pre><code>conn = db_connect({ "host": "localhost", "port": 3306 })
 record = db_create("users", { "username": "Abinash", "email": "abinash@example.com" })
 records = db_fetch("users", { "status": "active" })
-dd(record)</code></pre>
+
+dx(record)       # Dump and stop execution (dark-styled, Laravel-like)
+log_core(record) # Log from logic/script layer - outputs [CORE LOG]
+log_view(record) # Log from template/screen layer - outputs [VIEW LOG]</code></pre>
+
+                <h3>Debugging Helper Reference</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Function</th>
+                            <th>Output Label</th>
+                            <th>Layer</th>
+                            <th>Halts Execution?</th>
+                            <th>Returns Value?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="strong"><code>dx(value)</code></td>
+                            <td><code>⚡ [AbiLang dx() Dump]</code></td>
+                            <td>Any</td>
+                            <td class="check-yes">✅ Yes</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td class="strong"><code>log_core(value)</code></td>
+                            <td><code>[CORE LOG]</code></td>
+                            <td>Logic / Script files (<code>.abi</code>)</td>
+                            <td>No</td>
+                            <td class="check-yes">✅ Yes (pass-through)</td>
+                        </tr>
+                        <tr>
+                            <td class="strong"><code>log_view(value)</code></td>
+                            <td><code>[VIEW LOG]</code></td>
+                            <td>Template / Component files (<code>.abx</code>)</td>
+                            <td>No</td>
+                            <td class="check-yes">✅ Yes (pass-through)</td>
+                        </tr>
+                    </tbody>
+                </table>
             </section>
 
             <!-- Section: Navigation & Screens -->
@@ -969,7 +1008,7 @@ const role = context.profileRole || "Viewer";
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
 
-            const tokenRegex = /(#.*$|\/\/.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(class|func|extends|implements|extents)\b|\b(public|private|protected)\b|\b(if|else|while|for|in|return|try|catch|finally|import|export|from|async|await|throw|new|const|let|var|interface)\b|\b(print|input|dd|db_connect|db_create|db_update|db_delete|db_fetch|include|route|screen|env|json_parse|fetch)\b|\b(true|false|null)\b|\b(and|or|not)\b|\b([A-Z][a-zA-Z0-9_]*)\b|\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*\()|([=!<>]=?|[+\-*\/%])|\b(\d+(?:\.\d+)?)\b/gm;
+            const tokenRegex = /(#.*$|\/\/.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(class|func|extends|implements|extents)\b|\b(public|private|protected)\b|\b(if|else|while|for|in|return|try|catch|finally|import|export|from|async|await|throw|new|const|let|var|interface)\b|\b(print|input|dx|log_core|log_view|db_connect|db_create|db_update|db_delete|db_fetch|include|route|screen|env|json_parse|fetch)\b|\b(true|false|null)\b|\b(and|or|not)\b|\b([A-Z][a-zA-Z0-9_]*)\b|\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*\()|([=!<>]=?|[+\-*\/%])|\b(\d+(?:\.\d+)?)\b/gm;
 
             html = html.replace(tokenRegex, (m, cmt, str, storage, modifier, keyword, builtin, constant, logical, cls, fn, op, num) => {
                 if (cmt)      return `<span class="token-comment">${m}</span>`;

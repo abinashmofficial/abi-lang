@@ -110,6 +110,7 @@ API_KEY="xyz123secret"
     echo "PORT=$PORT"
     echo "APP_NAME=$APP_NAME"
     echo "APP_LANG=en"
+
     echo "DB_DRIVER=$DB_DRIVER"
     if [ "$DB_DRIVER" != "none" ]; then
         echo "DB_HOST=127.0.0.1"
@@ -120,7 +121,7 @@ API_KEY="xyz123secret"
     echo "DB_DATABASE=$DB_DATABASE"
     echo "DB_USERNAME=$DB_USERNAME"
     echo "DB_PASSWORD=$DB_PASSWORD"
-    echo "API_KEY=$API_KEY"
+
 } > .env
 
 echo ".env file created successfully!"
@@ -355,6 +356,7 @@ render ProfileCard from "components/profile_card"
 EOF
 
 cat << 'EOF' > abicore/screens/index.abx
+
 render Header from "layout/header"
 render LandingBody from "components/landing_body"
 render Footer from "layout/footer"
@@ -1005,6 +1007,7 @@ if DB_DATABASE != "" or DB_HOST != "" {
 EOF
 
 cat << 'EOF' > abicore/navigation/routes.abi
+
 include("constants/constants.abi")
 include("support/helpers.abi")
 include("handlers/handler.abi")

@@ -1,0 +1,5 @@
+class Support {
+    public func get_platform_info() {
+        return "Running AbiLang " + VERSION + " by " + AUTHOR
+    }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "abilang",
+  "version": "1.0.0",
+  "description": "The Progressive Scripting Language Project with Bootstrap and Layouts",
+  "main": "dist/index.js",
+  "bin": {
+    "abi": "./dist/cli.js"
+  },
+  "scripts": {
+    "start": "node dist/cli.js",
+    "web": "node server.js",
+    "reload": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "esbuild": "^0.19.11"
+  },
+  "devDependencies": {}
+}

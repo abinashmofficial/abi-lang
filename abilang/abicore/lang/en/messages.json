@@ -1,0 +1,12 @@
+{
+  "title": "The Progressive Scripting Language",
+  "subtitle": "An approachable, highly performant and versatile scripting language designed for Abinash, running natively on all platform engines.",
+  "get_started": "Get Started",
+  "view_docs": "View Docs",
+  "system_info": "System Information",
+  "platform": "Platform",
+  "architecture": "Architecture",
+  "uptime": "Uptime",
+  "seconds": "seconds",
+  "memory": "Memory"
+}

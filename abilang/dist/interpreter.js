@@ -313,12 +313,14 @@ class Interpreter {
         }));
         this.globals.define("db_connect", new BuiltinFunction(1, (args) => {
             const config = args[0] || {};
-            if (config.host && config.database) {
-                this.io.print(`[DB Connected] Successfully connected to database: ${config.database} at ${config.host}:${config.port || 3306}\n`);
-                return { connected: true, config: config, host: config.host };
+            const isSqlite = config.driver === "sqlite" || config.host === "sqlite";
+            if (config.database || (config.host && (config.database || isSqlite))) {
+                const hostStr = config.host ? ` at ${config.host}:${config.port || 3306}` : "";
+                this.io.print(`[DB Connected] Successfully connected to database: ${config.database || "local"}${hostStr}\n`);
+                return { connected: true, config: config, host: config.host || "localhost" };
             }
             else {
-                const errorMsg = !config.host ? "Missing database host parameter" : "Missing database name parameter";
+                const errorMsg = "Missing database configuration parameters";
                 this.io.print(`[DB Connection Error] Connection failed: ${errorMsg}\n`);
                 return { connected: false, error: errorMsg, config: config };
             }

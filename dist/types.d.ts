@@ -45,6 +45,8 @@ export declare enum TokenType {
     CATCH = "CATCH",
     FINALLY = "FINALLY",
     EXTENDS = "EXTENDS",
+    PUBLISH = "PUBLISH",
+    DEFAULT = "DEFAULT",
     EOF = "EOF"
 }
 export interface Token {
@@ -54,7 +56,7 @@ export interface Token {
     column: number;
 }
 export type ASTNode = Statement | Expression;
-export type Statement = PrintStatement | VarDeclStatement | IfStatement | WhileStatement | ForStatement | FunctionDeclStatement | ReturnStatement | ExpressionStatement | ClassDeclStatement | TryCatchStatement;
+export type Statement = PrintStatement | VarDeclStatement | IfStatement | WhileStatement | ForStatement | FunctionDeclStatement | ReturnStatement | ExpressionStatement | ClassDeclStatement | TryCatchStatement | PublishStatement;
 export interface MethodDecl {
     name: string;
     params: string[];
@@ -67,6 +69,12 @@ export interface ClassDeclStatement {
     name: string;
     parent: string | null;
     methods: MethodDecl[];
+    line: number;
+}
+export interface PublishStatement {
+    type: "PublishStatement";
+    name: string;
+    isDefault: boolean;
     line: number;
 }
 export interface TryCatchStatement {

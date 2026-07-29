@@ -68,7 +68,24 @@ class Parser {
             return this.classDecl();
         if (this.match(types_1.TokenType.TRY))
             return this.tryCatchStatement();
+        if (this.match(types_1.TokenType.PUBLISH))
+            return this.publishStatement();
         return this.expressionStatement();
+    }
+    publishStatement() {
+        const line = this.previous().line;
+        let isDefault = false;
+        // `publish default ComponentName`
+        if (this.match(types_1.TokenType.DEFAULT)) {
+            isDefault = true;
+        }
+        const nameToken = this.consume(types_1.TokenType.IDENTIFIER, "Expected component name after 'publish'");
+        return {
+            type: "PublishStatement",
+            name: nameToken.value,
+            isDefault,
+            line
+        };
     }
     printStatement() {
         const line = this.previous().line;

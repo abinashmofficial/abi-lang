@@ -56,6 +56,8 @@ export enum TokenType {
   CATCH = "CATCH",
   FINALLY = "FINALLY",
   EXTENDS = "EXTENDS",
+  PUBLISH = "PUBLISH",
+  DEFAULT = "DEFAULT",
 
   EOF = "EOF"
 }
@@ -80,7 +82,8 @@ export type Statement =
   | ReturnStatement
   | ExpressionStatement
   | ClassDeclStatement
-  | TryCatchStatement;
+  | TryCatchStatement
+  | PublishStatement;
 
 export interface MethodDecl {
   name: string;
@@ -95,6 +98,13 @@ export interface ClassDeclStatement {
   name: string;
   parent: string | null;
   methods: MethodDecl[];
+  line: number;
+}
+
+export interface PublishStatement {
+  type: "PublishStatement";
+  name: string;        // the identifier/component being published
+  isDefault: boolean;  // true when `publish default ComponentName`
   line: number;
 }
 

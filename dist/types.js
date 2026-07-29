@@ -55,5 +55,7 @@ var TokenType;
     TokenType["CATCH"] = "CATCH";
     TokenType["FINALLY"] = "FINALLY";
     TokenType["EXTENDS"] = "EXTENDS";
+    TokenType["PUBLISH"] = "PUBLISH";
+    TokenType["DEFAULT"] = "DEFAULT";
     TokenType["EOF"] = "EOF";
 })(TokenType || (exports.TokenType = TokenType = {}));

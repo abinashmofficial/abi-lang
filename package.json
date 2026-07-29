@@ -8,12 +8,17 @@
   },
   "scripts": {
     "build": "node scripts/build.js",
-    "cli": "npx tsx src/cli.ts",
     "start": "node dist/cli.js",
-    "test": "node dist/cli.js examples/name.abi",
+    "repl": "node dist/cli.js",
     "dev:cli": "npx tsx src/cli.ts",
+    "dev:web": "node scripts/dev.js",
     "web": "node scripts/dev.js",
-    "install-syntax": "node scripts/install-syntax.js"
+    "test": "node dist/cli.js examples/name.abi",
+    "test:all": "node dist/cli.js examples/name.abi && node dist/cli.js examples/oop_test.abi && node dist/cli.js examples/extends_try_test.abi",
+    "link": "npm link",
+    "unlink": "npm unlink abilang",
+    "install-syntax": "node scripts/install-syntax.js",
+    "prepublishOnly": "npm run build && npm run test:all"
   },
   "dependencies": {},
   "devDependencies": {

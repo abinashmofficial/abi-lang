@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <title>AbiLang - Documentation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -104,6 +107,7 @@
                                 <li><strong>Hybrid Architecture:</strong> Compiles and runs directly in Node.js on the backend, or bundles to clean standard JavaScript for runtime performance in web browsers.</li>
                                 <li><strong>Procedural Scoping:</strong> Imports other scripts recursively using the global <code>include("path")</code> system, keeping functions, models, and constants within a shared environment.</li>
                                 <li><strong>Cloud Fetch:</strong> Built-in async HTTP call methods (<code>fetch</code>) and JSON parsing utilities (<code>json_parse</code>) for smooth REST-database connectivity.</li>
+                                <li><strong>npx &amp; npm Ready:</strong> Full support for <code>npx . script.abi</code>, <code>npm link</code> global install, and <code>npm run test:all</code> regression testing — all out of the box after <code>npm run build</code>.</li>
                             </ul>
                         </div>
                         <div class="cmd-group">
@@ -113,6 +117,9 @@
                                 <li><strong>Linux:</strong> Ubuntu 20.04 LTS+ / Debian 11+ / Fedora 36+, Node.js v18.0.0+, Git installed</li>
                                 <li><strong>Windows:</strong> Windows 10/11 (64-bit), PowerShell 5.1+ / PowerShell Core 7+, Node.js v18.0.0+, npm v9.0.0+</li>
                                 <li><strong>Mobile:</strong> Android SDK API Level 30+ (Android 11+), Xcode 14+ (macOS only, for iOS), CocoaPods installed</li>
+                                <li><strong>Node.js:</strong> v18.0.0+ (LTS recommended)</li>
+                                <li><strong>Package Manager:</strong> npm v9.0.0+ / yarn / pnpm</li>
+                                <li><strong>Build Tools:</strong> Git, TypeScript (via dev dependencies), and C++ build tools for native addon compilation if required.</li>
                             </ul>
                         </div>
                     </div>
@@ -136,6 +143,25 @@ while count <= 3 {
     print count
     count = count + 1
 }</code></pre>
+                        </div>
+                        <div class="cmd-group">
+                            <span class="cmd-label">3. Running Scripts (npm / npx / global)</span>
+                            <pre><code># Using npm scripts:
+npm start                          # open REPL
+npm run repl                       # open REPL (alias)
+npm test                           # run examples/name.abi
+npm run test:all                   # run all examples
+npm run dev:cli path/to/script.abi # run via tsx (no build)
+
+# Using npx (from the project folder):
+npx . path/to/script.abi
+npx . --help
+
+# After npm link (global install):
+npm run link                       # register abi globally
+abi path/to/script.abi             # run from anywhere
+abi --help
+abi                                # open REPL</code></pre>
                         </div>
                     </div>
 

@@ -13,6 +13,7 @@ export declare class Parser {
     private error;
     parse(): Statement[];
     private statement;
+    private publishStatement;
     private printStatement;
     private functionDecl;
     private returnStatement;

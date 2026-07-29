@@ -40,13 +40,19 @@ function buildProject() {
     
     try {
         execSync('npx --no-install tsc --project tsconfig.json', { stdio: 'pipe' });
-        const rootDist = path.resolve(__dirname, '../dist');
-        const abilangDist = path.resolve(__dirname, '../abilang/dist');
-        if (!fs.existsSync(abilangDist)) {
-            fs.mkdirSync(abilangDist, { recursive: true });
-        }
-        fs.readdirSync(rootDist).forEach(file => {
-            fs.copyFileSync(path.join(rootDist, file), path.join(abilangDist, file));
+
+
+        // Sync static assets (flowchart, CSS, HTML docs) from root into web/
+        const root = path.resolve(__dirname, '..');
+        const assetsToCopy = [
+            'abilang_flowchart.png', 'theme.css', 'style.css', 'documents.css',
+            'documents.html', 'index.html', 'docs.html',
+            'favicon.ico', 'favicon.png', 'apple-touch-icon.png'
+        ];
+        assetsToCopy.forEach(asset => {
+            const src = path.join(root, asset);
+            const dest = path.join(webDir, asset);
+            if (fs.existsSync(src)) fs.copyFileSync(src, dest);
         });
     } catch (error) {
         const stderr = error.stdout ? error.stdout.toString() : (error.message || "");
@@ -57,7 +63,7 @@ function buildProject() {
     }
 
     try {
-        execSync('npx --no-install esbuild src/index.ts --bundle --minify --format=iife --global-name=AbiLang --outfile=web/dist/abilang.min.js', { stdio: 'pipe' });
+        execSync('npx --no-install esbuild src/index.ts --bundle --minify --external:fs --external:path --format=iife --global-name=AbiLang --outfile=web/dist/abilang.min.js', { stdio: 'pipe' });
     } catch (error) {
         logError("Bundler failed: " + (error.stderr ? error.stderr.toString() : error.message));
         return false;

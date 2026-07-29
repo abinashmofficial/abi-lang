@@ -31,6 +31,8 @@ class Lexer {
         try: types_1.TokenType.TRY,
         catch: types_1.TokenType.CATCH,
         finally: types_1.TokenType.FINALLY,
+        publish: types_1.TokenType.PUBLISH,
+        default: types_1.TokenType.DEFAULT,
     };
     constructor(source) {
         this.source = source.replace(/\r\n/g, "\n");

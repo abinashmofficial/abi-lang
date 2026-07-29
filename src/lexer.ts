@@ -30,6 +30,8 @@ export class Lexer {
     try: TokenType.TRY,
     catch: TokenType.CATCH,
     finally: TokenType.FINALLY,
+    publish: TokenType.PUBLISH,
+    default: TokenType.DEFAULT,
   };
 
   constructor(source: string) {

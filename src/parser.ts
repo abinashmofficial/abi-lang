@@ -1,4 +1,4 @@
-import { Token, TokenType, Statement, Expression, ClassDeclStatement, MethodDecl, TryCatchStatement } from "./types";
+import { Token, TokenType, Statement, Expression, ClassDeclStatement, MethodDecl, TryCatchStatement, PublishStatement } from "./types";
 
 export class Parser {
   private tokens: Token[];
@@ -66,8 +66,27 @@ export class Parser {
     if (this.match(TokenType.RETURN)) return this.returnStatement();
     if (this.match(TokenType.CLASS)) return this.classDecl();
     if (this.match(TokenType.TRY)) return this.tryCatchStatement();
+    if (this.match(TokenType.PUBLISH)) return this.publishStatement();
 
     return this.expressionStatement();
+  }
+
+  private publishStatement(): PublishStatement {
+    const line = this.previous().line;
+    let isDefault = false;
+
+    // `publish default ComponentName`
+    if (this.match(TokenType.DEFAULT)) {
+      isDefault = true;
+    }
+
+    const nameToken = this.consume(TokenType.IDENTIFIER, "Expected component name after 'publish'");
+    return {
+      type: "PublishStatement",
+      name: nameToken.value,
+      isDefault,
+      line
+    };
   }
 
   private printStatement(): Statement {

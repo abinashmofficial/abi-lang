@@ -1,6 +1,0 @@
-
-include("constants/constants.abi")
-include("support/helpers.abi")
-include("handlers/handler.abi")
-
-route("get", "/", "handler@index", "home")

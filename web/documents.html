@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <title>AbiLang - Comprehensive Documentation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,6 +76,7 @@
                     <li class="nav-item"><a href="#handlers" class="nav-link">Handlers & Entities</a></li>
                     <li class="nav-item"><a href="#navigation" class="nav-link">Navigation & Screens</a></li>
                     <li class="nav-item"><a href="#ui-template" class="nav-link">Component & View Syntax</a></li>
+                    <li class="nav-item"><a href="#publish-syntax" class="nav-link">publish & publish default</a></li>
                     <li class="nav-item"><a href="#step-by-step-guide" class="nav-link">Step-by-Step MVC Setup</a></li>
                 </ul>
             </div>
@@ -544,6 +548,18 @@ try {
                             <td class="check-yes"><code>{{ expression }}</code> (AbiLang native)</td>
                             <td><code>&lt;%= expression %&gt;</code></td>
                         </tr>
+                        <tr>
+                            <td class="strong"><code>publish ComponentName</code></td>
+                            <td>Register a named component for use by other screens</td>
+                            <td class="check-yes"><code>publish</code> (AbiLang native)</td>
+                            <td><code>export { ComponentName }</code></td>
+                        </tr>
+                        <tr>
+                            <td class="strong"><code>publish default ComponentName</code></td>
+                            <td>Mark the primary/main component of this file (one per page)</td>
+                            <td class="check-yes"><code>publish default</code> (AbiLang native)</td>
+                            <td><code>export default ComponentName</code></td>
+                        </tr>
                     </tbody>
                 </table>
 
@@ -620,6 +636,114 @@ render Footer from "layout/footer"
 
                 <div class="callout callout-info">
                     <strong>Backward Compatibility:</strong> The old <code>&#64;include()</code> and <code>&lt;% %&gt;</code> / <code>&lt;%= %&gt;</code> syntax still works. You can mix old and new syntax in the same project during migration.
+                </div>
+            </section>
+
+            <!-- Section: publish & publish default -->
+            <section id="publish-syntax" class="docs-section">
+                <h1><code>publish</code> &amp; <code>publish default</code></h1>
+                <p>AbiLang uses <code>publish</code> as its native, meaningful keyword for making components and values available to other files — a clean alternative to JavaScript's <code>export</code>. Every <code>.abi</code> script file can publish multiple named values, but each file should have <strong>at most one</strong> <code>publish default</code> — the primary/main component of that module.</p>
+
+                <div class="callout callout-info">
+                    <strong>Why <code>publish</code> instead of <code>export</code>?</strong> The word <em>publish</em> is intentionally more descriptive — it communicates that a component is being <em>published</em> as part of the module's public API to the outside world, rather than just moved out. It also avoids collision with JavaScript module semantics when AbiLang scripts run inside mixed environments.
+                </div>
+
+                <h2>1. Named Publish — <code>publish ComponentName</code></h2>
+                <p>Use <code>publish</code> to make a specific function, class, or value reachable from other AbiLang files. A single file can publish as many named values as it needs:</p>
+
+                <pre><code>func greet(name) {
+    return "Hello, " + name + "!"
+}
+
+func farewell(name) {
+    return "Goodbye, " + name + "!"
+}
+
+publish greet
+publish farewell</code></pre>
+
+                <div class="callout callout-tip">
+                    <strong>Tip:</strong> <code>publish</code> registers the value globally so it can be resolved when another file calls <code>include("this_file.abi")</code>. Think of it as declaring the public API of your script file.
+                </div>
+
+                <h2>2. Default Publish — <code>publish default ComponentName</code></h2>
+                <p>Use <code>publish default</code> to declare the <strong>single main component</strong> of a file. This is the entry point that gets resolved when another screen renders the file without specifying a named member. Each file should have <strong>at most one</strong> <code>publish default</code>:</p>
+
+                <pre><code>class ProfileCard {
+    public func init(name, role) {
+        this.name = name
+        this.role = role
+    }
+
+    public func render() {
+        return "&lt;div&gt;" + this.name + " — " + this.role + "&lt;/div&gt;"
+    }
+}
+
+publish ProfileCard          # named publish — available by name
+publish default ProfileCard  # default publish — primary component of this file</code></pre>
+
+                <div class="callout callout-tip">
+                    <strong>One default per file:</strong> Just like <code>export default</code> in JavaScript/TypeScript, only one component should be the default. Use <code>publish</code> (without <code>default</code>) for all additional values.
+                </div>
+
+                <h2>3. Comparison with JavaScript</h2>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Pattern</th>
+                            <th>AbiLang</th>
+                            <th>JavaScript Equivalent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Named export</td>
+                            <td class="strong"><code>publish ComponentName</code></td>
+                            <td><code>export { ComponentName }</code></td>
+                        </tr>
+                        <tr>
+                            <td>Default/main export</td>
+                            <td class="strong"><code>publish default ComponentName</code></td>
+                            <td><code>export default ComponentName</code></td>
+                        </tr>
+                        <tr>
+                            <td>Multiple named exports</td>
+                            <td class="strong">One <code>publish</code> per name</td>
+                            <td><code>export { A, B, C }</code></td>
+                        </tr>
+                        <tr>
+                            <td>Max defaults per file</td>
+                            <td class="check-yes">1 (<code>publish default</code>)</td>
+                            <td class="check-yes">1 (<code>export default</code>)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>4. Full Component File Example</h2>
+                <p>A complete <code>.abi</code> handler file that publishes both a named helper and a default handler class:</p>
+
+                <pre><code>func format_date(date_str) {
+    return "[" + date_str + "]"
+}
+
+class DashboardHandler {
+    public func init(user) {
+        this.user = user
+    }
+
+    public func index() {
+        formatted = format_date("2026-07-27")
+        print "Dashboard loaded for: " + this.user
+        return screen("dashboard")
+    }
+}
+
+publish format_date                # named — reusable utility
+publish default DashboardHandler   # default — primary handler of this file</code></pre>
+
+                <div class="callout callout-info">
+                    <strong>Runtime output:</strong> When AbiLang runs <code>publish</code> statements, it prints a confirmation log: <code>[PUBLISH] format_date registered as a named component</code> and <code>[PUBLISH DEFAULT] DashboardHandler is now the default component of this module</code>.
                 </div>
             </section>
 
@@ -1008,7 +1132,7 @@ const role = context.profileRole || "Viewer";
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
 
-            const tokenRegex = /(#.*$|\/\/.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(class|func|extends|implements|extents)\b|\b(public|private|protected)\b|\b(if|else|while|for|in|return|try|catch|finally|import|export|from|async|await|throw|new|const|let|var|interface)\b|\b(print|input|dx|log_core|log_view|db_connect|db_create|db_update|db_delete|db_fetch|include|route|screen|env|json_parse|fetch)\b|\b(true|false|null)\b|\b(and|or|not)\b|\b([A-Z][a-zA-Z0-9_]*)\b|\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*\()|([=!<>]=?|[+\-*\/%])|\b(\d+(?:\.\d+)?)\b/gm;
+            const tokenRegex = /(#[^\n]*$|\/\/[^\n]*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(\b(?:class|func|include|return|render|publish)\b)|(\b(?:public|private|protected)\b)|(\b(?:if|else|while|for|in|try|catch|finally|extends|import|from|inject|export)\b)|(\b(?:print|input|fetch|json_parse|db_connect|db_create|db_update|db_delete|db_fetch|dx|log_core|log_view|screen|route|view|create_text|create_button|create_column|create_row|render_ui|draw_screen|json_stringify|len|str|int|float)\b)|(\b(?:true|false|null|this)\b)|(\b(?:and|or|not)\b)|(\b[A-Z][a-zA-Z0-9_]*\b)|(\b[a-zA-Z_][a-zA-Z0-9_]*\b(?=\s*\())|([=!<>+\-*\/%]+)|(\b\d+(?:\.\d+)?\b)/gm;
 
             html = html.replace(tokenRegex, (m, cmt, str, storage, modifier, keyword, builtin, constant, logical, cls, fn, op, num) => {
                 if (cmt)      return `<span class="token-comment">${m}</span>`;

@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Interpreter = exports.Environment = exports.BoundMethod = exports.ClassInstance = exports.ClassCallable = exports.UserFunction = exports.BuiltinFunction = exports.ReturnException = void 0;
+const lexer_1 = require("./lexer");
+const parser_1 = require("./parser");
 class ReturnException {
     value;
     constructor(value) {
@@ -269,11 +271,9 @@ class Interpreter {
                 throw new Error(`Include file not found: '${filePath}'`);
             }
             const source = fsModule.readFileSync(absolutePath, "utf-8");
-            const Lexer = require("./lexer").Lexer;
-            const Parser = require("./parser").Parser;
-            const lexer = new Lexer(source);
+            const lexer = new lexer_1.Lexer(source);
             const tokens = lexer.tokenize();
-            const parser = new Parser(tokens);
+            const parser = new parser_1.Parser(tokens);
             const statements = parser.parse();
             for (const statement of statements) {
                 await this.execute(statement);
@@ -426,6 +426,9 @@ class Interpreter {
             case "TryCatchStatement":
                 await this.executeTryCatch(stmt);
                 break;
+            case "PublishStatement":
+                await this.executePublish(stmt);
+                break;
             case "ExpressionStatement":
                 await this.evaluate(stmt.expression);
                 break;
@@ -448,6 +451,29 @@ class Interpreter {
     async executeClassDecl(stmt) {
         const klass = new ClassCallable(stmt, this.environment);
         this.environment.define(stmt.name, klass);
+    }
+    async executePublish(stmt) {
+        let value;
+        try {
+            value = this.environment.get(stmt.name, stmt.line);
+        }
+        catch {
+            // If the name is not yet defined (e.g. a class/func declared later),
+            // publish just records the name for tooling/documentation purposes.
+            value = stmt.name;
+        }
+        // Register under the component's own name for named imports
+        this.globals.define(stmt.name, value);
+        // `publish default` marks the primary component of the file
+        if (stmt.isDefault) {
+            this.globals.define("__default__", value);
+            const label = `[PUBLISH DEFAULT] ${stmt.name} is now the default component of this module\n`;
+            this.io.print(label);
+        }
+        else {
+            const label = `[PUBLISH] ${stmt.name} registered as a named component\n`;
+            this.io.print(label);
+        }
     }
     async executeTryCatch(stmt) {
         try {

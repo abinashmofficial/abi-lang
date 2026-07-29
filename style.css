@@ -662,15 +662,11 @@ body.light-theme #editor::selection {
     background: rgba(0, 0, 0, 0.15);
 }
 
-.token-comment { color: var(--token-comment); font-style: italic; }
-.token-string { color: var(--token-string); }
-.token-keyword { color: var(--token-keyword); font-weight: 600; }
-.token-logical { color: var(--token-logical); font-weight: 600; }
-.token-constant { color: var(--token-constant); }
-.token-builtin { color: var(--token-builtin); }
-.token-function { color: var(--token-function); }
-.token-number { color: var(--token-number); }
-.token-class { color: var(--token-class); font-weight: 600; }
+/* Token structural styles — colors are owned by theme.css */
+.token-comment { font-style: italic; }
+.token-keyword  { font-weight: 600; }
+.token-logical  { font-weight: 600; }
+.token-class    { font-weight: 600; }
 
 /* Viewer Body Box Panel Content */
 .viewer-body {

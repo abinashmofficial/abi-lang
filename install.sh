@@ -1051,7 +1051,6 @@ else
 fi
 
 # 9. Configure global executables
-echo '#!/usr/bin/env node' | cat - dist/cli.js > temp && mv temp dist/cli.js
 chmod +x dist/cli.js
 
 # Modify interpreter.js components to include standard route/include registration

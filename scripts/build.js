@@ -8,12 +8,12 @@ try {
 
     // Inject shebang into dist/cli.js so `npx abi` and `npm link` work
     const cliPath = path.join(__dirname, '../dist/cli.js');
-    const cliContent = fs.readFileSync(cliPath, 'utf-8');
+    let cliContent = fs.readFileSync(cliPath, 'utf-8');
+    cliContent = cliContent.replace(/^\uFEFF/, '');
     if (!cliContent.startsWith('#!/usr/bin/env node')) {
-        fs.writeFileSync(cliPath, '#!/usr/bin/env node\n' + cliContent);
-        console.log("Shebang injected into dist/cli.js");
+        cliContent = '#!/usr/bin/env node\n' + cliContent;
     }
-    // Make cli.js executable (chmod +x)
+    fs.writeFileSync(cliPath, cliContent, { encoding: 'utf-8' });
     fs.chmodSync(cliPath, '755');
 
     // Sync static assets from root into web/ (flowchart, CSS, HTML docs)

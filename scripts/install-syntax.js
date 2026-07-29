@@ -143,27 +143,27 @@ const abilangUiTmGrammar = {
   "name": "AbiLang UI",
   "patterns": [
     {
-      "name": "comment.block.abiui",
+      "name": "comment.block.html",
       "begin": "<%--",
       "end": "--%>"
     },
     {
-      "name": "comment.line.abiui",
+      "name": "comment.line.number-sign.abi",
       "match": "(?:^|\\s)(?:#|//).*$"
     },
     {
       "name": "meta.keyword.load.abiui",
       "match": "\\b(?:(export)\\s+)?(load|import|inject|render)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(from)\\s+(\"[^\"]*\"|'[^']*'|[a-zA-Z_][a-zA-Z0-9_.]*)",
       "captures": {
-        "1": { "name": "keyword.control.import.abiui" },
-        "2": { "name": "keyword.control.import.abiui" },
-        "3": { "name": "entity.name.type.class.abiui" },
-        "4": { "name": "keyword.control.import.abiui" },
-        "5": { "name": "variable.other.readwrite.abiui" }
+        "1": { "name": "keyword.control.import.js" },
+        "2": { "name": "keyword.control.import.js" },
+        "3": { "name": "entity.name.type.class.js" },
+        "4": { "name": "keyword.control.import.js" },
+        "5": { "name": "string.quoted.double.js" }
       }
     },
     {
-      "name": "keyword.control.component.abiui",
+      "name": "keyword.control.js",
       "match": "\\b(component|publish)\\b"
     },
     {
@@ -192,10 +192,10 @@ const abilangUiTmGrammar = {
     },
     {
       "begin": "\\{\\{",
-      "beginCaptures": { "0": { "name": "punctuation.section.embedded.begin.abiui" } },
+      "beginCaptures": { "0": { "name": "punctuation.definition.parameters.begin.js" } },
       "end": "\\}\\}",
-      "endCaptures": { "0": { "name": "punctuation.section.embedded.end.abiui" } },
-      "name": "meta.embedded.expression.abiui",
+      "endCaptures": { "0": { "name": "punctuation.definition.parameters.end.js" } },
+      "name": "meta.embedded.line.js",
       "patterns": [{ "include": "source.js" }]
     },
     {
@@ -208,22 +208,21 @@ const abilangUiTmGrammar = {
     },
     {
       "begin": "<%(=)?",
-      "beginCaptures": { "0": { "name": "punctuation.section.embedded.begin.abiui" } },
+      "beginCaptures": { "0": { "name": "punctuation.section.embedded.begin.js" } },
       "end": "%>",
-      "endCaptures": { "0": { "name": "punctuation.section.embedded.end.abiui" } },
-      "name": "meta.embedded.block.abiui",
+      "endCaptures": { "0": { "name": "punctuation.section.embedded.end.js" } },
+      "name": "meta.embedded.block.js",
       "patterns": [{ "include": "source.js" }]
     },
     {
-      "name": "entity.name.tag.component.abiui",
-      "match": "</?([A-Z][a-zA-Z0-9_]*)\\b([^>]*)>",
+      "match": "</?([A-Z][a-zA-Z0-9_]*)\\b",
       "captures": {
         "1": { "name": "entity.name.tag.html" }
       }
     },
     { "include": "text.html.basic" }
   ],
-  "scopeName": "text.html.abilangui"
+  "scopeName": "text.html.basic"
 };
 
 const vscodePackageJson = {
@@ -257,7 +256,7 @@ const vscodePackageJson = {
       },
       {
         "language": "abilangui",
-        "scopeName": "text.html.abilangui",
+        "scopeName": "text.html.basic",
         "path": "./syntaxes/abilangui.tmLanguage.json"
       }
     ]

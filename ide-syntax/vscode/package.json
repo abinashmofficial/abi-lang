@@ -46,7 +46,7 @@
       },
       {
         "language": "abilangui",
-        "scopeName": "text.html.abilangui",
+        "scopeName": "text.html.basic",
         "path": "./syntaxes/abilangui.tmLanguage.json"
       }
     ]

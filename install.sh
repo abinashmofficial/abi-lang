@@ -170,6 +170,11 @@ else
     done
 fi
 
+# Ensure dist/cli.js shebang and executable permissions
+chmod +x dist/cli.js
+sed -i '1s/^\xef\xbb\xbf//' dist/cli.js
+sed -i $'s/\r$//' dist/cli.js
+
 cat << 'EOF' > abicore/screens/layout/header.abx
 <!DOCTYPE html>
 <html lang="en">
@@ -1156,7 +1161,7 @@ fi
 
 if [ -f "abicore/navigation/routes.abi" ]; then
     echo "Verifying Database Connection & Routing:"
-    node dist/cli.js abicore/navigation/routes.abi || true
+    ./dist/cli.js abicore/navigation/routes.abi || node dist/cli.js abicore/navigation/routes.abi || true
 fi
 
 echo ""

@@ -148,6 +148,10 @@ const abilangUiTmGrammar = {
       "end": "--%>"
     },
     {
+      "name": "comment.line.abiui",
+      "match": "(?:^|\\s)(?:#|//).*$"
+    },
+    {
       "name": "meta.keyword.load.abiui",
       "match": "\\b(?:(export)\\s+)?(load|import|inject|render)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(from)\\s+(\"[^\"]*\"|'[^']*'|[a-zA-Z_][a-zA-Z0-9_.]*)",
       "captures": {
@@ -160,10 +164,10 @@ const abilangUiTmGrammar = {
     },
     {
       "name": "keyword.control.component.abiui",
-      "match": "\\b(component)\\b"
+      "match": "\\b(component|publish)\\b"
     },
     {
-      "begin": "(?:^|\\s)*(<script\\b[^>]*>)",
+      "begin": "(<script\\b[^>]*>)",
       "beginCaptures": {
         "1": { "name": "entity.name.tag.html" }
       },
@@ -175,7 +179,7 @@ const abilangUiTmGrammar = {
       "patterns": [{ "include": "source.js" }]
     },
     {
-      "begin": "(?:^|\\s)*(<style\\b[^>]*>)",
+      "begin": "(<style\\b[^>]*>)",
       "beginCaptures": {
         "1": { "name": "entity.name.tag.html" }
       },

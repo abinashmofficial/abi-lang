@@ -10,9 +10,7 @@ try {
     const cliPath = path.join(__dirname, '../dist/cli.js');
     let cliContent = fs.readFileSync(cliPath, 'utf-8');
     cliContent = cliContent.replace(/^\uFEFF/, '');
-    if (!cliContent.startsWith('#!/usr/bin/env node')) {
-        cliContent = '#!/usr/bin/env node\n' + cliContent;
-    }
+    cliContent = cliContent.replace(/^#![^\n]*\n/, '');
     fs.writeFileSync(cliPath, cliContent, { encoding: 'utf-8' });
     fs.chmodSync(cliPath, '755');
 

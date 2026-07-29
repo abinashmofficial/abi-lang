@@ -1161,7 +1161,8 @@ fi
 
 if [ -f "abicore/navigation/routes.abi" ]; then
     echo "Verifying Database Connection & Routing:"
-    ./dist/cli.js abicore/navigation/routes.abi || node dist/cli.js abicore/navigation/routes.abi || true
+    sed -i '1{/^#!/d}' dist/cli.js
+    node dist/cli.js abicore/navigation/routes.abi || true
 fi
 
 echo ""

@@ -148,22 +148,22 @@ const abilangUiTmGrammar = {
       "end": "--%>"
     },
     {
-      "name": "comment.line.number-sign.abi",
+      "name": "comment.line.number-sign.html",
       "match": "(?:^|\\s)(?:#|//).*$"
     },
     {
       "name": "meta.keyword.load.abiui",
       "match": "\\b(?:(export)\\s+)?(load|import|inject|render)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(from)\\s+(\"[^\"]*\"|'[^']*'|[a-zA-Z_][a-zA-Z0-9_.]*)",
       "captures": {
-        "1": { "name": "keyword.control.import.js" },
-        "2": { "name": "keyword.control.import.js" },
-        "3": { "name": "entity.name.type.class.js" },
-        "4": { "name": "keyword.control.import.js" },
-        "5": { "name": "string.quoted.double.js" }
+        "1": { "name": "keyword.control.export.html" },
+        "2": { "name": "keyword.control.import.html" },
+        "3": { "name": "entity.name.tag.custom.html" },
+        "4": { "name": "keyword.control.import.html" },
+        "5": { "name": "string.quoted.double.html" }
       }
     },
     {
-      "name": "keyword.control.js",
+      "name": "keyword.control.html",
       "match": "\\b(component|publish)\\b"
     },
     {
@@ -192,18 +192,18 @@ const abilangUiTmGrammar = {
     },
     {
       "begin": "\\{\\{",
-      "beginCaptures": { "0": { "name": "punctuation.definition.parameters.begin.js" } },
+      "beginCaptures": { "0": { "name": "punctuation.section.embedded.begin.js" } },
       "end": "\\}\\}",
-      "endCaptures": { "0": { "name": "punctuation.definition.parameters.end.js" } },
+      "endCaptures": { "0": { "name": "punctuation.section.embedded.end.js" } },
       "name": "meta.embedded.line.js",
       "patterns": [{ "include": "source.js" }]
     },
     {
-      "name": "keyword.control.directive.abiui",
+      "name": "keyword.other.directive.html",
       "match": "@include\\s*\\(\\s*\"[^\"]*\"\\s*\\)|@include\\s*\\(\\s*'[^']*'\\s*\\)"
     },
     {
-      "name": "keyword.control.directive.abiui",
+      "name": "keyword.other.directive.html",
       "match": "@plugin\\s*\\(\\s*\"[^\"]*\"(?:,\\s*\"[^\"]*\")*(?:,\\s*[^)]*)?\\)"
     },
     {
@@ -222,7 +222,7 @@ const abilangUiTmGrammar = {
     },
     { "include": "text.html.basic" }
   ],
-  "scopeName": "text.html.derivative"
+  "scopeName": "text.html.basic"
 };
 
 const vscodePackageJson = {
@@ -255,8 +255,8 @@ const vscodePackageJson = {
         "path": "./syntaxes/abilang.tmLanguage.json"
       },
       {
-        "language": "html",
-        "scopeName": "text.html.derivative",
+        "language": "abilangui",
+        "scopeName": "text.html.basic",
         "path": "./syntaxes/abilangui.tmLanguage.json"
       }
     ]

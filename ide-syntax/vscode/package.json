@@ -45,8 +45,8 @@
         "path": "./syntaxes/abilang.tmLanguage.json"
       },
       {
-        "language": "html",
-        "scopeName": "text.html.derivative",
+        "language": "abilangui",
+        "scopeName": "text.html.basic",
         "path": "./syntaxes/abilangui.tmLanguage.json"
       }
     ]

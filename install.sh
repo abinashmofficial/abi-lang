@@ -274,7 +274,7 @@ cat << 'EOF' > abicore/screens/layout/header.abx
         strong { color: var(--text-main); }
     </style>
 </head>
-<body>
+<body class="dark-theme">
     <nav class="navbar navbar-expand-lg navbar-custom py-3">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="/">

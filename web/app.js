@@ -702,9 +702,9 @@ if (themeToggle && themeIcon) {
             localStorage.setItem("theme", hasDark ? "dark" : "light");
         } catch (e) {}
     });
-    let preferredTheme = "light";
+    let preferredTheme = "dark";
     try {
-        preferredTheme = localStorage.getItem("theme") || "light";
+        preferredTheme = localStorage.getItem("theme") || "dark";
     } catch (e) {}
     if (preferredTheme === "dark") {
         document.body.classList.add("dark-theme");

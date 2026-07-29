@@ -222,7 +222,7 @@ const abilangUiTmGrammar = {
     },
     { "include": "text.html.basic" }
   ],
-  "scopeName": "text.html.basic"
+  "scopeName": "text.html.derivative"
 };
 
 const vscodePackageJson = {
@@ -255,8 +255,8 @@ const vscodePackageJson = {
         "path": "./syntaxes/abilang.tmLanguage.json"
       },
       {
-        "language": "abilangui",
-        "scopeName": "text.html.basic",
+        "language": "html",
+        "scopeName": "text.html.derivative",
         "path": "./syntaxes/abilangui.tmLanguage.json"
       }
     ]

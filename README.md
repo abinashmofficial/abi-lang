@@ -1,4 +1,4 @@
-# AbiLang (`.abi`)
+# AbiLang (`.abx`)
 
 AbiLang is a simple, easy-to-learn, lightweight programming language named after you (**Abinash**). It is built in TypeScript and is designed to run seamlessly in both CLI (terminal) and Web (browser) environments.
 
@@ -206,33 +206,33 @@ npm run build
 | `npm run repl` | Same as `npm start` — opens REPL |
 | `npm run dev:cli` | Run CLI via `tsx` (no build needed, TypeScript direct) |
 | `npm run dev:web` | Start the web playground dev server |
-| `npm test` | Run `examples/name.abi` |
-| `npm run test:all` | Run all three example `.abi` files |
+| `npm test` | Run `examples/name.abx` |
+| `npm run test:all` | Run all three example `.abx` files |
 | `npm run install-syntax` | Install IDE syntax highlighting |
 
 * **Launch Interactive REPL Session**:
   ```bash
-  npm start
+  npm start # or pnpm start
   # or
   npm run repl
   ```
   Type any AbiLang code (e.g., `print 10 + 20` or `name = input "name? "`) and hit **Enter**. Type `exit` to quit.
 
-* **Execute an AbiLang Script File (`.abi`)**:
+* **Execute an AbiLang Script File (`.abx`)**:
   ```bash
-  node dist/cli.js path/to/script.abi
+  node dist/cli.js path/to/script.abx
   ```
 
 * **Run during development without building** (uses TypeScript directly via `tsx`):
   ```bash
-  npm run dev:cli path/to/script.abi
+  npm run dev:cli path/to/script.abx
   ```
 
 #### Option B — `npx` (no global install needed)
 
 You can run AbiLang from the project folder without `npm link`:
 ```bash
-npx . examples/name.abi
+npx . examples/name.abx
 npx . --help
 ```
 
@@ -241,10 +241,10 @@ npx . --help
 Register the `abi` binary globally so you can use it from anywhere on your system:
 ```bash
 # Inside the project folder:
-npm run link       # same as: npm link
+npm run link       # same as: npm link / pnpm link
 
 # Now use anywhere:
-abi examples/name.abi
+abi examples/name.abx
 abi --help
 abi                # opens REPL
 
@@ -256,22 +256,21 @@ npm run unlink     # same as: npm unlink abilang
 1. Launch the local web server:
    ```bash
    npm run web
-   # or
-   npm run dev:web
+   # or pnpm run dev:web
    ```
 2. Open the URL in your browser:
-   * **[http://127.0.0.1:8080](http://127.0.0.1:8080)**
+   * **[http://127.0.0.1:8080](http://127.0.0.1:8080)** (automatically falls back to 8081, 8082, etc. if port 8080 is in use)
 
 ### 5. Testing
 
 Run a single quick test:
 ```bash
-npm test
+npm test # or pnpm test
 ```
 
 Run all bundled example scripts:
 ```bash
-npm run test:all
+npm run test:all # or pnpm run test:all
 ```
 
 All tests pass with **exit code 0** — no errors.

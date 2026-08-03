@@ -19,7 +19,7 @@ body {
     --token-function: #859900;
     --token-number: #cb4b16;
     --token-text: #586e75;
-    --token-class: #268bd2;
+    --token-class: var(--abi-green);
 }
 
 body.dark-theme {
@@ -43,7 +43,7 @@ body.dark-theme {
     --token-function: #A6E22E;
     --token-number: #AE81FF;
     --token-text: #F8F8F2;
-    --token-class: #66D9EF;
+    --token-class: var(--abi-green);
 }
 
 .token-comment  { color: var(--token-comment)  !important; font-style: italic; }

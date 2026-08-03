@@ -140,10 +140,10 @@ cat << EOF > package.json
     "abi": "./dist/cli.js"
   },
   "scripts": {
-    "start": "node dist/cli.js",
-    "web": "node server.js",
+    "start": "node scripts/dev.js",
+    "web": "node scripts/dev.js",
     "reload": "node server.js",
-    "dev": "node server.js"
+    "dev": "node scripts/dev.js"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",

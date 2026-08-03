@@ -53,7 +53,7 @@ async function runRepl() {
   
   console.log("=========================================");
   console.log(" Welcome to AbiLang CLI REPL (v1.0.0) ");
-  console.log(" File extension: .abi | Named after Abinash");
+  console.log(" File extension: .abx | Named after Abinash");
   console.log(" Type 'exit' or press Ctrl+C to quit. ");
   console.log("=========================================\n");
 
@@ -63,7 +63,7 @@ async function runRepl() {
   });
 
   const prompt = () => {
-    rl.question("abi> ", async (line) => {
+    rl.question("abx> ", async (line) => {
       if (line.trim() === "exit") {
         rl.close();
         return;
@@ -92,7 +92,7 @@ async function main() {
     if (args[0] === "-h" || args[0] === "--help") {
       console.log("Usage:");
       console.log("  abi                    Start the interactive REPL");
-      console.log("  abi <file.abi>         Run an AbiLang script file");
+      console.log("  abi <file.abx>         Run an AbiLang script file");
       process.exit(0);
     }
     await runFile(args[0]);

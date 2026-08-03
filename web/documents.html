@@ -155,26 +155,26 @@
                 <pre><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/abinashmofficial/abi-lang/main/install.sh | bash</code></pre>
 
                 <h2>Manual Compilation & Local Run</h2>
-                <p>If you prefer a manual setup, clone the repository, install its packages, and boot up the visual playground:</p>
+                <p>If you prefer a manual setup, clone the repository, install its packages using <code>pnpm</code> or <code>npm</code>, and boot up the project. Running <code>pnpm start</code> presents an interactive selection prompt to launch the Web Playground, Mobile App (with connected device checks), or CLI REPL:</p>
                 <pre><code class="language-bash">git clone https://github.com/abinashmofficial/abi-lang.git
 cd abi-lang
-npm install
-npm run build
-npm run web</code></pre>
+pnpm install
+pnpm run build
+pnpm start</code></pre>
             </section>
 
             <!-- Section: IDE Syntax & Extensions -->
             <section id="ide-integration" class="docs-section">
                 <h1>IDE Syntax & Extensions</h1>
-                <p>AbiLang provides official syntax highlighting and file extension configurations for popular IDEs (VS Code, VS Code Insiders, Vim, and Sublime Text). This ensures developers get a seamless editing experience with zero error flags.</p>
+                <p>AbiLang provides official syntax highlighting and file extension configurations for popular IDEs (VS Code, VS Code Insiders, Vim, and Sublime Text). This ensures developers get a seamless editing experience with zero error flags. Keywords like <code>class</code> are highlighted with standard control coloring, while class identifier names (e.g. <code>BaseHandler</code>) are highlighted in vibrant green.</p>
                 
                 <h2>Supported File Extensions</h2>
                 <p>You can write and execute AbiLang script files and templates using any of these standard extensions:</p>
                 <ul>
-                    <li><code>.abi</code> - Standard default extension</li>
+                    <li><code>.abx</code> - Standard component template, logic, and layout extension</li>
+                    <li><code>.abi</code> - Legacy script extension</li>
                     <li><code>.ab</code> - Short unique extension</li>
                     <li><code>.abilang</code> - Explicit verbose extension</li>
-                    <li><code>.abx</code> - Component template and layouts extension</li>
                 </ul>
 
                 <h2>Auto-Installer Script</h2>
@@ -768,7 +768,7 @@ render Footer from "layout/footer"
                 <h3>2. The Page View: <code>abicore/screens/dashboard.abx</code></h3>
                 <p>Since the header and footer are wrapped automatically, your screen file only needs to contain the middle content and setup block:</p>
                 <pre><code>&lt;script prepare&gt;
-context.pageTitle = "My Dashboard";
+export const pageTitle = "My Dashboard";
 &lt;/script&gt;
 
 &lt;div class="container"&gt;
@@ -783,8 +783,8 @@ context.pageTitle = "My Dashboard";
                 <pre><code>render ProfileCard from "components/profile_card"
 
 &lt;script prepare&gt;
-context.profileName = "Abinash";
-context.profileRole = "Administrator";
+export const profileName = "Abinash";
+export const profileRole = "Administrator";
 &lt;/script&gt;
 
 &lt;div class="container"&gt;
@@ -797,10 +797,10 @@ context.profileRole = "Administrator";
                 <h3>Sample Component: <code>abicore/screens/components/profile_card.abx</code></h3>
                 <pre><code>&lt;script prepare&gt;
 const os = require('os');
-export name = context.profileName || "Guest User";
-export role = context.profileRole || "Viewer";
-export platform = os.platform();
-export memory = Math.floor(os.freemem() / 1024 / 1024);
+export const name = profileName || "Guest User";
+export const role = profileRole || "Viewer";
+export const platform = os.platform();
+export const memory = Math.floor(os.freemem() / 1024 / 1024);
 &lt;/script&gt;
 
 export ProfileCard {
@@ -826,16 +826,16 @@ export ProfileCard {
                 <pre><code>my-project/
 ├── abicore/
 │   ├── constants/
-│   │   └── constants.abi
+│   │   └── constants.abx
 │   ├── entities/
-│   │   └── entity.abi
+│   │   └── entity.abx
 │   ├── handlers/
-│   │   └── handler.abi
+│   │   └── handler.abx
 │   ├── lang/
 │   │   └── en/
 │   │       └── messages.json
 │   ├── navigation/
-│   │   └── routes.abi
+│   │   └── routes.abx
 │   ├── screens/
 │   │   ├── components/
 │   │   ├── layout/
@@ -844,7 +844,7 @@ export ProfileCard {
 │   │   │   └── layout.abx
 │   │   └── index.abx
 │   └── support/
-│       └── helpers.abi
+│       └── helpers.abx
 ├── public/
 │   ├── css/
 │   │   ├── style.css
@@ -918,21 +918,22 @@ render Footer from "layout/footer"
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-let lang = {};
-try {
-    const langCode = process.env.APP_LANG || 'en';
-    const langFile = path.resolve('abicore/lang/' + langCode + '/messages.json');
-    if (fs.existsSync(langFile)) {
-        lang = JSON.parse(fs.readFileSync(langFile, 'utf8'));
-    } else {
-        lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
+
+function loadMessages(langCode = process.env.APP_LANG || 'en') {
+    try {
+        const langFile = path.resolve(`abicore/lang/${langCode}/messages.json`);
+        if (fs.existsSync(langFile)) {
+            return JSON.parse(fs.readFileSync(langFile, 'utf8'));
+        }
+        return JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
+    } catch {
+        return { title: "AbiLang", subtitle: "Welcome" };
     }
-} catch (e) {
-    lang = { title: "AbiLang", subtitle: "Welcome" };
 }
-context.lang = lang;
-context.profileName = "Abinash";
-context.profileRole = "Lead Platform Architect";
+
+export const lang = loadMessages();
+export const profileName = "Abinash";
+export const profileRole = "Lead Platform Architect";
 &lt;/script&gt;
 
 &lt;Header /&gt;
@@ -975,8 +976,8 @@ const os = require('os');
                 <h3>3. Leaf Component: <code>abicore/screens/components/profile_card.abx</code></h3>
                 <p>A simple presentation component to display user details from parent context:</p>
                 <pre><code>&lt;script prepare&gt;
-const name = context.profileName || "Guest User";
-const role = context.profileRole || "Viewer";
+export const name = profileName || "Guest User";
+export const role = profileRole || "Viewer";
 &lt;/script&gt;
 
 &lt;div class="card card-custom p-4 text-start mx-auto mb-4" style="max-width: 600px; border-left: 4px solid var(--abi-green);"&gt;

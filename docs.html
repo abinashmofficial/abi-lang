@@ -147,19 +147,19 @@ while count <= 3 {
                         <div class="cmd-group">
                             <span class="cmd-label">3. Running Scripts (npm / npx / global)</span>
                             <pre><code># Using npm scripts:
-npm start                          # open REPL
+npm start                          # open REPL (or pnpm start)
 npm run repl                       # open REPL (alias)
-npm test                           # run examples/name.abi
+npm test                           # run examples/name.abx
 npm run test:all                   # run all examples
-npm run dev:cli path/to/script.abi # run via tsx (no build)
+npm run dev:cli path/to/script.abx # run via tsx (no build)
 
 # Using npx (from the project folder):
-npx . path/to/script.abi
+npx . path/to/script.abx
 npx . --help
 
 # After npm link (global install):
 npm run link                       # register abi globally
-abi path/to/script.abi             # run from anywhere
+abi path/to/script.abx             # run from anywhere
 abi --help
 abi                                # open REPL</code></pre>
                         </div>
@@ -167,8 +167,8 @@ abi                                # open REPL</code></pre>
 
                     <div class="os-content" id="os-handlers">
                         <div class="cmd-group">
-                            <span class="cmd-label">1. Default Handler (abicore/handlers/handler.abi)</span>
-                            <pre><code>include("abicore/entities/entity.abi")
+                            <span class="cmd-label">1. Default Handler (abicore/handlers/handler.abx)</span>
+                            <pre><code>include("abicore/entities/entity.abx")
 
 class Handler {
     public func index() {
@@ -185,7 +185,7 @@ class Handler {
                         <div class="cmd-group">
                             <span class="cmd-label">2. Creating and Extending Handlers</span>
                             <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Handlers use object-oriented class syntax and support public, private, and protected visibility modifiers for methods. Member data can be assigned to <code>this</code>. To define dynamic route handlers, map paths to class action methods:</p>
-                            <pre><code>include("abicore/entities/entity.abi")
+                            <pre><code>include("abicore/entities/entity.abx")
 
 class ProfileHandler {
     public func show_profile() {
@@ -202,8 +202,8 @@ class ProfileHandler {
 
                     <div class="os-content" id="os-navigation">
                         <div class="cmd-group">
-                            <span class="cmd-label">1. Route Registrations (abicore/navigation/routes.abi)</span>
-                            <pre><code>include("abicore/handlers/handler.abi")
+                            <span class="cmd-label">1. Route Registrations (abicore/navigation/routes.abx)</span>
+                            <pre><code>include("abicore/handlers/handler.abx")
 
 route("get", "/", "handler@index", "home")</code></pre>
                         </div>
@@ -232,7 +232,7 @@ route("get", "/", "handler@index", "home")</code></pre>
                     <div class="os-content" id="os-idesyntax">
                         <div class="cmd-group">
                             <span class="cmd-label">IDE Syntax & Extensions Integration</span>
-                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">AbiLang supports standard file extensions (<code>.abi</code>, <code>.ab</code>, and <code>.abilang</code>) and provides customized, Laravel/PHP-like class highlighting configurations for popular code editors (VS Code, Vim, and Sublime Text). This formats classes, class declarations, visibility scopes, and parameters seamlessly with zero IDE errors.</p>
+                            <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">AbiLang supports standard file extension <code>.abx</code> and provides customized, React & Laravel/PHP-like class highlighting configurations for popular code editors (VS Code, Vim, and Sublime Text). This formats classes, class declarations, visibility scopes, and parameters seamlessly with zero IDE errors.</p>
                         </div>
                         <div class="cmd-group">
                             <span class="cmd-label">Configuring Syntax Highlighting</span>

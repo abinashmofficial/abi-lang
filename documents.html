@@ -101,12 +101,13 @@
                     <strong>Core Philosophy:</strong> AbiLang is designed to minimize boilerplates, eliminate unnecessary tokens like declarations (<code>const</code>, <code>let</code>) and mandatory semicolons, and introduce robust structural clarity with clean braces and optional parameter parentheses.
                 </div>
 
-                <h2>Key Features</h2>
+                <h2>5 Standout Innovations That Make AbiLang Special</h2>
                 <ul>
-                    <li><strong>No Declarations:</strong> Assign variables directly. The interpreter handles allocations dynamically.</li>
-                    <li><strong>Flexible Flow Control:</strong> Clean loop iterations and conditional checks with optional parentheses.</li>
-                    <li><strong>Integrated Framework Mechanics:</strong> Native handler configurations, entity definitions, route bindings, and screen render engine helpers.</li>
-                    <li><strong>Cloud Ready:</strong> Native cloud integrations featuring asynchronous <code>fetch</code> routines and <code>json_parse</code> parsing out of the box.</li>
+                    <li><strong>1. Zero-Boilerplate Component Exports (<code>.abx</code>)</strong>: No state hooks (<code>useState</code>) or <code>&lt;?php ?&gt;</code> tags. Export variables directly using standard <code>export const name = "value"</code> syntax inside <code>&lt;script prepare&gt;</code>.</li>
+                    <li><strong>2. Auto-Healing Dev Ports</strong>: Senses port collisions on <code>8080</code> and automatically falls back to <code>8081</code>, <code>8082</code>, etc. with zero <code>EADDRINUSE</code> crashes.</li>
+                    <li><strong>3. Smart Target Selection Prompt (<code>pnpm start</code>)</strong>: An interactive launcher menu to pick Web Playground, Mobile App (with USB/emulator device checks), or CLI REPL.</li>
+                    <li><strong>4. Native Dump &amp; Die (<code>dx()</code>)</strong>: Dumps variable values in formatted dark mode and halts execution immediately right where it was called.</li>
+                    <li><strong>5. Universal Execution Pipeline</strong>: Engineered in TypeScript to execute identically across Terminal CLI, Browser Sandboxes, and Mobile Viewports.</li>
                 </ul>
             </section>
 
@@ -1010,6 +1011,34 @@ export const role = profileRole || "Viewer";
                             <td class="check-no">None (Requires $)</td>
                         </tr>
                         <tr>
+                            <td class="strong">Component Format</td>
+                            <td class="check-yes">Single File (.abx)</td>
+                            <td class="check-no">JSX + CSS Bundlers</td>
+                            <td class="check-no">N/A</td>
+                            <td class="check-no">Separate Blade/PHP</td>
+                        </tr>
+                        <tr>
+                            <td class="strong">Component Script Exports</td>
+                            <td class="check-yes">Direct export const</td>
+                            <td class="check-no">useState Hooks</td>
+                            <td class="check-no">N/A</td>
+                            <td class="check-no">&lt;?php ?&gt; Tags</td>
+                        </tr>
+                        <tr>
+                            <td class="strong">Port Auto-Healing</td>
+                            <td class="check-yes">Built-in (8080+)</td>
+                            <td class="check-no">Fatal EADDRINUSE</td>
+                            <td class="check-no">Fatal Error</td>
+                            <td class="check-no">Fatal Error</td>
+                        </tr>
+                        <tr>
+                            <td class="strong">Target Selection Prompt</td>
+                            <td class="check-yes">Web/Mobile/CLI Prompt</td>
+                            <td class="check-no">Manual Flags</td>
+                            <td class="check-no">Manual Flags</td>
+                            <td class="check-no">Manual Flags</td>
+                        </tr>
+                        <tr>
                             <td class="strong">Semicolons</td>
                             <td class="check-yes">Optional</td>
                             <td class="check-yes">Optional</td>
@@ -1024,25 +1053,11 @@ export const role = profileRole || "Viewer";
                             <td class="check-yes">Braces {}</td>
                         </tr>
                         <tr>
-                            <td class="strong">Condition Parentheses</td>
-                            <td class="check-yes">Optional</td>
-                            <td class="check-no">Required</td>
-                            <td class="check-yes">Optional</td>
-                            <td class="check-no">Required</td>
-                        </tr>
-                        <tr>
-                            <td class="strong">Browser Playground</td>
-                            <td class="check-yes">Native / Built-in</td>
-                            <td class="check-yes">Native</td>
-                            <td class="check-no">Heavy (WASM)</td>
-                            <td class="check-no">No (Server only)</td>
-                        </tr>
-                        <tr>
-                            <td class="strong">Routing & Controllers</td>
-                            <td class="check-yes">Built-in helpers</td>
-                            <td class="check-no">Framework required</td>
-                            <td class="check-no">Framework required</td>
-                            <td class="check-no">Framework/Server required</td>
+                            <td class="strong">Dump & Die Helper</td>
+                            <td class="check-yes">Native dx()</td>
+                            <td class="check-no">console.log</td>
+                            <td class="check-no">print / pdb</td>
+                            <td class="check-yes">dd() (Laravel only)</td>
                         </tr>
                     </tbody>
                 </table>

@@ -21,7 +21,8 @@
         "extensions": [
           ".abi",
           ".ab",
-          ".abilang"
+          ".abilang",
+          ".abx"
         ],
         "configuration": "./language-configuration.json"
       },
@@ -46,7 +47,7 @@
       },
       {
         "language": "abilangui",
-        "scopeName": "text.html.basic",
+        "scopeName": "text.html.abilangui",
         "path": "./syntaxes/abilangui.tmLanguage.json"
       }
     ]

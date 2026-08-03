@@ -196,7 +196,7 @@ const abilangUiTmGrammar = {
       "end": "\\}\\}",
       "endCaptures": { "0": { "name": "punctuation.section.embedded.end.js" } },
       "name": "meta.embedded.line.js",
-      "patterns": [{ "include": "source.js" }]
+      "patterns": [{ "include": "source.abi" }, { "include": "source.js" }]
     },
     {
       "name": "keyword.other.directive.html",
@@ -212,7 +212,7 @@ const abilangUiTmGrammar = {
       "end": "%>",
       "endCaptures": { "0": { "name": "punctuation.section.embedded.end.js" } },
       "name": "meta.embedded.block.js",
-      "patterns": [{ "include": "source.js" }]
+      "patterns": [{ "include": "source.abi" }, { "include": "source.js" }]
     },
     {
       "match": "</?([A-Z][a-zA-Z0-9_]*)\\b",
@@ -220,9 +220,10 @@ const abilangUiTmGrammar = {
         "1": { "name": "entity.name.tag.html" }
       }
     },
+    { "include": "text.html.derivative" },
     { "include": "text.html.basic" }
   ],
-  "scopeName": "text.html.basic"
+  "scopeName": "text.html.abilangui"
 };
 
 const vscodePackageJson = {
@@ -238,7 +239,7 @@ const vscodePackageJson = {
       {
         "id": "abilang",
         "aliases": ["AbiLang", "abilang"],
-        "extensions": [".abi", ".ab", ".abilang"],
+        "extensions": [".abi", ".ab", ".abilang", ".abx"],
         "configuration": "./language-configuration.json"
       },
       {
@@ -256,7 +257,7 @@ const vscodePackageJson = {
       },
       {
         "language": "abilangui",
-        "scopeName": "text.html.basic",
+        "scopeName": "text.html.abilangui",
         "path": "./syntaxes/abilangui.tmLanguage.json"
       }
     ]

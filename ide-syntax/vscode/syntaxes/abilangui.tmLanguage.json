@@ -95,6 +95,9 @@
       "name": "meta.embedded.line.js",
       "patterns": [
         {
+          "include": "source.abi"
+        },
+        {
           "include": "source.js"
         }
       ]
@@ -123,6 +126,9 @@
       "name": "meta.embedded.block.js",
       "patterns": [
         {
+          "include": "source.abi"
+        },
+        {
           "include": "source.js"
         }
       ]
@@ -136,8 +142,11 @@
       }
     },
     {
+      "include": "text.html.derivative"
+    },
+    {
       "include": "text.html.basic"
     }
   ],
-  "scopeName": "text.html.basic"
+  "scopeName": "text.html.abilangui"
 }

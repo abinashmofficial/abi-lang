@@ -74,7 +74,16 @@ function buildProject() {
 
 let watchDebounceTimeout;
 function startWatcher() {
-    logInfo(`Watching for compiler changes in: ${colors.bold}src/*${colors.reset}`);
+    logInfo(`Watching for compiler and component changes in: ${colors.bold}src/*, abicore/*${colors.reset}`);
+    
+    // Auto-install IDE syntax colors initially
+    try {
+        const installSyntaxPath = path.resolve(__dirname, 'install-syntax.js');
+        if (fs.existsSync(installSyntaxPath)) {
+            execSync(`node "${installSyntaxPath}"`, { stdio: 'pipe' });
+        }
+    } catch (e) {}
+
     fs.watch(srcDir, { recursive: true }, (eventType, filename) => {
         if (!filename || !filename.endsWith('.ts')) return;
         
@@ -83,6 +92,23 @@ function startWatcher() {
             logInfo(`Change detected in ${filename}. Rebuilding...`);
             buildProject();
         }, 100);
+    });
+
+    const rootDir = path.resolve(__dirname, '..');
+    fs.watch(rootDir, { recursive: true }, (eventType, filename) => {
+        if (!filename || (!filename.endsWith('.abx') && !filename.endsWith('.abi') && !filename.endsWith('.abilang'))) return;
+        
+        clearTimeout(watchDebounceTimeout);
+        watchDebounceTimeout = setTimeout(() => {
+            logInfo(`New file/change detected: ${filename}. Updating IDE syntax theme colors...`);
+            try {
+                const installSyntaxPath = path.resolve(__dirname, 'install-syntax.js');
+                if (fs.existsSync(installSyntaxPath)) {
+                    execSync(`node "${installSyntaxPath}"`, { stdio: 'pipe' });
+                    logSuccess("IDE Syntax theme colors updated!");
+                }
+            } catch (e) {}
+        }, 150);
     });
 }
 

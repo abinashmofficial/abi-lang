@@ -1181,8 +1181,8 @@ startServer().catch(err => {
 EOF
 
 # 7. Create routing and helper/constant components
-cat << 'EOF' > abicore/handlers/handler.abi
-include("entities/entity.abi")
+cat << 'EOF' > abicore/handlers/handler.abx
+include("entities/entity.abx")
 
 class Handler {
     public func index() {
@@ -1194,7 +1194,7 @@ class Handler {
 }
 EOF
 
-cat << 'EOF' > abicore/entities/entity.abi
+cat << 'EOF' > abicore/entities/entity.abx
 class Entity {
     public func data() {
         return "Entity data"
@@ -1202,7 +1202,7 @@ class Entity {
 }
 EOF
 
-cat << 'EOF' > abicore/support/helpers.abi
+cat << 'EOF' > abicore/support/helpers.abx
 class Support {
     public func get_platform_info() {
         return "Running AbiLang " + VERSION + " by " + AUTHOR
@@ -1210,7 +1210,7 @@ class Support {
 }
 EOF
 
-cat << 'EOF' > abicore/constants/constants.abi
+cat << 'EOF' > abicore/constants/constants.abx
 APP_TITLE = "AbiLang Bootstrap Portal"
 VERSION = "1.2.0"
 AUTHOR = "Abinash"
@@ -1227,11 +1227,11 @@ if DB_DATABASE != "" or DB_HOST != "" {
 }
 EOF
 
-cat << 'EOF' > abicore/navigation/routes.abi
+cat << 'EOF' > abicore/navigation/routes.abx
 
-include("constants/constants.abi")
-include("support/helpers.abi")
-include("handlers/handler.abi")
+include("constants/constants.abx")
+include("support/helpers.abx")
+include("handlers/handler.abx")
 
 route("get", "/", "handler@index", "home")
 EOF
@@ -1281,6 +1281,9 @@ if (!content.includes("globals.define(\"include\"")) {
             let absolutePath = path.resolve(filePath);
             if (!fs.existsSync(absolutePath)) {
                 absolutePath = path.resolve("abicore/" + filePath);
+            }
+            if (!fs.existsSync(absolutePath) && fs.existsSync(absolutePath + ".abx")) {
+                absolutePath = absolutePath + ".abx";
             }
             if (!fs.existsSync(absolutePath)) {
                 throw new Error(\`Include file not found: \\\x27\${filePath}\\\x27\`);
@@ -1376,9 +1379,9 @@ elif [ -f "$SCRIPT_DIR/scripts/install-syntax.js" ]; then
     node "$SCRIPT_DIR/scripts/install-syntax.js" > /dev/null 2>&1
 fi
 
-if [ -f "abicore/navigation/routes.abi" ]; then
+if [ -f "abicore/navigation/routes.abx" ]; then
     sed -i '1{/^#!/d}' dist/cli.js
-    node dist/cli.js abicore/navigation/routes.abi > /dev/null 2>&1 || true
+    node dist/cli.js abicore/navigation/routes.abx > /dev/null 2>&1 || true
 fi
 
 print_progress 100 "Installation completed!"

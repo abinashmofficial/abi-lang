@@ -88,6 +88,22 @@ else
     DB_PASSWORD=""
 fi
 
+print_progress() {
+    local percent=$1
+    local message=$2
+    local width=30
+    local completed=$((width * percent / 100))
+    local remaining=$((width - completed))
+    local bar=""
+    for ((i=0; i<completed; i++)); do bar+="#"; done
+    for ((i=0; i<remaining; i++)); do bar+="-"; done
+    printf "\r\033[K[\033[32m%s\033[0m] %3d%% - %s" "$bar" "$percent" "$message"
+    if [ "$percent" -eq 100 ]; then
+        echo ""
+    fi
+}
+
+print_progress 10 "Creating project directory structure..."
 mkdir -p "$PROJECT_NAME"
 cd "$PROJECT_NAME"
 
@@ -106,6 +122,7 @@ mkdir -p abicore/lang/en
 APP_NAME=$(echo "$PROJECT_NAME" | tr '[:lower:]' '[:upper:]')
 API_KEY="xyz123secret"
 
+print_progress 25 "Generating .env configuration..."
 {
     echo "PORT=$PORT"
     echo "APP_NAME=$APP_NAME"
@@ -124,12 +141,11 @@ API_KEY="xyz123secret"
 
 } > .env
 
-echo ".env file created successfully!"
-
 # Base repository URL
 BASE_URL="https://raw.githubusercontent.com/abinashmofficial/abi-lang/main"
 
 # 3. Create package.json
+print_progress 40 "Configuring package.json..."
 cat << EOF > package.json
 {
   "name": "$PROJECT_NAME",
@@ -156,6 +172,7 @@ cat << EOF > package.json
 EOF
 
 # 4. Download or copy source binary components
+print_progress 55 "Copying binary core & scripts..."
 if [ -d "$SCRIPT_DIR/dist" ]; then
     for file in cli.js index.js interpreter.js lexer.js parser.js types.js; do
         if [ -f "$SCRIPT_DIR/dist/$file" ]; then
@@ -175,10 +192,157 @@ if [ -d "$SCRIPT_DIR/scripts" ]; then
     cp -r "$SCRIPT_DIR/scripts/"* "scripts/"
 fi
 
+cat << 'DEV_EOF' > scripts/dev.js
+const fs = require('fs');
+const path = require('path');
+const readline = require('readline');
+const { spawn, execSync } = require('child_process');
+
+const srcDir = path.resolve(__dirname, '../src');
+const webDir = path.resolve(__dirname, '../web');
+
+const colors = {
+    reset: "\x1b[0m",
+    red: "\x1b[31m",
+    green: "\x1b[32m",
+    yellow: "\x1b[33m",
+    cyan: "\x1b[36m",
+    bold: "\x1b[1m"
+};
+
+function logInfo(msg) {
+    console.log(`${colors.cyan}[AbiLang Dev]${colors.reset} ${msg}`);
+}
+
+function logSuccess(msg) {
+    console.log(`${colors.green}[AbiLang Dev] SUCCESS:${colors.reset} ${colors.bold}${msg}${colors.reset}`);
+}
+
+function logError(msg) {
+    console.log(`${colors.red}[AbiLang Dev] ERROR:${colors.reset} ${colors.bold}${msg}${colors.reset}`);
+}
+
+const net = require('net');
+
+function findAvailablePort(startPort, callback) {
+    const server = net.createServer();
+    server.listen(startPort, () => {
+        const port = server.address().port;
+        server.close(() => callback(port));
+    });
+    server.on('error', () => {
+        findAvailablePort(startPort + 1, callback);
+    });
+}
+
+function startWebServer() {
+    logInfo("Checking available port for HTTP Web Server...");
+    findAvailablePort(8080, (port) => {
+        logInfo(`Starting HTTP Web Server on port ${port}...`);
+        let serverProcess;
+        if (fs.existsSync(path.resolve(__dirname, '../server.js'))) {
+            process.env.PORT = port.toString();
+            serverProcess = spawn('node', ['server.js'], { stdio: 'inherit', shell: true });
+        } else {
+            serverProcess = spawn('npx', ['-y', 'http-server', 'web', '-p', port.toString(), '--cors'], { stdio: 'inherit', shell: true });
+        }
+        
+        serverProcess.on('error', (err) => {
+            logError("HTTP Server failed to start: " + err.message);
+        });
+
+        process.on('SIGINT', () => {
+            if (serverProcess) serverProcess.kill('SIGINT');
+            process.exit();
+        });
+        
+        process.on('SIGTERM', () => {
+            if (serverProcess) serverProcess.kill('SIGTERM');
+            process.exit();
+        });
+    });
+}
+
+function getConnectedMobileDevices() {
+    const devices = [];
+    try {
+        const adbOut = execSync('adb devices', { stdio: 'pipe' }).toString();
+        const lines = adbOut.split('\n').slice(1);
+        lines.forEach(line => {
+            const parts = line.trim().split(/\s+/);
+            if (parts.length >= 2 && parts[1] === 'device') {
+                devices.push({ id: parts[0], type: 'android' });
+            }
+        });
+    } catch (e) {}
+    return devices;
+}
+
+function startMobileApp() {
+    const devices = getConnectedMobileDevices();
+    if (devices.length === 0) {
+        console.log(`\n${colors.red}${colors.bold}=== MOBILE RUN ERROR ===${colors.reset}`);
+        console.log(`${colors.red}No connected mobile devices or running emulators found!${colors.reset}`);
+        console.log(`${colors.yellow}Please connect an Android/iOS device via USB or start an emulator first.${colors.reset}`);
+        console.log(`${colors.red}${colors.bold}========================${colors.reset}\n`);
+        process.exit(1);
+    }
+
+    logSuccess(`Found ${devices.length} connected device(s): ${devices.map(d => d.id).join(', ')}`);
+    logInfo("Starting Capacitor mobile application...");
+    try {
+        execSync('npx cap run android', { stdio: 'inherit' });
+    } catch (err) {
+        logError("Mobile run failed: " + err.message);
+        process.exit(1);
+    }
+}
+
+function startReplCLI() {
+    logInfo("Starting CLI REPL...");
+    const cliPath = path.resolve(__dirname, '../dist/cli.js');
+    const replProcess = spawn('node', [cliPath], { stdio: 'inherit' });
+    replProcess.on('exit', () => process.exit());
+}
+
+function main() {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    console.log(`\n${colors.cyan}${colors.bold}=========================================${colors.reset}`);
+    console.log(`${colors.bold}  Select Target Platform to Run: ${colors.reset}`);
+    console.log(`  1) Web Playground (Browser) ${colors.green}[Default]${colors.reset}`);
+    console.log(`  2) Mobile Device (Android / iOS)`);
+    console.log(`  3) CLI Interactive REPL Session`);
+    console.log(`${colors.cyan}${colors.bold}=========================================${colors.reset}\n`);
+
+    rl.question(`Enter selection [1]: `, (answer) => {
+        rl.close();
+        const choice = answer.trim() || '1';
+
+        if (choice === '1') {
+            startWebServer();
+        } else if (choice === '2') {
+            startMobileApp();
+        } else if (choice === '3') {
+            startReplCLI();
+        } else {
+            startWebServer();
+        }
+    });
+}
+
+main();
+DEV_EOF
+
 # Ensure dist/cli.js shebang and executable permissions
 chmod +x dist/cli.js
 sed -i '1s/^\xef\xbb\xbf//' dist/cli.js
 sed -i $'s/\r$//' dist/cli.js
+
+print_progress 70 "Generating screens and UI components..."
 
 cat << 'EOF' > abicore/screens/layout/header.abx
 <!DOCTYPE html>
@@ -1154,20 +1318,21 @@ const fs = require("fs");
 '
 
 # Complete dependency link
-npm install --omit=dev
-npm link --force
+print_progress 85 "Installing dependencies..."
+npm install --omit=dev --silent
+npm link --force > /dev/null 2>&1
 
 # Install syntax highlighting support for local IDEs
 if [ -f "$SCRIPT_DIR/scripts/install-syntax.js" ]; then
-    echo "Configuring local IDE syntax coloring..."
-    node "$SCRIPT_DIR/scripts/install-syntax.js"
+    node "$SCRIPT_DIR/scripts/install-syntax.js" > /dev/null 2>&1
 fi
 
 if [ -f "abicore/navigation/routes.abi" ]; then
-    echo "Verifying Database Connection & Routing:"
     sed -i '1{/^#!/d}' dist/cli.js
-    node dist/cli.js abicore/navigation/routes.abi || true
+    node dist/cli.js abicore/navigation/routes.abi > /dev/null 2>&1 || true
 fi
+
+print_progress 100 "Installation completed!"
 
 echo ""
 echo "╭─────────────────────────────────────────────╮"

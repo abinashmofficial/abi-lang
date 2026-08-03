@@ -21,8 +21,10 @@ echo ""
 
 if [ -t 0 ]; then
     TTY_IN=/dev/stdin
-else
+elif [ -e /dev/tty ]; then
     TTY_IN=/dev/tty
+else
+    TTY_IN=/dev/stdin
 fi
 
 if [ -z "$PROJECT_NAME" ]; then
@@ -1443,7 +1445,7 @@ echo "│  🚀 AbiLang                                 │"
 echo "│                                             │"
 echo "│  ✓ Project created successfully             │"
 echo "│                                             │"
-echo "│  📂 $(pwd)      │"
+echo "│  📂 $(pwd)"
 echo "│                                             │"
 echo "│  ▶ Start development                        │"
 echo "│     pnpm start                              │"

@@ -47,6 +47,46 @@ if [ -z "$DB_CHOICE" ]; then
     DB_CHOICE="${DB_CHOICE_INPUT:-5}"
 fi
 
+if [ -z "$CSS_CHOICE" ]; then
+    echo ""
+    echo "Select a CSS Framework / Design System:"
+    echo "  1) Bootstrap 5 (Modern Grid & Components)"
+    echo "  2) Tailwind CSS (Utility-First Responsive UI)"
+    echo "  3) Materialize CSS (Google Material Design)"
+    echo "  4) Bulma (Pure Flexbox Framework)"
+    echo "  5) Foundation (Advanced Responsive Framework)"
+    echo "  6) Custom Vanilla CSS (Zero External Dependencies)"
+    read -r -p "Enter choice [1]: " CSS_CHOICE_INPUT <"$TTY_IN"
+    CSS_CHOICE="${CSS_CHOICE_INPUT:-1}"
+fi
+
+case "$CSS_CHOICE" in
+    2)
+        CSS_NAME="Tailwind CSS"
+        CSS_LINK='<script src="https://cdn.tailwindcss.com"></script>'
+        ;;
+    3)
+        CSS_NAME="Materialize CSS"
+        CSS_LINK='<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">'
+        ;;
+    4)
+        CSS_NAME="Bulma CSS"
+        CSS_LINK='<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">'
+        ;;
+    5)
+        CSS_NAME="Foundation CSS"
+        CSS_LINK='<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.8.1/dist/css/foundation.min.css">'
+        ;;
+    6)
+        CSS_NAME="Vanilla CSS"
+        CSS_LINK=""
+        ;;
+    *)
+        CSS_NAME="Bootstrap 5"
+        CSS_LINK='<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">'
+        ;;
+esac
+
 case "$DB_CHOICE" in
     1)
         DB_DRIVER="mysql"
@@ -88,16 +128,23 @@ else
     DB_PASSWORD=""
 fi
 
+INSTALL_START_TIME=$(date +%s)
+
 print_progress() {
     local percent=$1
     local message=$2
     local width=30
     local completed=$((width * percent / 100))
     local remaining=$((width - completed))
+    local current_time=$(date +%s)
+    local elapsed=$((current_time - INSTALL_START_TIME))
+    local minutes=$((elapsed / 60))
+    local seconds=$((elapsed % 60))
+    local timer_str=$(printf "%02dm:%02ds" "$minutes" "$seconds")
     local bar=""
     for ((i=0; i<completed; i++)); do bar+="#"; done
     for ((i=0; i<remaining; i++)); do bar+="-"; done
-    printf "\r\033[K[\033[32m%s\033[0m] %3d%% - %s" "$bar" "$percent" "$message"
+    printf "\r\033[K[\033[32m%s\033[0m] %3d%% (\033[33m%s\033[0m) - %s" "$bar" "$percent" "$timer_str" "$message"
     if [ "$percent" -eq 100 ]; then
         echo ""
     fi
@@ -165,9 +212,6 @@ cat << EOF > package.json
     "test:all": "node dist/cli.js abicore/navigation/routes.abx"
   },
   "dependencies": {
-    "bootstrap": "^5.3.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "esbuild": "^0.19.11"
   },
   "devDependencies": {}
@@ -347,14 +391,14 @@ sed -i $'s/\r$//' dist/cli.js
 
 print_progress 70 "Generating screens and UI components..."
 
-cat << 'EOF' > abicore/screens/layout/header.abx
+cat << EOF > abicore/screens/layout/header.abx
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AbiLang - Modern Bootstrap Web Portal</title>
-    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+    <title>AbiLang - Modern Responsive Web Portal</title>
+    $CSS_LINK
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">

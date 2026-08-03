@@ -170,6 +170,11 @@ else
     done
 fi
 
+mkdir -p scripts
+if [ -d "$SCRIPT_DIR/scripts" ]; then
+    cp -r "$SCRIPT_DIR/scripts/"* "scripts/"
+fi
+
 # Ensure dist/cli.js shebang and executable permissions
 chmod +x dist/cli.js
 sed -i '1s/^\xef\xbb\xbf//' dist/cli.js
@@ -1173,6 +1178,6 @@ echo "│                                             │"
 echo "│  📂 $(pwd)      │"
 echo "│                                             │"
 echo "│  ▶ Start development                        │"
-echo "│     npm run web                             │"
+echo "│     pnpm start                              │"
 echo "╰─────────────────────────────────────────────╯"
 echo ""

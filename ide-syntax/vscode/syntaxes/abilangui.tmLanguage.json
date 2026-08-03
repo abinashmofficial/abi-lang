@@ -52,6 +52,9 @@
       "name": "meta.embedded.block.html",
       "patterns": [
         {
+          "include": "source.abi"
+        },
+        {
           "include": "source.js"
         }
       ]

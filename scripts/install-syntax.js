@@ -176,7 +176,7 @@ const abilangUiTmGrammar = {
         "1": { "name": "entity.name.tag.html" }
       },
       "name": "meta.embedded.block.html",
-      "patterns": [{ "include": "source.js" }]
+      "patterns": [{ "include": "source.abi" }, { "include": "source.js" }]
     },
     {
       "begin": "(<style\\b[^>]*>)",

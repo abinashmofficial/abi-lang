@@ -156,10 +156,13 @@ cat << EOF > package.json
     "abi": "./dist/cli.js"
   },
   "scripts": {
+    "build": "node scripts/build.js",
     "start": "node scripts/dev.js",
     "web": "node scripts/dev.js",
     "reload": "node server.js",
-    "dev": "node scripts/dev.js"
+    "dev": "node scripts/dev.js",
+    "test": "node dist/cli.js abicore/navigation/routes.abx",
+    "test:all": "node dist/cli.js abicore/navigation/routes.abx"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
@@ -1322,8 +1325,10 @@ print_progress 85 "Installing dependencies..."
 npm install --omit=dev --silent
 npm link --force > /dev/null 2>&1
 
-# Install syntax highlighting support for local IDEs
-if [ -f "$SCRIPT_DIR/scripts/install-syntax.js" ]; then
+# Install syntax highlighting support for local IDEs (VS Code, VS Code Insiders, Vim, Sublime)
+if [ -f "scripts/install-syntax.js" ]; then
+    node "scripts/install-syntax.js" > /dev/null 2>&1
+elif [ -f "$SCRIPT_DIR/scripts/install-syntax.js" ]; then
     node "$SCRIPT_DIR/scripts/install-syntax.js" > /dev/null 2>&1
 fi
 

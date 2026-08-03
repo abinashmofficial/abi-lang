@@ -282,7 +282,28 @@ function findAvailablePort(startPort, callback) {
     });
 }
 
+function startWatcher() {
+    try {
+        const installSyntaxPath = path.resolve(__dirname, 'install-syntax.js');
+        if (fs.existsSync(installSyntaxPath)) {
+            execSync(`node "${installSyntaxPath}"`, { stdio: 'pipe' });
+        }
+    } catch (e) {}
+
+    const rootDir = path.resolve(__dirname, '..');
+    fs.watch(rootDir, { recursive: true }, (eventType, filename) => {
+        if (!filename || (!filename.endsWith('.abx') && !filename.endsWith('.abi') && !filename.endsWith('.abilang'))) return;
+        try {
+            const installSyntaxPath = path.resolve(__dirname, 'install-syntax.js');
+            if (fs.existsSync(installSyntaxPath)) {
+                execSync(`node "${installSyntaxPath}"`, { stdio: 'pipe' });
+            }
+        } catch (e) {}
+    });
+}
+
 function startWebServer() {
+    startWatcher();
     logInfo("Checking available port for HTTP Web Server...");
     findAvailablePort(8080, (port) => {
         logInfo(`Starting HTTP Web Server on port ${port}...`);

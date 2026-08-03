@@ -544,7 +544,7 @@ cat << 'EOF' > abicore/lang/en/messages.json
 EOF
 
 cat << 'EOF' > abicore/screens/components/profile_card.abx
-<script prepare>
+<script setup>
     const name = context.profileName || "Guest User";
     const role = context.profileRole || "Viewer";
 </script>
@@ -558,7 +558,7 @@ EOF
 cat << 'EOF' > abicore/screens/components/landing_body.abx
 render ProfileCard from "components/profile_card"
 
-<script prepare>
+<script setup>
     const os = require('os');
 </script>
 
@@ -597,7 +597,7 @@ render ProfileCard from "components/profile_card"
 </section>
 EOF
 
-cat << 'EOF' > abicore/screens/index.abx
+cat << 'EOF' > abicore/screens/index.abi
 
 render Header from "layout/header"
 render LandingBody from "components/landing_body"
@@ -754,7 +754,7 @@ const { Interpreter, BuiltinFunction } = require('./dist/interpreter');
 const { Lexer } = require('./dist/lexer');
 const { Parser } = require('./dist/parser');
 
-require.extensions['.abx'] = function (module, filename) {
+const abxLoader = function (module, filename) {
     const content = fs.readFileSync(filename, 'utf8');
     const esbuild = require('esbuild');
     const isReact = /require\(['"]react['"]\)/.test(content) || 
@@ -766,14 +766,18 @@ require.extensions['.abx'] = function (module, filename) {
         let directPath = path.resolve(path.dirname(filename), importPath);
         if (fs.existsSync(directPath)) return directPath;
         if (fs.existsSync(directPath + '.abx')) return directPath + '.abx';
+        if (fs.existsSync(directPath + '.abi')) return directPath + '.abi';
         
         let relativeToScreens = importPath.startsWith('abicore/screens/') ? importPath : 'abicore/screens/' + importPath;
         let screensPath = path.resolve(process.cwd(), relativeToScreens);
         if (fs.existsSync(screensPath)) return screensPath;
         if (fs.existsSync(screensPath + '.abx')) return screensPath + '.abx';
+        if (fs.existsSync(screensPath + '.abi')) return screensPath + '.abi';
         
         return directPath;
-    };
+    };;
+require.extensions['.abx'] = abxLoader;
+require.extensions['.abi'] = abxLoader;
 
     if (isTemplate) {
         let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nif (!context.beam) context.beam = function(val) { console.log("[BEAM]", val); return val; };\nif (!context.dx) context.dx = function(val) { console.log("%c[AbiLang dx() Dump]", "background: #1e1e2e; color: #f5c2e7; font-weight: bold; padding: 4px 8px; border-radius: 4px;", val); throw new Error("[Execution Halted by dx()]"); };\nconst __parts = [];\nwith(context) {\n';
@@ -1163,7 +1167,13 @@ async function startServer() {
                     if (!screenFile.startsWith('abicore/')) {
                         screenFile = 'abicore/' + (screenFile.startsWith('screens/') ? screenFile : 'screens/' + screenFile);
                     }
-                    const filePath = path.join(__dirname, screenFile);
+                    let filePath = path.join(__dirname, screenFile);
+                    if (!fs.existsSync(filePath) && fs.existsSync(filePath + '.abi')) {
+                        filePath = filePath + '.abi';
+                    }
+                    if (!fs.existsSync(filePath) && fs.existsSync(filePath + '.abx')) {
+                        filePath = filePath + '.abx';
+                    }
                     if (fs.existsSync(filePath)) {
                         const content = renderTemplate(filePath);
                         res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -1306,6 +1316,9 @@ if (!content.includes("globals.define(\"include\"")) {
             if (!fs.existsSync(absolutePath) && fs.existsSync(absolutePath + ".abx")) {
                 absolutePath = absolutePath + ".abx";
             }
+            if (!fs.existsSync(absolutePath) && fs.existsSync(absolutePath + ".abi")) {
+                absolutePath = absolutePath + ".abi";
+            }
             if (!fs.existsSync(absolutePath)) {
                 throw new Error(\`Include file not found: \\\x27\${filePath}\\\x27\`);
             }
@@ -1322,7 +1335,8 @@ if (!content.includes("globals.define(\"include\"")) {
         this.globals.define("screen", new BuiltinFunction(1, async (args) => {
             const pathName = String(args[0]);
             const cleanPath = pathName.startsWith("abicore/screens/") ? pathName : "abicore/screens/" + pathName;
-            return cleanPath.endsWith(".abx") ? cleanPath : cleanPath + ".abx";
+            if (cleanPath.endsWith(".abi") || cleanPath.endsWith(".abx")) return cleanPath;
+            return cleanPath + ".abi";
         }));
         this.globals.define("env", new BuiltinFunction(1, async (args) => {
             const key = String(args[0]);
@@ -1390,7 +1404,23 @@ const fs = require("fs");
 
 # Complete dependency link
 print_progress 85 "Installing dependencies..."
+(
+    while true; do
+        sleep 1
+        current_time=$(date +%s)
+        elapsed=$((current_time - INSTALL_START_TIME))
+        minutes=$((elapsed / 60))
+        seconds=$((elapsed % 60))
+        timer_str=$(printf "%02dm:%02ds" "$minutes" "$seconds")
+        printf "\r\033[K[\033[32m########################------\033[0m]  85%% (\033[33m%s\033[0m) - Installing dependencies..." "$timer_str"
+    done
+) &
+TIMER_PID=$!
+
 npm install --omit=dev --silent
+kill $TIMER_PID > /dev/null 2>&1 || true
+wait $TIMER_PID 2>/dev/null || true
+
 npm link --force > /dev/null 2>&1
 
 # Install syntax highlighting support for local IDEs (VS Code, VS Code Insiders, Vim, Sublime)

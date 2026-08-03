@@ -863,7 +863,7 @@ require.extensions['.abx'] = function (module, filename) {
             })() %>`;
         });
 
-        processedContent = processedContent.replace(/<script\s+prepare>([\s\S]*?)<\/script>/g, (match, code) => {
+        processedContent = processedContent.replace(/<script\s+(?:setup|prepare)>([\s\S]*?)<\/script>/g, (match, code) => {
             let processedCode = code.trim();
             processedCode = processedCode.replace(/\bimport\s+\{\s*([\w\s,]+)\s*\}\s+from\s+['"]([^'"]+)['"]/g, (m, vars, importPath) => {
                 let includePath = path.resolve(path.dirname(filename), importPath);

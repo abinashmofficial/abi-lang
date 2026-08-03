@@ -103,7 +103,7 @@
 
                 <h2>5 Standout Innovations That Make AbiLang Special</h2>
                 <ul>
-                    <li><strong>1. Zero-Boilerplate Component Exports (<code>.abx</code>)</strong>: No state hooks (<code>useState</code>) or <code>&lt;?php ?&gt;</code> tags. Export variables directly using standard <code>export const name = "value"</code> syntax inside <code>&lt;script prepare&gt;</code>.</li>
+                    <li><strong>1. Zero-Boilerplate Component Exports (<code>.abx</code>)</strong>: No state hooks (<code>useState</code>) or <code>&lt;?php ?&gt;</code> tags. Export variables directly using standard <code>export const name = "value"</code> syntax inside <code>&lt;script setup&gt;</code>.</li>
                     <li><strong>2. Auto-Healing Dev Ports</strong>: Senses port collisions on <code>8080</code> and automatically falls back to <code>8081</code>, <code>8082</code>, etc. with zero <code>EADDRINUSE</code> crashes.</li>
                     <li><strong>3. Smart Target Selection Prompt (<code>pnpm start</code>)</strong>: An interactive launcher menu to pick Web Playground, Mobile App (with USB/emulator device checks), or CLI REPL.</li>
                     <li><strong>4. Native Dump &amp; Die (<code>dx()</code>)</strong>: Dumps variable values in formatted dark mode and halts execution immediately right where it was called.</li>
@@ -779,7 +779,7 @@ render Footer from "layout/footer"
 
                 <h3>2. The Page View: <code>abicore/screens/dashboard.abx</code></h3>
                 <p>Since the header and footer are wrapped automatically, your screen file only needs to contain the middle content and setup block:</p>
-                <pre><code>&lt;script prepare&gt;
+                <pre><code>&lt;script setup&gt;
 export const pageTitle = "My Dashboard";
 &lt;/script&gt;
 
@@ -794,7 +794,7 @@ export const pageTitle = "My Dashboard";
                 <h3>Sample View Page: <code>abicore/screens/dashboard.abx</code></h3>
                 <pre><code>render ProfileCard from "components/profile_card"
 
-&lt;script prepare&gt;
+&lt;script setup&gt;
 export const profileName = "Abinash";
 export const profileRole = "Administrator";
 &lt;/script&gt;
@@ -807,7 +807,7 @@ export const profileRole = "Administrator";
                 <p>You can optionally wrap your HTML templates inside an <code>export ComponentName { ... }</code> block to define named layout structures explicitly:</p>
                 
                 <h3>Sample Component: <code>abicore/screens/components/profile_card.abx</code></h3>
-                <pre><code>&lt;script prepare&gt;
+                <pre><code>&lt;script setup&gt;
 const os = require('os');
 export const name = profileName || "Guest User";
 export const role = profileRole || "Viewer";
@@ -926,7 +926,7 @@ route("get", "/", "handler@index", "home")</code></pre>
 render LandingBody from "components/landing_body"
 render Footer from "layout/footer"
 
-&lt;script prepare&gt;
+&lt;script setup&gt;
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -956,7 +956,7 @@ export const profileRole = "Lead Platform Architect";
                 <p>Loads the platform system statistics and embeds the user card component:</p>
                 <pre><code>render ProfileCard from "components/profile_card"
 
-&lt;script prepare&gt;
+&lt;script setup&gt;
 const os = require('os');
 &lt;/script&gt;
 
@@ -987,7 +987,7 @@ const os = require('os');
 
                 <h3>3. Leaf Component: <code>abicore/screens/components/profile_card.abx</code></h3>
                 <p>A simple presentation component to display user details from parent context:</p>
-                <pre><code>&lt;script prepare&gt;
+                <pre><code>&lt;script setup&gt;
 export const name = profileName || "Guest User";
 export const role = profileRole || "Viewer";
 &lt;/script&gt;

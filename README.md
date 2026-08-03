@@ -134,7 +134,7 @@ render Header from "layout/header"
 render LandingBody from "components/landing_body"
 render Footer from "layout/footer"
 
-<script prepare>
+<script setup>
     const fs = require('fs');
     const path = require('path');
 

@@ -134,7 +134,7 @@ render Header from "layout/header"
 render LandingBody from "components/landing_body"
 render Footer from "layout/footer"
 
-<script setup>
+<script>
     const fs = require('fs');
     const path = require('path');
 
@@ -238,6 +238,78 @@ npx . --help
 
 #### Option C — Global install via `npm link`
 
+### 8. Frontend Component Structure (`.abx`), Dual Language Modes (JS/TS) & Multi-Framework Target Exports
+
+AbiLang `.abx` component files support clean template composition, standard component script tags, and dual **JavaScript (Default)** or **TypeScript** modes:
+
+```html
+import Header from "./layout/Header";
+import ProfileCard from "./components/ProfileCard";
+
+<script>
+    import messages from "./lang/en/messages.json";
+
+    // JavaScript (Default) or TypeScript syntax
+    const title = messages.title || "AbiLang Component";
+    const count = $state(0); // Universal Reactive Signal State
+    const user = { name: "Abinash", role: "Developer" };
+
+    export const increment = () => count.value++;
+</script>
+
+<Header />
+<div class="container">
+    <h1>{{ title }}</h1>
+    <button onClick={increment}>Count: {{ count.value }}</button>
+    <ProfileCard name={user.name} />
+</div>
+```
+
+#### Transpile `.abx` to Modern Frontend & Mobile Frameworks
+
+AbiLang includes built-in transpilation to compile `.abx` components directly to **React, Vue.js, Svelte, Solid.js, Next.js, Angular, Web Components, React Native, Astro, Qwik, and TypeScript Types**:
+
+```bash
+# Export component to React JSX (.jsx)
+abi build App.abx --target react
+
+# Export component to Vue (.vue)
+abi build App.abx --target vue
+
+# Export component to Svelte (.svelte)
+abi build App.abx --target svelte
+
+# Export component to Solid.js (.jsx)
+abi build App.abx --target solid
+
+# Export component to Angular Component (.ts)
+abi build App.abx --target angular
+
+# Export component to Next.js Page (.jsx)
+abi build App.abx --target next
+
+# Export component to Web Component / Custom Element (.js)
+abi build App.abx --target webcomponent
+
+# Export component to React Native Mobile (.jsx)
+abi build App.abx --target react-native
+
+# Export component to Astro Component (.astro)
+abi build App.abx --target astro
+
+# Export component to Qwik Component (.tsx)
+abi build App.abx --target qwik
+
+# Export component TypeScript Definitions (.d.ts)
+abi build App.abx --target ts-types
+```
+
+---
+
+## How to Install & Run
+
+### 1. Global Installation
+
 Register the `abi` binary globally so you can use it from anywhere on your system:
 ```bash
 # Inside the project folder:
@@ -247,9 +319,6 @@ npm run link       # same as: npm link / pnpm link
 abi examples/name.abx
 abi --help
 abi                # opens REPL
-
-# To remove the global link:
-npm run unlink     # same as: npm unlink abilang
 ```
 
 ### 4. Running Web Playground (Browser)

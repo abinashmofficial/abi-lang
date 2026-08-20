@@ -242,11 +242,11 @@ route("get", "/", "handler@index", "home")</code></pre>
                         <div class="cmd-group">
                             <span class="cmd-label">Highlighting for .abx Components</span>
                             <p class="cmd-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Syntax coloring highlights components, render constructs, and expression placeholders identically to modern frontend codebases:</p>
-                            <pre><code>render Header from "abicore/screens/layout/header.abx" # Highlights render & from keywords
-render Footer from "abicore/screens/layout/footer.abx"
+                            <pre><code>import Header from "abicore/screens/layout/header.abx" # Standard ES component import syntax
+import Footer from "abicore/screens/layout/footer.abx"
 
-&lt;script setup&gt;
-# Highlighting enabled inside script setup logic blocks
+&lt;script&gt;
+# Highlighting enabled inside component script logic blocks
 &lt;/script&gt;
 
 &lt;Header /&gt;

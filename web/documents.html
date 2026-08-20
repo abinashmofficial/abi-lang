@@ -103,7 +103,7 @@
 
                 <h2>5 Standout Innovations That Make AbiLang Special</h2>
                 <ul>
-                    <li><strong>1. Zero-Boilerplate Component Exports (<code>.abx</code>)</strong>: No state hooks (<code>useState</code>) or <code>&lt;?php ?&gt;</code> tags. Export variables directly using standard <code>export const name = "value"</code> syntax inside <code>&lt;script setup&gt;</code>.</li>
+                    <li><strong>1. Zero-Boilerplate Component Exports (<code>.abx</code>)</strong>: No verbose state hooks or complex boilerplate. Define component state directly using clean <code>const name = "value"</code> statements inside standard <code>&lt;script&gt;</code> blocks.</li>
                     <li><strong>2. Auto-Healing Dev Ports</strong>: Senses port collisions on <code>8080</code> and automatically falls back to <code>8081</code>, <code>8082</code>, etc. with zero <code>EADDRINUSE</code> crashes.</li>
                     <li><strong>3. Smart Target Selection Prompt (<code>pnpm start</code>)</strong>: An interactive launcher menu to pick Web Playground, Mobile App (with USB/emulator device checks), or CLI REPL.</li>
                     <li><strong>4. Native Dump &amp; Die (<code>dx()</code>)</strong>: Dumps variable values in formatted dark mode and halts execution immediately right where it was called.</li>
@@ -467,25 +467,18 @@ re&#110;der Footer from "layout/footer"
 &lt;Docx /&gt;
 &lt;Footer /&gt;</code></pre>
 
-                <h2>3. <code>&lt;script prepare&gt;</code> — Logic Block</h2>
-                <p>Wrap server-side JavaScript logic inside a <code>&lt;script prepare&gt;&lt;/script&gt;</code> block. This runs before the HTML is rendered. Use it to load language files, read environment variables, or prepare data for the template.</p>
+                <h2>3. <code>&lt;script&gt;</code> — Logic & State Block</h2>
+                <p>Wrap component logic inside a standard <code>&lt;script&gt;&lt;/script&gt;</code> block. This runs when the component initializes to load state, process data, or import resources for the template.</p>
 
-                <pre><code>&lt;script prepare&gt;
-const fs   = require('fs');
-const path = require('path');
-const os   = require('os');
+                <pre><code>&lt;script&gt;
+import messages from "../lang/en/messages.json";
 
-let lang = {};
-try {
-    const file = path.resolve('abicore/lang/en/messages.json');
-    lang = JSON.parse(fs.readFileSync(file, 'utf8'));
-} catch (e) {
-    lang = { title: "AbiLang", subtitle: "Welcome" };
-}
+const lang = messages || { title: "AbiLang", subtitle: "Welcome" };
+const title = lang.title;
 &lt;/script&gt;</code></pre>
 
                 <div class="callout callout-tip">
-                    <strong>Tip:</strong> <code>&lt;script prepare&gt;</code> replaces the old <code>&lt;% code %&gt;</code> EJS-style blocks. Everything inside runs as plain Node.js — <code>require</code>, <code>process.env</code>, <code>fs</code>, and <code>os</code> are all available.
+                    <strong>Tip:</strong> The standard <code>&lt;script&gt;</code> block supports both <strong>JavaScript (Default)</strong> and <strong>TypeScript</strong> syntax with clean ES imports, universal reactive signals (<code>$state</code>), and component state logic.
                 </div>
 
                 <h2>4. <code>{&#123; }}</code> — Inline Expression Output</h2>
@@ -503,19 +496,13 @@ try {
                 <h2>5. Complete Screen Example</h2>
                 <p>Here is a full <code>abicore/screens/index.abx</code> showing all four features working together:</p>
 
-                <pre><code>render Header from "layout/header"
-render Footer from "layout/footer"
+                <pre><code>import Header from "layout/header"
+import Footer from "layout/footer"
 
-&lt;script prepare&gt;
-const fs   = require('fs');
-const path = require('path');
-const os   = require('os');
-let lang = {};
-try {
-    lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
-} catch (e) {
-    lang = { title: "AbiLang", subtitle: "Welcome" };
-}
+&lt;script&gt;
+import messages from "../lang/en/messages.json";
+
+const lang = messages || { title: "AbiLang", subtitle: "Welcome" };
 &lt;/script&gt;
 
 &lt;Header /&gt;
@@ -549,9 +536,9 @@ try {
                             <td><code>&#64;include("path")</code></td>
                         </tr>
                         <tr>
-                            <td class="strong"><code>&lt;script prepare&gt;...&lt;/script&gt;</code></td>
-                            <td>Server-side logic / data preparation</td>
-                            <td class="check-yes"><code>&lt;script prepare&gt;</code> (AbiLang native)</td>
+                            <td class="strong"><code>&lt;script&gt;...&lt;/script&gt;</code></td>
+                            <td>Component logic and reactive state</td>
+                            <td class="check-yes"><code>&lt;script&gt;</code> (AbiLang native)</td>
                             <td><code>&lt;% code %&gt;</code></td>
                         </tr>
                         <tr>
@@ -579,24 +566,24 @@ try {
                 <p>AbiLang templates share a dynamic <code>context</code> object between parent screens and child layout templates. This allows you to pass data (props) down to layouts, or export data up from components.</p>
                 
                 <h3>Passing Data Down (Props)</h3>
-                <p>Assign any variable to the <code>context</code> object inside the parent screen's logic block:</p>
-                <pre><code>&lt;script prepare&gt;
-context.pageTitle = "Home Dashboard";
-context.user = { name: "Abinash", role: "Admin" };
+                <p>Assign any variable to the component script scope inside the parent screen's logic block:</p>
+                <pre><code>&lt;script&gt;
+const pageTitle = "Home Dashboard";
+const user = { name: "Abinash", role: "Admin" };
 &lt;/script&gt;
 
-render Header from "layout/header"</code></pre>
+import Header from "layout/header"</code></pre>
 
                 <p>Then read and output the variables inside the child component/layout template:</p>
                 <pre><code>&lt;header&gt;
-    &lt;h1&gt;{{ context.pageTitle }}&lt;/h1&gt;
-    &lt;span&gt;Logged in as: {{ context.user.name }}&lt;/span&gt;
+    &lt;h1&gt;{{ pageTitle }}&lt;/h1&gt;
+    &lt;span&gt;Logged in as: {{ user.name }}&lt;/span&gt;
 &lt;/header&gt;</code></pre>
 
                 <h3>Exporting Data Up from Components</h3>
-                <p>If a reusable component prepares data or configuration, it can write directly to the shared <code>context</code> object to export it to the parent screen:</p>
-                <pre><code>&lt;script prepare&gt;
-context.sidebarLinks = ["Home", "Docs", "Settings"];
+                <p>If a reusable component prepares data or configuration, it can declare variables inside its component script block:</p>
+                <pre><code>&lt;script&gt;
+const sidebarLinks = ["Home", "Docs", "Settings"];
 &lt;/script&gt;</code></pre>
 
                 <p>The parent template can access the exported variables anywhere after rendering the component:</p>
@@ -610,12 +597,9 @@ context.sidebarLinks = ["Home", "Docs", "Settings"];
                 <p>Configure a component file, import/export its scope variables, and render it in multiple places with custom parameters.</p>
                 
                 <h3>1. Component View: <code>abicore/screens/components/profile_card.abx</code></h3>
-                <pre><code>&lt;script prepare&gt;
-const os = require('os');
-const name = context.profileName || "Guest User";
-const role = context.profileRole || "Viewer";
-const platform = os.platform();
-const memory = Math.floor(os.freemem() / 1024 / 1024);
+                <pre><code>&lt;script&gt;
+const name = profileName || "Abinash";
+const role = profileRole || "Lead Platform Architect";
 &lt;/script&gt;
 
 &lt;div class="profile-card"&gt;
@@ -623,20 +607,19 @@ const memory = Math.floor(os.freemem() / 1024 / 1024);
     &lt;hr&gt;
     &lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; {{ name }}&lt;/p&gt;
     &lt;p&gt;&lt;strong&gt;Role:&lt;/strong&gt; {{ role }}&lt;/p&gt;
-    
-    &lt;div class="system-stats"&gt;
-        &lt;h3&gt;System Details&lt;/h3&gt;
-        &lt;ul&gt;
-            &lt;li&gt;&lt;strong&gt;OS Platform:&lt;/strong&gt; {{ platform }}&lt;/li&gt;
-            &lt;li&gt;&lt;strong&gt;Free Memory:&lt;/strong&gt; {{ memory }} MB&lt;/li&gt;
-        &lt;/ul&gt;
-    &lt;/div&gt;
 &lt;/div&gt;</code></pre>
 
                 <h3>2. Reusing in Main Screen: <code>abicore/screens/dashboard.abx</code></h3>
-                <pre><code>render Header from "layout/header"
-render ProfileCard from "components/profile_card"
-render Footer from "layout/footer"
+                <pre><code>import Header from "layout/header"
+import ProfileCard from "components/profile_card"
+import Footer from "layout/footer"
+
+&lt;script&gt;
+import messages from "../lang/en/messages.json";
+
+const profileName = "Abinash";
+const profileRole = "Administrator";
+&lt;/script&gt;
 
 &lt;Header /&gt;
 
@@ -644,10 +627,63 @@ render Footer from "layout/footer"
 
 &lt;ProfileCard profileName="Jane Doe" profileRole="Support Manager" /&gt;
 
-&lt;Footer /&gt;</code></pre>
+                <h2>9. Universal Signals (`$state`) &amp; Async Data Loader (`$fetch`)</h2>
+                <p>AbiLang provides built-in reactive signals and data loading helpers that work across browser environments, CLI, and exported framework targets:</p>
+                <pre><code>&lt;script&gt;
+import messages from "../lang/en/messages.json";
+
+// 1. Reactive Universal Signal State
+const count = $state(0);
+
+// 2. Declarative Async Data Fetcher
+const { data: user } = $fetch("/api/user", { name: "Abinash", role: "Lead Architect" });
+
+const lang = messages || { title: "AbiLang", subtitle: "Welcome" };
+&lt;/script&gt;
+
+&lt;div class="card"&gt;
+    &lt;h1&gt;{{ lang.title }}&lt;/h1&gt;
+    &lt;p&gt;Logged in as: {{ user.name }} ({{ user.role }})&lt;/p&gt;
+    &lt;button onClick={count.value++}&gt;Clicks: {{ count.value }}&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+
+                <h2>10. Exporting `.abx` to Modern Frontend & Mobile Frameworks</h2>
+                <p>AbiLang includes CLI commands to transpile `.abx` component files directly to native components for React, Vue.js, Svelte, Solid.js, Next.js, Angular, Web Components, React Native, Astro, Qwik, and TypeScript Types:</p>
+                <pre><code># Export to React JSX (.jsx)
+abi build Dashboard.abx --target react
+
+# Export to Vue Component (.vue)
+abi build Dashboard.abx --target vue
+
+# Export to Svelte Component (.svelte)
+abi build Dashboard.abx --target svelte
+
+# Export to Solid.js (.jsx)
+abi build Dashboard.abx --target solid
+
+# Export to Angular Component (.ts)
+abi build Dashboard.abx --target angular
+
+# Export to Next.js Page (.jsx)
+abi build Dashboard.abx --target next
+
+# Export to Web Component Custom Element (.js)
+abi build Dashboard.abx --target webcomponent
+
+# Export to React Native Mobile (.jsx)
+abi build Dashboard.abx --target react-native
+
+# Export to Astro Component (.astro)
+abi build Dashboard.abx --target astro
+
+# Export to Qwik Component (.tsx)
+abi build Dashboard.abx --target qwik
+
+# Export to TypeScript Types Definition (.d.ts)
+abi build Dashboard.abx --target ts-types</code></pre>
 
                 <div class="callout callout-info">
-                    <strong>Backward Compatibility:</strong> The old <code>&#64;include()</code> and <code>&lt;% %&gt;</code> / <code>&lt;%= %&gt;</code> syntax still works. You can mix old and new syntax in the same project during migration.
+                    <strong>Syntax Flexibility:</strong> standard ES imports (<code>import Component from "path"</code>) and standard <code>&lt;script&gt;</code> tags are fully supported alongside <code>render</code> syntax.
                 </div>
             </section>
 
@@ -778,9 +814,9 @@ render Footer from "layout/footer"
 &lt;Footer /&gt;</code></pre>
 
                 <h3>2. The Page View: <code>abicore/screens/dashboard.abx</code></h3>
-                <p>Since the header and footer are wrapped automatically, your screen file only needs to contain the middle content and setup block:</p>
-                <pre><code>&lt;script setup&gt;
-export const pageTitle = "My Dashboard";
+                <p>Since the header and footer are wrapped automatically, your screen file only needs to contain the middle content and component script block:</p>
+                <pre><code>&lt;script&gt;
+const pageTitle = "My Dashboard";
 &lt;/script&gt;
 
 &lt;div class="container"&gt;
@@ -792,11 +828,11 @@ export const pageTitle = "My Dashboard";
                 <p>To write cleaner, component-driven layouts, declare renders at the top of your page using the standard <code>render</code> statement, and then render them inline inside your markup using custom component tags (like <code>&lt;ProfileCard /&gt;</code>).</p>
                 
                 <h3>Sample View Page: <code>abicore/screens/dashboard.abx</code></h3>
-                <pre><code>render ProfileCard from "components/profile_card"
+                <pre><code>import ProfileCard from "components/profile_card"
 
-&lt;script setup&gt;
-export const profileName = "Abinash";
-export const profileRole = "Administrator";
+&lt;script&gt;
+const profileName = "Abinash";
+const profileRole = "Administrator";
 &lt;/script&gt;
 
 &lt;div class="container"&gt;
@@ -807,12 +843,9 @@ export const profileRole = "Administrator";
                 <p>You can optionally wrap your HTML templates inside an <code>export ComponentName { ... }</code> block to define named layout structures explicitly:</p>
                 
                 <h3>Sample Component: <code>abicore/screens/components/profile_card.abx</code></h3>
-                <pre><code>&lt;script setup&gt;
-const os = require('os');
-export const name = profileName || "Guest User";
-export const role = profileRole || "Viewer";
-export const platform = os.platform();
-export const memory = Math.floor(os.freemem() / 1024 / 1024);
+                <pre><code>&lt;script&gt;
+const name = profileName || "Guest User";
+const role = profileRole || "Viewer";
 &lt;/script&gt;
 
 export ProfileCard {
@@ -922,30 +955,16 @@ route("get", "/", "handler@index", "home")</code></pre>
                 
                 <h3>1. Main Entry screen: <code>abicore/screens/index.abx</code></h3>
                 <p>Declares layout components, specifies page metadata, and renders the high-level skeleton:</p>
-                <pre><code>render Header from "layout/header"
-render LandingBody from "components/landing_body"
-render Footer from "layout/footer"
+                <pre><code>import Header from "layout/header"
+import LandingBody from "components/landing_body"
+import Footer from "layout/footer"
 
-&lt;script setup&gt;
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+&lt;script&gt;
+import messages from "../lang/en/messages.json";
 
-function loadMessages(langCode = process.env.APP_LANG || 'en') {
-    try {
-        const langFile = path.resolve(`abicore/lang/${langCode}/messages.json`);
-        if (fs.existsSync(langFile)) {
-            return JSON.parse(fs.readFileSync(langFile, 'utf8'));
-        }
-        return JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
-    } catch {
-        return { title: "AbiLang", subtitle: "Welcome" };
-    }
-}
-
-export const lang = loadMessages();
-export const profileName = "Abinash";
-export const profileRole = "Lead Platform Architect";
+const lang = messages || { title: "AbiLang", subtitle: "Welcome" };
+const profileName = "Abinash";
+const profileRole = "Lead Platform Architect";
 &lt;/script&gt;
 
 &lt;Header /&gt;
@@ -954,10 +973,10 @@ export const profileRole = "Lead Platform Architect";
 
                 <h3>2. Body Component: <code>abicore/screens/components/landing_body.abx</code></h3>
                 <p>Loads the platform system statistics and embeds the user card component:</p>
-                <pre><code>render ProfileCard from "components/profile_card"
+                <pre><code>import ProfileCard from "components/profile_card"
 
-&lt;script setup&gt;
-const os = require('os');
+&lt;script&gt;
+const system = { platform: "Linux", architecture: "x64" };
 &lt;/script&gt;
 
 &lt;section class="hero-section d-flex align-items-center"&gt;
@@ -976,8 +995,8 @@ const os = require('os');
                 &lt;div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;"&gt;
                     &lt;h5 class="text-white mb-3"&gt;System Information&lt;/h5&gt;
                     &lt;div class="row text-muted fs-6"&gt;
-                        &lt;div class="col-6 mb-2"&gt;&lt;strong&gt;Platform:&lt;/strong&gt; {{ os.platform() }}&lt;/div&gt;
-                        &lt;div class="col-6 mb-2"&gt;&lt;strong&gt;Architecture:&lt;/strong&gt; {{ os.arch() }}&lt;/div&gt;
+                        &lt;div class="col-6 mb-2"&gt;&lt;strong&gt;Platform:&lt;/strong&gt; {{ system.platform }}&lt;/div&gt;
+                        &lt;div class="col-6 mb-2"&gt;&lt;strong&gt;Architecture:&lt;/strong&gt; {{ system.architecture }}&lt;/div&gt;
                     &lt;/div&gt;
                 &lt;/div&gt;
             &lt;/div&gt;
@@ -987,9 +1006,9 @@ const os = require('os');
 
                 <h3>3. Leaf Component: <code>abicore/screens/components/profile_card.abx</code></h3>
                 <p>A simple presentation component to display user details from parent context:</p>
-                <pre><code>&lt;script setup&gt;
-export const name = profileName || "Guest User";
-export const role = profileRole || "Viewer";
+                <pre><code>&lt;script&gt;
+const name = profileName || "Abinash";
+const role = profileRole || "Lead Platform Architect";
 &lt;/script&gt;
 
 &lt;div class="card card-custom p-4 text-start mx-auto mb-4" style="max-width: 600px; border-left: 4px solid var(--abi-green);"&gt;

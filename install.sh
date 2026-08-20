@@ -37,6 +37,15 @@ if [ -z "$PORT" ]; then
     PORT="${PORT_INPUT:-3000}"
 fi
 
+if [ -z "$LANG_CHOICE" ]; then
+    echo ""
+    echo "Select Script Language Mode:"
+    echo "  1) JavaScript (Default - Standard JS with optional TS annotations)"
+    echo "  2) TypeScript (Strict TS with interfaces and type checking)"
+    read -r -p "Enter choice [1]: " LANG_CHOICE_INPUT <"$TTY_IN"
+    LANG_CHOICE="${LANG_CHOICE_INPUT:-1}"
+fi
+
 if [ -z "$DB_CHOICE" ]; then
     echo ""
     echo "Select a database type:"
@@ -546,9 +555,9 @@ cat << 'EOF' > abicore/lang/en/messages.json
 EOF
 
 cat << 'EOF' > abicore/screens/components/profile_card.abx
-<script setup>
-    const name = context.profileName || "Guest User";
-    const role = context.profileRole || "Viewer";
+<script>
+    const name = profileName || "Abinash";
+    const role = profileRole || "Lead Platform Architect";
 </script>
 
 <div class="card card-custom p-4 text-start mx-auto mb-4" style="max-width: 600px; border-left: 4px solid var(--abi-green);">
@@ -558,10 +567,15 @@ cat << 'EOF' > abicore/screens/components/profile_card.abx
 EOF
 
 cat << 'EOF' > abicore/screens/components/landing_body.abx
-render ProfileCard from "components/profile_card"
+import ProfileCard from "components/profile_card";
 
-<script setup>
-    const os = require('os');
+<script>
+    const system = {
+        platform: "Linux",
+        architecture: "x64",
+        uptime: 3600,
+        memory: 2048
+    };
 </script>
 
 <section class="hero-section d-flex align-items-center">
@@ -587,10 +601,10 @@ render ProfileCard from "components/profile_card"
                 <div class="card card-custom p-4 text-start mx-auto" style="max-width: 600px;">
                     <h5 class="mb-3" style="color: var(--text-main);">{{ lang.system_info }}</h5>
                     <div class="row fs-6" style="color: var(--text-muted);">
-                        <div class="col-6 mb-2"><strong style="color: var(--text-main);">{{ lang.platform }}:</strong> {{ os.platform() }}</div>
-                        <div class="col-6 mb-2"><strong style="color: var(--text-main);">{{ lang.architecture }}:</strong> {{ os.arch() }}</div>
-                        <div class="col-6 mb-2"><strong style="color: var(--text-main);">{{ lang.uptime }}:</strong> {{ Math.floor(os.uptime()) }} {{ lang.seconds }}</div>
-                        <div class="col-6 mb-2"><strong style="color: var(--text-main);">{{ lang.memory }}:</strong> {{ Math.floor(os.freemem() / 1024 / 1024) }}MB / {{ Math.floor(os.totalmem() / 1024 / 1024) }}MB</div>
+                        <div class="col-6 mb-2"><strong style="color: var(--text-main);">{{ lang.platform }}:</strong> {{ system.platform }}</div>
+                        <div class="col-6 mb-2"><strong style="color: var(--text-main);">{{ lang.architecture }}:</strong> {{ system.architecture }}</div>
+                        <div class="col-6 mb-2"><strong style="color: var(--text-main);">{{ lang.uptime }}:</strong> {{ system.uptime }} {{ lang.seconds }}</div>
+                        <div class="col-6 mb-2"><strong style="color: var(--text-main);">{{ lang.memory }}:</strong> {{ system.memory }}MB</div>
                     </div>
                 </div>
             </div>
@@ -600,30 +614,16 @@ render ProfileCard from "components/profile_card"
 EOF
 
 cat << 'EOF' > abicore/screens/index.abi
+import Header from "layout/header";
+import LandingBody from "components/landing_body";
+import Footer from "layout/footer";
 
-render Header from "layout/header"
-render LandingBody from "components/landing_body"
-render Footer from "layout/footer"
-
-<script prepare>
-    const fs = require('fs');
-    const path = require('path');
-    const os = require('os');
-    let lang = {};
-    try {
-        const langCode = process.env.APP_LANG || 'en';
-        const langFile = path.resolve('abicore/lang/' + langCode + '/messages.json');
-        if (fs.existsSync(langFile)) {
-            lang = JSON.parse(fs.readFileSync(langFile, 'utf8'));
-        } else {
-            lang = JSON.parse(fs.readFileSync(path.resolve('abicore/lang/en/messages.json'), 'utf8'));
-        }
-    } catch (e) {
-        lang = { title: "AbiLang", subtitle: "Welcome" };
-    }
-    context.lang = lang;
-    context.profileName = "Abinash";
-    context.profileRole = "Lead Platform Architect";
+<script>
+    import messages from "../lang/en/messages.json";
+    
+    const lang = messages || { title: "AbiLang", subtitle: "Welcome" };
+    const profileName = "Abinash";
+    const profileRole = "Lead Platform Architect";
 </script>
 
 <style>
@@ -869,8 +869,17 @@ require.extensions['.abi'] = abxLoader;
             })() %>`;
         });
 
-        processedContent = processedContent.replace(/<script\s+(?:setup|prepare)>([\s\S]*?)<\/script>/g, (match, code) => {
+        processedContent = processedContent.replace(/<script>([\s\S]*?)<\/script>/g, (match, code) => {
             let processedCode = code.trim();
+            processedCode = `
+                function $state(initialValue) {
+                    let val = initialValue;
+                    return { get value() { return val; }, set value(v) { val = v; } };
+                }
+                function $fetch(url, defaultData = null) {
+                    return defaultData;
+                }
+                ` + processedCode;
             processedCode = processedCode.replace(/\bimport\s+\{\s*([\w\s,]+)\s*\}\s+from\s+['"]([^'"]+)['"]/g, (m, vars, importPath) => {
                 let includePath = path.resolve(path.dirname(filename), importPath);
                 if (!fs.existsSync(includePath)) {

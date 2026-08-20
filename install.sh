@@ -803,9 +803,7 @@ const abxLoader = function (module, filename) {
         if (fs.existsSync(screensPath + '.abi')) return screensPath + '.abi';
         
         return directPath;
-    };;
-require.extensions['.abx'] = abxLoader;
-require.extensions['.abi'] = abxLoader;
+    };
 
     if (isTemplate) {
         let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nif (!context.beam) context.beam = function(val) { console.log("[BEAM]", val); return val; };\nif (!context.dx) context.dx = function(val) { console.log("%c[AbiLang dx() Dump]", "background: #1e1e2e; color: #f5c2e7; font-weight: bold; padding: 4px 8px; border-radius: 4px;", val); throw new Error("[Execution Halted by dx()]"); };\nconst __parts = [];\nwith(context) {\n';
@@ -959,6 +957,9 @@ require.extensions['.abi'] = abxLoader;
     }
     module._compile(transpiled, filename);
 };
+
+require.extensions['.abx'] = abxLoader;
+require.extensions['.abi'] = abxLoader;
 
 const envFile = path.resolve('.env');
 if (fs.existsSync(envFile)) {

@@ -912,11 +912,14 @@ const abxLoader = function (module, filename) {
                 const randomId = Math.floor(Math.random() * 1000000);
                 return `const _import_ctx_${randomId} = {}; require(${JSON.stringify(includePath)})(require, console, _import_ctx_${randomId}); const { ${vars} } = _import_ctx_${randomId};`;
             });
+            processedCode = processedCode.replace(/\b(?:const|let|var)\s+(\w+)\s*=/g, (m, name) => {
+                return `context.${name} =`;
+            });
             processedCode = processedCode.replace(/\bexport\s+(?:(const|let|var)\s+)?(\w+)\s*=/g, (m, keyword, name) => {
                 return `context.${name} =`;
             });
-            const matches = [...processedCode.matchAll(/\bexport\s+(function|class)\s+(\w+)\b/g)];
-            processedCode = processedCode.replace(/\bexport\s+(function|class)\s+(\w+)\b/g, '$1 $2');
+            const matches = [...processedCode.matchAll(/\b(?:export\s+)?(function|class)\s+(\w+)\b/g)];
+            processedCode = processedCode.replace(/\b(?:export\s+)?(function|class)\s+(\w+)\b/g, '$1 $2');
             matches.forEach(m => {
                 const name = m[2];
                 processedCode += `\ncontext.${name} = ${name};`;

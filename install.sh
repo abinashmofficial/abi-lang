@@ -822,19 +822,11 @@ const abxLoader = function (module, filename) {
     };
 
     if (isTemplate) {
-        let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nif (!context.beam) context.beam = function(val) { console.log("[BEAM]", val); return val; };\nif (!context.dx) context.dx = function(val) { console.log("%c[AbiLang dx() Dump]", "background: #1e1e2e; color: #f5c2e7; font-weight: bold; padding: 4px 8px; border-radius: 4px;", val); throw new Error("[Execution Halted by dx()]"); };\nconst __parts = [];\nwith(context) {\n';
+        let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nif (!context.$state) context.$state = function(initialValue) { let val = initialValue; return { get value() { return val; }, set value(v) { val = v; } }; };\nif (!context.$fetch) context.$fetch = function(url, defaultData = null) { return defaultData; };\nif (!context.beam) context.beam = function(val) { console.log("[BEAM]", val); return val; };\nif (!context.dx) context.dx = function(val) { console.log("%c[AbiLang dx() Dump]", "background: #1e1e2e; color: #f5c2e7; font-weight: bold; padding: 4px 8px; border-radius: 4px;", val); throw new Error("[Execution Halted by dx()]"); };\nconst __parts = [];\nwith(context) {\n';
+        let processedContent = content;
         let scriptBlocksContent = "";
         processedContent = processedContent.replace(/<script>([\s\S]*?)<\/script>/gi, (match, code) => {
             let processedCode = code.trim();
-            processedCode = `
-                function $state(initialValue) {
-                    let val = initialValue;
-                    return { get value() { return val; }, set value(v) { val = v; } };
-                }
-                function $fetch(url, defaultData = null) {
-                    return defaultData;
-                }
-                ` + processedCode;
             processedCode = processedCode.replace(/\bimport\s+(\w+)\s+from\s+['"]([^'"]+)['"]/g, (m, varName, importPath) => {
                 let includePath = path.resolve(path.dirname(filename), importPath);
                 if (!fs.existsSync(includePath)) {
@@ -870,12 +862,15 @@ const abxLoader = function (module, filename) {
         let m;
         const imports = [];
         while ((m = importRegex.exec(processedContent)) !== null) {
-            imports.push({
-                match: m[0],
-                alias: m[1],
-                quotedPath: m[2],
-                varName: m[3]
-            });
+            const pathStr = m[2] || '';
+            if (!pathStr.endsWith('.json')) {
+                imports.push({
+                    match: m[0],
+                    alias: m[1],
+                    quotedPath: m[2],
+                    varName: m[3]
+                });
+            }
         }
         imports.reverse().forEach(imp => {
             const alias = imp.alias;
@@ -947,6 +942,9 @@ const abxLoader = function (module, filename) {
                     return plugin();
                 }
                 return String(plugin);
+            })() %>`;
+        });
+
         script += scriptBlocksContent;
 
         processedContent = processedContent.replace(/\{\{\s*([\s\S]*?)\s*\}\}/g, (match, expr) => {

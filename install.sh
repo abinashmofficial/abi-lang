@@ -951,7 +951,10 @@ const abxLoader = function (module, filename) {
         let index = 0;
         let match;
         while ((match = codeRegex.exec(processedContent)) !== null) {
-            script += `__parts.push(${JSON.stringify(processedContent.slice(index, match.index))});\n`;
+            const rawChunk = processedContent.slice(index, match.index);
+            if (rawChunk) {
+                script += `__parts.push(${JSON.stringify(rawChunk)});\n`;
+            }
             const code = match[1].trim();
             if (code.startsWith('=')) {
                 script += `__parts.push(${code.slice(1)});\n`;
@@ -960,7 +963,10 @@ const abxLoader = function (module, filename) {
             }
             index = codeRegex.lastIndex;
         }
-        script += `__parts.push(${JSON.stringify(processedContent.slice(index))});\n`;
+        const tailChunk = processedContent.slice(index);
+        if (tailChunk) {
+            script += `__parts.push(${JSON.stringify(tailChunk)});\n`;
+        }
         script += `}\nreturn __parts.join("");\n};\nfn.isAbiLangTemplate = true;\nmodule.exports = fn;\n`;
         transpiled = esbuild.transformSync(script, {
             loader: 'js',

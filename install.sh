@@ -1038,7 +1038,10 @@ async function loadRoutes() {
         });
         return null;
     }));
-    const routeFile = path.resolve('abicore/navigation/routes.abi');
+    let routeFile = path.resolve('abicore/navigation/routes.abx');
+    if (!fs.existsSync(routeFile)) {
+        routeFile = path.resolve('abicore/navigation/routes.abi');
+    }
     if (fs.existsSync(routeFile)) {
         const source = fs.readFileSync(routeFile, 'utf8');
         const lexer = new Lexer(source);

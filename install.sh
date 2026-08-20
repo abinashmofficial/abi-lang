@@ -746,6 +746,32 @@ render Footer from "layout/footer"
 <Footer />
 EOF
 
+cat << 'EOF' > abicore/handlers/handler.abx
+class Handler {
+    public func index() {
+        return screen("index")
+    }
+
+    public func docs() {
+        return screen("docs")
+    }
+}
+EOF
+
+cat << 'EOF' > abicore/navigation/routes.abx
+include("abicore/handlers/handler.abx")
+
+route("get", "/", "handler@index", "home")
+route("get", "/docs", "handler@docs", "docs")
+EOF
+
+cat << 'EOF' > abicore/navigation/routes.abi
+include("abicore/handlers/handler.abx")
+
+route("get", "/", "handler@index", "home")
+route("get", "/docs", "handler@docs", "docs")
+EOF
+
 
 
 cat << 'EOF' > server.js
@@ -1191,6 +1217,24 @@ async function startServer() {
                         res.end(content);
                         return;
                     }
+                }
+            }
+        }
+
+        // Fallback: If root URL '/' or no explicit route matched, render abicore/screens/index
+        if (urlPath === '/' || routes.length === 0) {
+            let indexPath = path.join(__dirname, 'abicore/screens/index.abi');
+            if (!fs.existsSync(indexPath)) {
+                indexPath = path.join(__dirname, 'abicore/screens/index.abx');
+            }
+            if (fs.existsSync(indexPath)) {
+                try {
+                    const content = renderTemplate(indexPath);
+                    res.writeHead(200, { 'Content-Type': 'text/html' });
+                    res.end(content);
+                    return;
+                } catch (e) {
+                    console.error('[Render Error]', e);
                 }
             }
         }

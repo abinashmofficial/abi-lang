@@ -944,7 +944,7 @@ const abxLoader = function (module, filename) {
         script += `__parts.push(${JSON.stringify(processedContent.slice(index))});\n`;
         script += `}\nreturn __parts.join("");\n};\nfn.isAbiLangTemplate = true;\nmodule.exports = fn;\n`;
         transpiled = esbuild.transformSync(script, {
-            loader: 'js',
+            loader: 'jsx',
             target: 'node18',
             format: 'cjs'
         }).code;

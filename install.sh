@@ -823,8 +823,49 @@ const abxLoader = function (module, filename) {
 
     if (isTemplate) {
         let script = 'const fs = require("fs");\nconst path = require("path");\nconst fn = function(require, console, context = {}) {\nif (!context.beam) context.beam = function(val) { console.log("[BEAM]", val); return val; };\nif (!context.dx) context.dx = function(val) { console.log("%c[AbiLang dx() Dump]", "background: #1e1e2e; color: #f5c2e7; font-weight: bold; padding: 4px 8px; border-radius: 4px;", val); throw new Error("[Execution Halted by dx()]"); };\nconst __parts = [];\nwith(context) {\n';
-        let processedContent = content;
-        processedContent = processedContent.replace(/(?:export\s+component|export|component)\s+(\w+)\s*\{([\s\S]*?)\}/g, '$2');
+        let scriptBlocksContent = "";
+        processedContent = processedContent.replace(/<script>([\s\S]*?)<\/script>/gi, (match, code) => {
+            let processedCode = code.trim();
+            processedCode = `
+                function $state(initialValue) {
+                    let val = initialValue;
+                    return { get value() { return val; }, set value(v) { val = v; } };
+                }
+                function $fetch(url, defaultData = null) {
+                    return defaultData;
+                }
+                ` + processedCode;
+            processedCode = processedCode.replace(/\bimport\s+(\w+)\s+from\s+['"]([^'"]+)['"]/g, (m, varName, importPath) => {
+                let includePath = path.resolve(path.dirname(filename), importPath);
+                if (!fs.existsSync(includePath)) {
+                    includePath = path.resolve(process.cwd(), importPath);
+                }
+                return `context.${varName} = require(${JSON.stringify(includePath)});`;
+            });
+            processedCode = processedCode.replace(/\bimport\s+\{\s*([\w\s,]+)\s*\}\s+from\s+['"]([^'"]+)['"]/g, (m, vars, importPath) => {
+                let includePath = path.resolve(path.dirname(filename), importPath);
+                if (!fs.existsSync(includePath)) {
+                    includePath = path.resolve(process.cwd(), importPath);
+                }
+                const randomId = Math.floor(Math.random() * 1000000);
+                return `const _import_ctx_${randomId} = {}; require(${JSON.stringify(includePath)})(require, console, _import_ctx_${randomId}); const { ${vars} } = _import_ctx_${randomId};`;
+            });
+            processedCode = processedCode.replace(/\b(?:const|let|var)\s+(\w+)\s*=/g, (m, name) => {
+                return `context.${name} =`;
+            });
+            processedCode = processedCode.replace(/\bexport\s+(?:(const|let|var)\s+)?(\w+)\s*=/g, (m, keyword, name) => {
+                return `context.${name} =`;
+            });
+            const matches = [...processedCode.matchAll(/\b(?:export\s+)?(function|class)\s+(\w+)\b/g)];
+            processedCode = processedCode.replace(/\b(?:export\s+)?(function|class)\s+(\w+)\b/g, '$1 $2');
+            matches.forEach(m => {
+                const name = m[2];
+                processedCode += `\ncontext.${name} = ${name};`;
+            });
+            scriptBlocksContent += processedCode + "\n";
+            return "";
+        });
+
         const importRegex = /(?:export\s+)?(?:load|import|inject|render)\s+(\w+)\s+from\s+(?:['"]([^'"]+)['"]|([a-zA-Z0-9_\.]+))/g;
         let m;
         const imports = [];
@@ -906,42 +947,7 @@ const abxLoader = function (module, filename) {
                     return plugin();
                 }
                 return String(plugin);
-            })() %>`;
-        });
-
-        processedContent = processedContent.replace(/<script>([\s\S]*?)<\/script>/g, (match, code) => {
-            let processedCode = code.trim();
-            processedCode = `
-                function $state(initialValue) {
-                    let val = initialValue;
-                    return { get value() { return val; }, set value(v) { val = v; } };
-                }
-                function $fetch(url, defaultData = null) {
-                    return defaultData;
-                }
-                ` + processedCode;
-            processedCode = processedCode.replace(/\bimport\s+\{\s*([\w\s,]+)\s*\}\s+from\s+['"]([^'"]+)['"]/g, (m, vars, importPath) => {
-                let includePath = path.resolve(path.dirname(filename), importPath);
-                if (!fs.existsSync(includePath)) {
-                    includePath = path.resolve(process.cwd(), importPath);
-                }
-                const randomId = Math.floor(Math.random() * 1000000);
-                return `const _import_ctx_${randomId} = {}; require(${JSON.stringify(includePath)})(require, console, _import_ctx_${randomId}); const { ${vars} } = _import_ctx_${randomId};`;
-            });
-            processedCode = processedCode.replace(/\b(?:const|let|var)\s+(\w+)\s*=/g, (m, name) => {
-                return `context.${name} =`;
-            });
-            processedCode = processedCode.replace(/\bexport\s+(?:(const|let|var)\s+)?(\w+)\s*=/g, (m, keyword, name) => {
-                return `context.${name} =`;
-            });
-            const matches = [...processedCode.matchAll(/\b(?:export\s+)?(function|class)\s+(\w+)\b/g)];
-            processedCode = processedCode.replace(/\b(?:export\s+)?(function|class)\s+(\w+)\b/g, '$1 $2');
-            matches.forEach(m => {
-                const name = m[2];
-                processedCode += `\ncontext.${name} = ${name};`;
-            });
-            return `<% ${processedCode} %>`;
-        });
+        script += scriptBlocksContent;
 
         processedContent = processedContent.replace(/\{\{\s*([\s\S]*?)\s*\}\}/g, (match, expr) => {
             return `<%= ${expr.trim()} %>`;

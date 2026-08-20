@@ -613,6 +613,24 @@ import ProfileCard from "components/profile_card";
 </section>
 EOF
 
+cat << 'EOF' > abicore/screens/index.abx
+import Header from "layout/header";
+import LandingBody from "components/landing_body";
+import Footer from "layout/footer";
+
+<script>
+    import messages from "../lang/en/messages.json";
+    
+    const lang = messages || { title: "AbiLang", subtitle: "Welcome" };
+    const profileName = "Abinash";
+    const profileRole = "Lead Platform Architect";
+</script>
+
+<Header />
+<LandingBody />
+<Footer />
+EOF
+
 cat << 'EOF' > abicore/screens/index.abi
 import Header from "layout/header";
 import LandingBody from "components/landing_body";
@@ -785,9 +803,7 @@ const { Parser } = require('./dist/parser');
 const abxLoader = function (module, filename) {
     const content = fs.readFileSync(filename, 'utf8');
     const esbuild = require('esbuild');
-    const isReact = /require\(['"]react['"]\)/.test(content) || 
-                    /from\s+['"]react['"]/i.test(content) || 
-                    /import\s+React/i.test(content);
+    const isReact = /(?:import\s+React\b|from\s+['"]react['"]|require\(['"]react['"]\))/.test(content);
     const isTemplate = !isReact;
     let transpiled;
     const resolveTemplatePath = (importPath) => {
